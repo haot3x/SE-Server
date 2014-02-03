@@ -13,6 +13,7 @@ import urllib
 # sys.path includes 'server/lib' due to appengine_config.py
 
 from flask import Flask, render_template, url_for
+ASSETS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../static/app')
 app = Flask(__name__.split('.')[0])
 
 from handlers.event import event_api
