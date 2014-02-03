@@ -9,5 +9,4 @@ def event(eid=None):
   if request.method == 'GET':
     return "{eid=%s}" % (eid,)  
   else:
-    return "eid is a number"
-  
+    return str(request.data)

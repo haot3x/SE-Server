@@ -31,20 +31,17 @@
             <tbody>
             {% for item in links%}
               <tr>
-                <td>{{item.endpoint}}</td>
-                <td>{{item.methods}}</td>
-                <td>{{item.url}}</td>
+                <td>{{ item.endpoint }}</td>
+                <td>{{ item.methods }}</td>
+                <td>{{ item.url }}</td>
               </tr>
             {% endfor %}
             </tbody>
           </table>
     </div>
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<!-- <script src="../static/jquery/jquery-1.11.0.js"></script> -->
+    
     <script src={{ url_for('static', filename='../static/jquery/jquery-1.11.0.js')}} ></script>
     <script src={{ url_for('static', filename = '../static/bootstrap/js/bootstrap.min.js')}} ></script>    
     <link href={{ url_for('static', filename='./bootstrap/css/bootstrap.min.css' )}} rel="stylesheet">
-
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
   </body>
 </html>
