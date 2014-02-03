@@ -12,8 +12,11 @@ import urllib
 
 # sys.path includes 'server/lib' due to appengine_config.py
 
-from flask import Flask, render_template, url_for
-ASSETS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../static/app')
+from flask import Flask
+from flask import render_template
+from flask import request
+from flask import url_for
+
 app = Flask(__name__.split('.')[0])
 
 from handlers.event import event_api
@@ -25,12 +28,9 @@ def hello(name="Yale"):
   """ Return hello template at application root URL."""
   return render_template('hello.html', name=name)
 
-@app.route('/admin')
+
+@app.route('/api')
 def sitemap():
-    # """view all the available RESTful APIs"""
-    # links = []
-    # for rule in app.url_map.iter_rules():
-    # 	links.append(rule.__str__)
     links = []
     for rule in app.url_map.iter_rules():
         line = {}

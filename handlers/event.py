@@ -1,4 +1,5 @@
 from flask import Blueprint
+from flask import request
 
 event_api = Blueprint('event_api', __name__)
 
