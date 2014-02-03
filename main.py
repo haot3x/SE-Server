@@ -13,6 +13,8 @@ import os
 import sys
 import urllib
 
+
+
 # sys.path includes 'server/lib' due to appengine_config.py
 
 from flask import Flask
@@ -26,8 +28,13 @@ app = Flask(__name__.split('.')[0])
 app.config['DEBUG'] = True
 app.config['SECURITY_REGISTERABLE'] = True
 
-from handlers.event import event_api
-app.register_blueprint(event_api)
+from controllers.test_controller import test_api
+app.register_blueprint(test_api)
+
+@app.errorhandler(404)
+def not_found(error):
+    #return render_template('404.html'), 404
+    return "404 - Page Not Found </br>List <a href='./api'>API</a>"
 
 @app.route('/')
 def hello():
