@@ -18,4 +18,7 @@ def hello(name=None):
   """ Return hello template at application root URL."""
   return render_template('hello.html', name=name)
 
-
+@app.route('/<uid>/<geoid>')
+def test(uid=None,geoid=None):
+  """ Return hello template at application root URL."""
+  return "{id=%s,geoid=%s}" % (uid,geoid)
