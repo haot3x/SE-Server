@@ -34,7 +34,7 @@ app.register_blueprint(test_api)
 @app.errorhandler(404)
 def not_found(error):
     #return render_template('404.html'), 404
-    return "404 - Page Not Found </br>List <a href='./api'>API</a>"
+    return "404 - Page Not Found </br>List <a href='/api'>API</a>"
 
 @app.route('/')
 def hello():
