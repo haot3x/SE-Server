@@ -13,8 +13,6 @@ import os
 import sys
 import urllib
 
-
-
 # sys.path includes 'server/lib' due to appengine_config.py
 
 from flask import Flask
@@ -38,9 +36,7 @@ def not_found(error):
 
 @app.route('/')
 def hello():
-  """ Return hello template at application root URL."""
-  return render_template('hello.html', name="Yale HOUT")
-
+    return render_template('landing.html')
 
 @app.route('/api')
 def sitemap():
@@ -58,4 +54,5 @@ def sitemap():
         #links.append(urllib.unquote("{:50s} {:20s} {}".format(line['endpoint'], line['methods'], line['url'])))
         links.append(line)
     #return "</br>".join(links)
-    return render_template("sitemap.html", links=links)
+    li = sorted(links, key=lambda k: k['url'])
+    return render_template("api.html", links=li)
