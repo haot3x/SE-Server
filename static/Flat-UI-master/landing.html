@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Hout</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Loading Bootstrap -->
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+
+    <!-- Loading Flat UI -->
+    <link href="css/flat-ui.css" rel="stylesheet">
+
+    <link rel="shortcut icon" href="images/favicon.ico">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.js"></script>
+      <script src="js/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    
+    <div>
+            
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-01">
+              <span class="sr-only">Toggle navigation</span>
+            </button>
+            <a class="navbar-brand" href="#">HOUT</a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="navbar-collapse-01">
+            <ul class="nav navbar-nav">           
+              <li class="active"><a id="nav-feature-div">Features</a></li>
+              <li><a id="nav-map-div">Live Map</a></li>
+              <li><a id="nav-team-div">Team</a></li>
+            </ul>           
+
+            <form class="navbar-form navbar-right" action="#" role="search">
+              <div class="form-group">
+                <div class="input-group">
+                  <input class="form-control" id="navbarInput-01" type="search" placeholder="Search">
+                  <span class="input-group-btn">
+                    <button type="submit" class="btn"><span class="fui-search"></span></button>
+                  </span>            
+                </div>
+              </div>               
+            </form>
+
+            </div><!-- /.navbar-collapse -->
+
+        </nav><!-- /navbar -->
+
+
+        <div id='feature-div' class='container'>
+            
+            
+            <div class='row' style='height:700px;'>
+            <div class="col-md-3"></div>
+
+            <div class="login-form container col-md-6" style='margin:140px 0 0 0;'>
+                <h1>Coming Soon</h1>
+
+                <div class="form-group ">
+                <input type="text" class="form-control login-field" value="" placeholder="Your name" id="login-name">
+                <label class="login-field-icon fui-user" for="subs-name"></label>
+                </div>
+
+                <div class="form-group">
+                <input type="text" class="form-control login-field" value="" placeholder="Your email" id="subs-email">
+                <label class="login-field-icon fui-mail" for="login-pass"></label>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox checked" for="checkbox2">
+                    <span class="icons"><span class="first-icon fui-checkbox-unchecked"></span><span class="second-icon fui-checkbox-checked"></span></span><input type="checkbox" value="" id="checkbox2" data-toggle="checkbox">
+                    Subscribe to our weekly news letter
+                    </label>                  
+                </div>
+
+                <a class="btn btn-primary btn-lg btn-block" href="#">Subscribe</a>
+                <!-- <a class="login-link" href="#">Lost your password?</a> -->
+            </div>
+
+
+
+            </div>
+        </div>
+        <!-- page main body container -->
+
+    <div id='map-div'>
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d47967.07159745638!2d-72.95904475000005!3d41.288367300000026!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89e7d9b6cd624945%3A0xae34a2c4b4d30427!2sYale+University%2C+New+Haven%2C+CT!5e0!3m2!1sen!2sus!4v1391542312443" width="100%" height="680" padding='0' margin='0' frameborder="0" style="border:0"></iframe>
+    </div>
+    
+
+    
+    <div id='team-div' class='container'>
+        
+        <div class='row'>
+        <div class="col-md-3"></div>
+        <div class="col-md-6">    
+            <h2>Team Members</h2>
+            <h6>Hushiyang Liu</h6>
+            <h6>Mengci Liu</h6>
+            <h6>Mengi Li</h6>
+            <h6>Tianxiong Jiang</h6>
+            <h6>Zhewu Zhou</h6>
+            <h6>Yuan Xia</h6>
+            <h6>Haotian Xu</h6>
+        </div>
+       </div>
+       
+       
+    </div>
+
+
+
+
+
+
+
+
+ 
+    </div>
+    <!--body-->
+
+
+    <!-- Load JS here for greater good =============================-->
+    <script src="js/jquery-1.8.3.min.js"></script>
+    <script src="js/jquery-ui-1.10.3.custom.min.js"></script>
+    <script src="js/jquery.ui.touch-punch.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap-select.js"></script>
+    <script src="js/bootstrap-switch.js"></script>
+    <script src="js/flatui-checkbox.js"></script>
+    <script src="js/flatui-radio.js"></script>
+    <script src="js/jquery.tagsinput.js"></script>
+    <script src="js/jquery.placeholder.js"></script>
+    <script src="js/jquery.scrollTo.min.js"></script>
+
+
+    <script>
+        $(document).ready(function() {   
+          
+          $('#nav-feature-div').click(function(){
+            $('html, body').animate({ scrollTop: $('#feature-div').offset().top}, 600);
+          });
+
+          $('#nav-map-div').click(function(){
+            $('html, body').animate({ scrollTop: $('#map-div').offset().top}, 600);
+          });
+          
+          $('#nav-team-div').click(function(){
+            $('html, body').animate({ scrollTop: $('#team-div').offset().top}, 600);
+          });
+          
+        });
+    </script>
+  </body>
+</html>
