@@ -31,12 +31,15 @@ app.register_blueprint(test_api)
 
 @app.errorhandler(404)
 def not_found(error):
-    #return render_template('404.html'), 404
-    return "404 - Page Not Found </br>List <a href='/api'>API</a>"
+    return render_template('404.html'), 404
 
 @app.route('/')
 def hello():
     return render_template('landing.html')
+
+@app.route('/basic')
+def basic():
+    return render_template('basic.html')
 
 @app.route('/api')
 def sitemap():
