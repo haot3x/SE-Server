@@ -3,14 +3,16 @@ from flask import request
 from flask import render_template
 from google.appengine.ext import ndb
 
+from flask import json
 
 from models.testmodel import TestModel
 
 test_api = Blueprint('test_api', __name__)
 
-@test_api.route("/api/test/<test_id>", methods=['GET', 'POST'])
+
+@test_api.route("/api/tests/<test_id>", methods=['GET', 'POST'])
 def test_creat(test_id=None):
-  """ Return hello template at application root URL."""
+  """ Test """
   if request.method == 'GET':
     tm = TestModel(parent=ndb.Key("TestModel","yo"),
         content = "dummy content %s " % (test_id))
@@ -21,9 +23,17 @@ def test_creat(test_id=None):
 
 @test_api.route("/api/tests", methods=['GET'])
 def test_list():
-    """ Return hello template at application root URL."""
+    """ Test """
     ancestor_key = ndb.Key("TestModel","yo")
     tests = TestModel.query_testmodel(ancestor_key).fetch(20)
     tests = TestModel.query().fetch(20)
-    #return "</br>".join(test.content for test in tests)
-    return render_template('dump_dict_list.html', model_only=True ,dict_list=[i.__dict__ for i in tests])
+    return json.dumps([p.to_dict() for p in list(tests)])
+    #return render_template('dump_dict_list.html', model_only=True ,dict_list=[i.__dict__ for i in tests])
+
+@test_api.route("/api/tests/random", methods=['GET'])
+def test_random():
+    """ Test """
+    import random
+    x = random.randint(0,1000)
+    y = random.randint(0,1000)
+    return '{"a":%s, "b":%s}' % (x,y)
