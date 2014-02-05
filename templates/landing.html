@@ -105,13 +105,17 @@
         <div class="col-md-1"></div>
         <div class="col-md-6">    
             <h2>Team Members</h2>
-            <h6>Hushiyang Liu</h6>
-            <h6>Mengci Liu</h6>
-            <h6>Meng Li</h6>
-            <h6>Tianxiong Jiang</h6>
-            <h6>Zhewu Zhou</h6>
-            <h6>Yuan Xia</h6>
-            <h6>Haotian Xu</h6>
+
+            <div class='row'><div class="col-md-4"> 
+            <h6 data-toggle="tooltip" data-placement="right" title="PM" title="Dev">Hushiyang Liu</h6>
+            <h6 data-toggle="tooltip" data-placement="right" title="PM" title="Dev">Mengci Liu</h6>
+            <h6 data-toggle="tooltip" data-placement="right" title="Backend Dev" title="Dev">Meng Li</h6>
+            <h6 data-toggle="tooltip" data-placement="right" title="iOS Dev" title="Dev">Tianxiong Jiang</h6>
+            <h6 data-toggle="tooltip" data-placement="right" title="iOS Dev" title="Dev">Zhewu Zhou</h6>
+            <h6 data-toggle="tooltip" data-placement="right" title="Backend Dev" title="Dev">Yuan Xia</h6>
+            <h6 data-toggle="tooltip" data-placement="right" title="Backend Dev" title="Dev">Haotian Xu</h6>
+            </div>
+            </div>
         </div>
        </div>
        
@@ -154,6 +158,8 @@
     <script>
         $(document).ready(function() {   
           
+          $('#team-div h6,button,div').tooltip();
+
           $('#nav-feature-div').click(function(event){
             $('html, body').animate({ scrollTop: $('#feature-div').offset().top}, 600);
             
