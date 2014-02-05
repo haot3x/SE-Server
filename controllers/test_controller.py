@@ -30,7 +30,7 @@ def test_list():
     return json.dumps([p.to_dict() for p in list(tests)])
     #return render_template('dump_dict_list.html', model_only=True ,dict_list=[i.__dict__ for i in tests])
 
-@test_api.route("/api/tests/random", methods=['GET'])
+@test_api.route("/api/tests/random", methods=['GET','DELETE'])
 def test_random():
     """ Test """
     import random
