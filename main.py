@@ -6,6 +6,20 @@ different routes are in the handlers directory
 
 local install:
     sudo pip install flask-security -t /Users/Ted/Code/SE-Server/server/lib
+    sudo pip install -r requirements.txt -t /Users/Ted/Code/SE-Server/server/lib
+
+
+gmail
+    yale.hout@gmail.com
+    yalese14
+
+https://mongolab.com/databases/yalehout/collections/
+    yale.hout@gmail.com
+    qwe123
+
+mongo ds063307.mongolab.com:63307/yalehout -u yalehout -p qwe123
+mongodb://yalehout:qwe123@ds063307.mongolab.com:63307/yalehout
+
 
 """
 
@@ -19,19 +33,92 @@ from flask import Flask
 from flask import render_template
 from flask import request
 from flask import url_for
+from flask import session
+from flask import redirect
 
-from flask.ext.security import Security
+from flask.ext.security import Security,UserMixin, RoleMixin, login_required
+from flask.ext.login import LoginManager 
+from google.appengine.ext import ndb
+
+from flask import Flask, render_template
+from flask.ext.mongoengine import MongoEngine
+from flask.ext.security import Security, MongoEngineUserDatastore, \
+    UserMixin, RoleMixin, login_required
+
+from flask_mail import Mail
+
+
+
 
 app = Flask(__name__.split('.')[0])
 app.config['DEBUG'] = True
+app.config['SECRET_KEY'] = 'super-secret'
 app.config['SECURITY_REGISTERABLE'] = True
+app.config['SECURITY_POST_LOGIN_VIEW'] = 'a_page_requires_login'
+
+
+# # At top of file
+# from flask_mail import Mail
+# # After 'Create app'
+# app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+# app.config['MAIL_PORT'] = 465
+# app.config['MAIL_USE_SSL'] = True
+# app.config['MAIL_USERNAME'] = 'yale.hout@gmail.com'
+# app.config['MAIL_PASSWORD'] = 'yalese14'
+# mail = Mail(app)
+
+
+# Flask Configuration goes here
+# http://pythonhosted.org/Flask-Security/configuration.html
+app.config['SECURITY_SEND_REGISTER_EMAIL'] = False
+
+# MongoDB Configuration goes here
+app.config["MONGODB_SETTINGS"] = {'DB': "yalehout", "host":'mongodb://yalehout:qwe123@ds063307.mongolab.com:63307/yalehout'}
+# if localhost - make sure you start the daemon first - mongod
+# app.config['MONGODB_DB']='test'
+# app.config['MONGODB_HOST']='127.0.0.1'
+# app.config['MONGODB_PORT']=27017
+db = MongoEngine(app)
+
+
+
+class Role(db.Document, RoleMixin):
+    name = db.StringField(max_length=80, unique=True)
+    description = db.StringField(max_length=255)
+    
+    #above is the minimum, dont touch
+
+#http://pythonhosted.org/Flask-Security/customizing.html
+class User(db.Document, UserMixin):
+    email = db.StringField(max_length=255)
+    password = db.StringField(max_length=255)
+    active = db.BooleanField(default=True)
+    confirmed_at = db.DateTimeField()
+    roles = db.ListField(db.ReferenceField(Role), default=[])
+    
+    # #above is the minimum, dont touch
+    # last_name = db.StringField(max_length=255)
+    # first_name = db.StringField(max_length=255)
+    # nickname = db.StringField(max_length=255)
+    # nickname = db.StringField(max_length=255)
+    # age = db.IntField()
+    # user_prof_id = db.ReferenceField("")
+    
+
+user_datastore = MongoEngineUserDatastore(db, User, Role)
+security = Security(app, user_datastore)
 
 from controllers.test_controller import test_api
 app.register_blueprint(test_api)
 
+# @app.before_first_request
+# def create_user():
+#     user_datastore.create_user(email='test@yale.edu', password='qwe123')
+
 @app.errorhandler(404)
 def not_found(error):
     return render_template('404.html'), 404
+
 
 @app.route('/')
 def hello():
@@ -40,6 +127,12 @@ def hello():
 @app.route('/basic')
 def basic():
     return render_template('basic.html')
+
+@app.route('/a_page_requires_login')
+@login_required
+def login_required_page():
+    return render_template('a_page_requires_login.html')
+
 
 @app.route('/api')
 def sitemap():

@@ -53,22 +53,24 @@
     you have access to it (either as a module global you can import or you just
     put it into your WSGI application).
 
-    :copyright: (c) 2013 by the Werkzeug Team, see AUTHORS for more details.
+    :copyright: (c) 2011 by the Werkzeug Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import os
 import re
 import tempfile
-from hashlib import md5
+try:
+    from hashlib import md5
+except ImportError:
+    from md5 import new as md5
+from itertools import izip
 from time import time
+from werkzeug.posixemulation import rename
+
 try:
     import cPickle as pickle
 except ImportError:
     import pickle
-
-from werkzeug._compat import iteritems, string_types, text_type, \
-     integer_types, to_bytes
-from werkzeug.posixemulation import rename
 
 
 def _items(mappingorseq):
@@ -82,11 +84,8 @@ def _items(mappingorseq):
         ...    assert k*k == v
 
     """
-    if hasattr(mappingorseq, "iteritems"):
-        return mappingorseq.iteritems()
-    elif hasattr(mappingorseq, "items"):
-        return mappingorseq.items()
-    return mappingorseq
+    return mappingorseq.iteritems() if hasattr(mappingorseq, 'iteritems') \
+        else mappingorseq
 
 
 class BaseCache(object):
@@ -140,7 +139,7 @@ class BaseCache(object):
         :param keys: The function accepts multiple keys as positional
                      arguments.
         """
-        return dict(zip(keys, self.get_many(*keys)))
+        return dict(izip(keys, self.get_many(*keys)))
 
     def set(self, key, value, timeout=None):
         """Adds a new key/value to the cache (overwrites value, if key already
@@ -246,6 +245,7 @@ class SimpleCache(BaseCache):
                     self._cache.pop(key, None)
 
     def get(self, key):
+        now = time()
         expires, value = self._cache.get(key, (0, None))
         if expires > time():
             return pickle.loads(value)
@@ -270,7 +270,7 @@ class SimpleCache(BaseCache):
         self._cache.pop(key, None)
 
 
-_test_memcached_key = re.compile(br'[^\x00-\x21\xff]{1,250}$').match
+_test_memcached_key = re.compile(r'[^\x00-\x21\xff]{1,250}$').match
 
 class MemcachedCache(BaseCache):
     """A cache that uses memcached as backend.
@@ -311,10 +311,10 @@ class MemcachedCache(BaseCache):
             # client.
             self._client = servers
 
-        self.key_prefix = to_bytes(key_prefix)
+        self.key_prefix = key_prefix
 
     def get(self, key):
-        if isinstance(key, text_type):
+        if isinstance(key, unicode):
             key = key.encode('utf-8')
         if self.key_prefix:
             key = self.key_prefix + key
@@ -340,7 +340,7 @@ class MemcachedCache(BaseCache):
         d = rv = self._client.get_multi(key_mapping.keys())
         if have_encoded_keys or self.key_prefix:
             rv = {}
-            for key, value in iteritems(d):
+            for key, value in d.iteritems():
                 rv[key_mapping[key]] = value
         if len(rv) < len(keys):
             for key in keys:
@@ -351,7 +351,7 @@ class MemcachedCache(BaseCache):
     def add(self, key, value, timeout=None):
         if timeout is None:
             timeout = self.default_timeout
-        if isinstance(key, text_type):
+        if isinstance(key, unicode):
             key = key.encode('utf-8')
         if self.key_prefix:
             key = self.key_prefix + key
@@ -360,7 +360,7 @@ class MemcachedCache(BaseCache):
     def set(self, key, value, timeout=None):
         if timeout is None:
             timeout = self.default_timeout
-        if isinstance(key, text_type):
+        if isinstance(key, unicode):
             key = key.encode('utf-8')
         if self.key_prefix:
             key = self.key_prefix + key
@@ -375,7 +375,7 @@ class MemcachedCache(BaseCache):
             timeout = self.default_timeout
         new_mapping = {}
         for key, value in _items(mapping):
-            if isinstance(key, text_type):
+            if isinstance(key, unicode):
                 key = key.encode('utf-8')
             if self.key_prefix:
                 key = self.key_prefix + key
@@ -463,28 +463,23 @@ class RedisCache(BaseCache):
     .. versionchanged:: 0.8
        This cache backend now properly serializes objects.
 
-    .. versionchanged:: 0.8.3
-       This cache backend now supports password authentication.
-
     :param host: address of the Redis server or an object which API is
                  compatible with the official Python Redis client (redis-py).
-    :param port: port number on which Redis server listens for connections.
-    :param password: password authentication for the Redis server.
-    :param db: db (zero-based numeric index) on Redis Server to connect.
+    :param port: port number on which Redis server listens for connections
     :param default_timeout: the default timeout that is used if no timeout is
                             specified on :meth:`~BaseCache.set`.
     :param key_prefix: A prefix that should be added to all keys.
     """
 
     def __init__(self, host='localhost', port=6379, password=None,
-                 db=0, default_timeout=300, key_prefix=None):
+                 default_timeout=300, key_prefix=None):
         BaseCache.__init__(self, default_timeout)
-        if isinstance(host, string_types):
+        if isinstance(host, basestring):
             try:
                 import redis
             except ImportError:
                 raise RuntimeError('no redis module found')
-            self._client = redis.Redis(host=host, port=port, password=password, db=db)
+            self._client = redis.Redis(host=host, port=port, password=password)
         else:
             self._client = host
         self.key_prefix = key_prefix or ''
@@ -494,9 +489,9 @@ class RedisCache(BaseCache):
         integers as regular string and pickle dumps everything else.
         """
         t = type(value)
-        if t in integer_types:
-            return str(value).encode('ascii')
-        return b'!' + pickle.dumps(value)
+        if t is int or t is long:
+            return str(value)
+        return '!' + pickle.dumps(value)
 
     def load_object(self, value):
         """The reversal of :meth:`dump_object`.  This might be callde with
@@ -504,7 +499,7 @@ class RedisCache(BaseCache):
         """
         if value is None:
             return None
-        if value.startswith(b'!'):
+        if value.startswith('!'):
             return pickle.loads(value[1:])
         try:
             return int(value)
@@ -585,7 +580,7 @@ class FileSystemCache(BaseCache):
     #: used for temporary files by the FileSystemCache
     _fs_transaction_suffix = '.__wz_cache'
 
-    def __init__(self, cache_dir, threshold=500, default_timeout=300, mode=0o600):
+    def __init__(self, cache_dir, threshold=500, default_timeout=300, mode=0600):
         BaseCache.__init__(self, default_timeout)
         self._path = cache_dir
         self._threshold = threshold
@@ -630,8 +625,6 @@ class FileSystemCache(BaseCache):
                 pass
 
     def _get_filename(self, key):
-        if isinstance(key, text_type):
-            key = key.encode('utf-8') #XXX unicode review
         hash = md5(key).hexdigest()
         return os.path.join(self._path, hash)
 

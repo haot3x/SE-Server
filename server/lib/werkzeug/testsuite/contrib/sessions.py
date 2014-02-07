@@ -5,16 +5,17 @@
 
     Added tests for the sessions.
 
-    :copyright: (c) 2013 by Armin Ronacher.
+    :copyright: (c) 2011 by Armin Ronacher.
     :license: BSD, see LICENSE for more details.
 """
 import unittest
 import shutil
-from tempfile import mkdtemp, gettempdir
 
 from werkzeug.testsuite import WerkzeugTestCase
+
 from werkzeug.contrib.sessions import FilesystemSessionStore
 
+from tempfile import mkdtemp, gettempdir
 
 
 class SessionTestCase(WerkzeugTestCase):
@@ -65,7 +66,7 @@ class SessionTestCase(WerkzeugTestCase):
     def test_fs_session_lising(self):
         store = FilesystemSessionStore(self.session_folder, renew_missing=True)
         sessions = set()
-        for x in range(10):
+        for x in xrange(10):
             sess = store.new()
             store.save(sess)
             sessions.add(sess.sid)

@@ -5,23 +5,22 @@
 
     This module implements context-local objects.
 
-    :copyright: (c) 2013 by the Werkzeug Team, see AUTHORS for more details.
+    :copyright: (c) 2011 by the Werkzeug Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from functools import update_wrapper
 from werkzeug.wsgi import ClosingIterator
-from werkzeug._compat import PY2, implements_bool
+from werkzeug._internal import _patch_wrapper
 
 # since each thread has its own greenlet we can just use those as identifiers
 # for the context.  If greenlets are not available we fall back to the
-# current thread ident depending on where it is.
+# current thread ident.
 try:
     from greenlet import getcurrent as get_ident
-except ImportError:
+except ImportError: # pragma: no cover
     try:
         from thread import get_ident
-    except ImportError:
-        from _thread import get_ident
+    except ImportError: # pragma: no cover
+        from dummy_thread import get_ident
 
 
 def release_local(local):
@@ -37,7 +36,7 @@ def release_local(local):
         False
 
     With this function one can release :class:`Local` objects as well
-    as :class:`LocalStack` objects.  However it is not possible to
+    as :class:`StackLocal` objects.  However it is not possible to
     release data held by proxies that way, one always has to retain
     a reference to the underlying local object in order to be able
     to release it.
@@ -237,7 +236,7 @@ class LocalManager(object):
         will have all the arguments copied from the inner application
         (name, docstring, module).
         """
-        return update_wrapper(self.make_middleware(func), func)
+        return _patch_wrapper(func, self.make_middleware(func))
 
     def __repr__(self):
         return '<%s storages: %d>' % (
@@ -246,7 +245,6 @@ class LocalManager(object):
         )
 
 
-@implements_bool
 class LocalProxy(object):
     """Acts as a proxy for a werkzeug local.  Forwards all operations to
     a proxied object.  The only operations not supported for forwarding
@@ -314,7 +312,7 @@ class LocalProxy(object):
             return '<%s unbound>' % self.__class__.__name__
         return repr(obj)
 
-    def __bool__(self):
+    def __nonzero__(self):
         try:
             return bool(self._get_current_object())
         except RuntimeError:
@@ -343,14 +341,11 @@ class LocalProxy(object):
     def __delitem__(self, key):
         del self._get_current_object()[key]
 
-    if PY2:
-        __getslice__ = lambda x, i, j: x._get_current_object()[i:j]
+    def __setslice__(self, i, j, seq):
+        self._get_current_object()[i:j] = seq
 
-        def __setslice__(self, i, j, seq):
-            self._get_current_object()[i:j] = seq
-
-        def __delslice__(self, i, j):
-            del self._get_current_object()[i:j]
+    def __delslice__(self, i, j):
+        del self._get_current_object()[i:j]
 
     __setattr__ = lambda x, n, v: setattr(x._get_current_object(), n, v)
     __delattr__ = lambda x, n: delattr(x._get_current_object(), n)
@@ -368,6 +363,7 @@ class LocalProxy(object):
     __getitem__ = lambda x, i: x._get_current_object()[i]
     __iter__ = lambda x: iter(x._get_current_object())
     __contains__ = lambda x, i: i in x._get_current_object()
+    __getslice__ = lambda x, i, j: x._get_current_object()[i:j]
     __add__ = lambda x, o: x._get_current_object() + o
     __sub__ = lambda x, o: x._get_current_object() - o
     __mul__ = lambda x, o: x._get_current_object() * o
@@ -393,17 +389,6 @@ class LocalProxy(object):
     __oct__ = lambda x: oct(x._get_current_object())
     __hex__ = lambda x: hex(x._get_current_object())
     __index__ = lambda x: x._get_current_object().__index__()
-    __coerce__ = lambda x, o: x._get_current_object().__coerce__(x, o)
-    __enter__ = lambda x: x._get_current_object().__enter__()
-    __exit__ = lambda x, *a, **kw: x._get_current_object().__exit__(*a, **kw)
-    __radd__ = lambda x, o: o + x._get_current_object()
-    __rsub__ = lambda x, o: o - x._get_current_object()
-    __rmul__ = lambda x, o: o * x._get_current_object()
-    __rdiv__ = lambda x, o: o / x._get_current_object()
-    if PY2:
-        __rtruediv__ = lambda x, o: x._get_current_object().__rtruediv__(o)
-    else:
-        __rtruediv__ = __rdiv__
-    __rfloordiv__ = lambda x, o: o // x._get_current_object()
-    __rmod__ = lambda x, o: o % x._get_current_object()
-    __rdivmod__ = lambda x, o: x._get_current_object().__rdivmod__(o)
+    __coerce__ = lambda x, o: x.__coerce__(x, o)
+    __enter__ = lambda x: x.__enter__()
+    __exit__ = lambda x, *a, **kw: x.__exit__(*a, **kw)

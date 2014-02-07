@@ -85,21 +85,34 @@ r"""
             request.client_session.save_cookie(response)
             return response(environ, start_response)
 
-    :copyright: (c) 2013 by the Werkzeug Team, see AUTHORS for more details.
+    :copyright: (c) 2011 by the Werkzeug Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import pickle
-import base64
+import sys
+import cPickle as pickle
 from hmac import new as hmac
 from time import time
-from hashlib import sha1 as _default_hash
-
-from werkzeug._compat import iteritems, text_type
 from werkzeug.urls import url_quote_plus, url_unquote_plus
 from werkzeug._internal import _date_to_unix
 from werkzeug.contrib.sessions import ModificationTrackingDict
 from werkzeug.security import safe_str_cmp
-from werkzeug._compat import to_native
+
+
+# rather ugly way to import the correct hash method.  Because
+# hmac either accepts modules with a new method (sha, md5 etc.)
+# or a hashlib factory function we have to figure out what to
+# pass to it.  If we have 2.5 or higher (so not 2.4 with a
+# custom hashlib) we import from hashlib and fail if it does
+# not exist (have seen that in old OS X versions).
+# in all other cases the now deprecated sha module is used.
+_default_hash = None
+if sys.version_info >= (2, 5):
+    try:
+        from hashlib import sha1 as _default_hash
+    except ImportError:
+        pass
+if _default_hash is None:
+    import sha as _default_hash
 
 
 class UnquoteError(Exception):
@@ -150,7 +163,7 @@ class SecureCookie(ModificationTrackingDict):
         # explicitly convert it into a bytestring because python 2.6
         # no longer performs an implicit string conversion on hmac
         if secret_key is not None:
-            secret_key = bytes(secret_key)
+            secret_key = str(secret_key)
         self.secret_key = secret_key
         self.new = new
 
@@ -178,7 +191,7 @@ class SecureCookie(ModificationTrackingDict):
         if cls.serialization_method is not None:
             value = cls.serialization_method.dumps(value)
         if cls.quote_base64:
-            value = b''.join(base64.b64encode(value).splitlines()).strip()
+            value = ''.join(value.encode('base64').splitlines()).strip()
         return value
 
     @classmethod
@@ -190,7 +203,7 @@ class SecureCookie(ModificationTrackingDict):
         """
         try:
             if cls.quote_base64:
-                value = base64.b64decode(value)
+                value = value.decode('base64')
             if cls.serialization_method is not None:
                 value = cls.serialization_method.loads(value)
             return value
@@ -217,15 +230,15 @@ class SecureCookie(ModificationTrackingDict):
         result = []
         mac = hmac(self.secret_key, None, self.hash_method)
         for key, value in sorted(self.items()):
-            result.append(('%s=%s' % (
+            result.append('%s=%s' % (
                 url_quote_plus(key),
-                self.quote(value).decode('ascii')
-            )).encode('ascii'))
-            mac.update(b'|' + result[-1])
-        return b'?'.join([
-            base64.b64encode(mac.digest()).strip(),
-            b'&'.join(result)
-        ])
+                self.quote(value)
+            ))
+            mac.update('|' + result[-1])
+        return '%s?%s' % (
+            mac.digest().encode('base64').strip(),
+            '&'.join(result)
+        )
 
     @classmethod
     def unserialize(cls, string, secret_key):
@@ -235,27 +248,25 @@ class SecureCookie(ModificationTrackingDict):
         :param secret_key: the secret key used to serialize the cookie.
         :return: a new :class:`SecureCookie`.
         """
-        if isinstance(string, text_type):
+        if isinstance(string, unicode):
             string = string.encode('utf-8', 'replace')
-        if isinstance(secret_key, text_type):
-            secret_key = secret_key.encode('utf-8', 'replace')
         try:
-            base64_hash, data = string.split(b'?', 1)
+            base64_hash, data = string.split('?', 1)
         except (ValueError, IndexError):
             items = ()
         else:
             items = {}
             mac = hmac(secret_key, None, cls.hash_method)
-            for item in data.split(b'&'):
-                mac.update(b'|' + item)
-                if not b'=' in item:
+            for item in data.split('&'):
+                mac.update('|' + item)
+                if not '=' in item:
                     items = None
                     break
-                key, value = item.split(b'=', 1)
+                key, value = item.split('=', 1)
                 # try to make the key a string
-                key = url_unquote_plus(key.decode('ascii'))
+                key = url_unquote_plus(key)
                 try:
-                    key = to_native(key)
+                    key = str(key)
                 except UnicodeError:
                     pass
                 items[key] = value
@@ -263,12 +274,12 @@ class SecureCookie(ModificationTrackingDict):
             # no parsing error and the mac looks okay, we can now
             # sercurely unpickle our cookie.
             try:
-                client_hash = base64.b64decode(base64_hash)
-            except TypeError:
+                client_hash = base64_hash.decode('base64')
+            except Exception:
                 items = client_hash = None
             if items is not None and safe_str_cmp(client_hash, mac.digest()):
                 try:
-                    for key, value in iteritems(items):
+                    for key, value in items.iteritems():
                         items[key] = cls.unquote(value)
                 except UnquoteError:
                     items = ()

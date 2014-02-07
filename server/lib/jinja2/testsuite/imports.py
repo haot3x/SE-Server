@@ -83,7 +83,7 @@ class IncludesTestCase(JinjaTestCase):
         self.assert_raises(TemplateNotFound, t.render)
         try:
             t.render()
-        except TemplatesNotFound as e:
+        except TemplatesNotFound, e:
             assert e.templates == ['missing', 'missing2']
             assert e.name == 'missing2'
         else:

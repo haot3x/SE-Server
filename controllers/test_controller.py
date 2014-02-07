@@ -5,10 +5,9 @@ from google.appengine.ext import ndb
 
 from flask import json
 
-from models.testmodel import TestModel
+from models.models import TestModel
 
 test_api = Blueprint('test_api', __name__)
-
 
 @test_api.route("/api/tests/<test_id>", methods=['GET', 'POST'])
 def test_creat(test_id=None):
@@ -37,3 +36,9 @@ def test_random():
     x = random.randint(0,1000)
     y = random.randint(0,1000)
     return '{"a":%s, "b":%s}' % (x,y)
+
+@test_api.route("/api/tests/sec", methods=['GET'])
+def test_sec():
+    """ Test """
+    return '{"a":%s, "b":%s}' % (x,y)
+

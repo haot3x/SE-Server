@@ -17,7 +17,14 @@ from jinja2 import Environment, DictLoader, contextfunction, nodes
 from jinja2.exceptions import TemplateAssertionError
 from jinja2.ext import Extension
 from jinja2.lexer import Token, count_newlines
-from jinja2._compat import next, BytesIO, itervalues, text_type
+from jinja2.utils import next
+
+# 2.x / 3.x
+try:
+    from io import BytesIO
+except ImportError:
+    from StringIO import StringIO as BytesIO
+
 
 importable_object = 23
 
@@ -31,8 +38,6 @@ i18n_templates = {
                   '{% trans %}watch out{% endtrans %}{% endblock %}',
     'plural.html': '{% trans user_count %}One user online{% pluralize %}'
                    '{{ user_count }} users online{% endtrans %}',
-    'plural2.html': '{% trans user_count=get_user_count() %}{{ user_count }}s'
-                    '{% pluralize %}{{ user_count }}p{% endtrans %}',
     'stringformat.html': '{{ _("User: %(num)s")|format(num=user_count) }}'
 }
 
@@ -217,7 +222,7 @@ class ExtensionsTestCase(JinjaTestCase):
         original = Environment(extensions=[TestExtension])
         overlay = original.overlay()
         for env in original, overlay:
-            for ext in itervalues(env.extensions):
+            for ext in env.extensions.itervalues():
                 assert ext.environment is env
 
     def test_preprocessor_extension(self):
@@ -253,15 +258,6 @@ class InternationalizationTestCase(JinjaTestCase):
         tmpl = i18n_env.get_template('plural.html')
         assert tmpl.render(LANGUAGE='de', user_count=1) == 'Ein Benutzer online'
         assert tmpl.render(LANGUAGE='de', user_count=2) == '2 Benutzer online'
-
-    def test_trans_plural_with_functions(self):
-        tmpl = i18n_env.get_template('plural2.html')
-        def get_user_count():
-            get_user_count.called += 1
-            return 1
-        get_user_count.called = 0
-        assert tmpl.render(LANGUAGE='de', get_user_count=get_user_count) == '1s'
-        assert get_user_count.called == 1
 
     def test_complex_plural(self):
         tmpl = i18n_env.from_string('{% trans foo=42, count=2 %}{{ count }} item{% '
@@ -436,7 +432,7 @@ class AutoEscapeTestCase(JinjaTestCase):
         '''
         tmpl = env.from_string(tmplsource)
         assert tmpl.render(val=True).split()[0] == 'Markup'
-        assert tmpl.render(val=False).split()[0] == text_type.__name__
+        assert tmpl.render(val=False).split()[0] == unicode.__name__
 
         # looking at the source we should see <testing> there in raw
         # (and then escaped as well)

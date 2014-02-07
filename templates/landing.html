@@ -37,9 +37,16 @@
 
             <div class="collapse navbar-collapse" id="navbar-collapse-01">
             <ul class="nav navbar-nav">           
-              <li class="active" id="nav-feature-div"><a>Features</a></li>
+              <li class="active" href='#'id="nav-feature-div"><a>Features</a></li>
               <li id="nav-map-div"><a >Live Map</a></li>
               <li id="nav-team-div"><a>Team</a></li>
+
+              {% if not current_user.is_authenticated() %}
+                <li><a href='/login'>Login</a></li>
+              {% else %}
+                <li><a href='/logout'>Logout - {{ current_user.email }}</a></li>
+              {% endif %}
+            
             </ul>           
 
             <form class="navbar-form navbar-right" action="#" role="search">

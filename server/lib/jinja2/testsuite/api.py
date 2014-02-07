@@ -9,12 +9,8 @@
     :license: BSD, see LICENSE for more details.
 """
 import unittest
-import os
-import tempfile
-import shutil
 
 from jinja2.testsuite import JinjaTestCase
-from jinja2._compat import next
 
 from jinja2 import Environment, Undefined, DebugUndefined, \
      StrictUndefined, UndefinedError, meta, \
@@ -54,8 +50,8 @@ class ExtendedAPITestCase(JinjaTestCase):
         c = Cycler(*items)
         for item in items + items:
             assert c.current == item
-            assert next(c) == item
-        next(c)
+            assert c.next() == item
+        c.next()
         assert c.current == 2
         c.reset()
         assert c.current == 1
@@ -111,8 +107,8 @@ class MetaTestCase(JinjaTestCase):
     def test_find_refererenced_templates(self):
         ast = env.parse('{% extends "layout.html" %}{% include helper %}')
         i = meta.find_referenced_templates(ast)
-        assert next(i) == 'layout.html'
-        assert next(i) is None
+        assert i.next() == 'layout.html'
+        assert i.next() is None
         assert list(i) == []
 
         ast = env.parse('{% extends "layout.html" %}'
@@ -145,21 +141,21 @@ class StreamingTestCase(JinjaTestCase):
     def test_basic_streaming(self):
         tmpl = env.from_string("<ul>{% for item in seq %}<li>{{ loop.index "
                                "}} - {{ item }}</li>{%- endfor %}</ul>")
-        stream = tmpl.stream(seq=list(range(4)))
-        self.assert_equal(next(stream), '<ul>')
-        self.assert_equal(next(stream), '<li>1 - 0</li>')
-        self.assert_equal(next(stream), '<li>2 - 1</li>')
-        self.assert_equal(next(stream), '<li>3 - 2</li>')
-        self.assert_equal(next(stream), '<li>4 - 3</li>')
-        self.assert_equal(next(stream), '</ul>')
+        stream = tmpl.stream(seq=range(4))
+        self.assert_equal(stream.next(), '<ul>')
+        self.assert_equal(stream.next(), '<li>1 - 0</li>')
+        self.assert_equal(stream.next(), '<li>2 - 1</li>')
+        self.assert_equal(stream.next(), '<li>3 - 2</li>')
+        self.assert_equal(stream.next(), '<li>4 - 3</li>')
+        self.assert_equal(stream.next(), '</ul>')
 
     def test_buffered_streaming(self):
         tmpl = env.from_string("<ul>{% for item in seq %}<li>{{ loop.index "
                                "}} - {{ item }}</li>{%- endfor %}</ul>")
-        stream = tmpl.stream(seq=list(range(4)))
+        stream = tmpl.stream(seq=range(4))
         stream.enable_buffering(size=3)
-        self.assert_equal(next(stream), u'<ul><li>1 - 0</li><li>2 - 1</li>')
-        self.assert_equal(next(stream), u'<li>3 - 2</li><li>4 - 3</li></ul>')
+        self.assert_equal(stream.next(), u'<ul><li>1 - 0</li><li>2 - 1</li>')
+        self.assert_equal(stream.next(), u'<li>3 - 2</li><li>4 - 3</li></ul>')
 
     def test_streaming_behavior(self):
         tmpl = env.from_string("")
@@ -169,17 +165,6 @@ class StreamingTestCase(JinjaTestCase):
         assert stream.buffered
         stream.disable_buffering()
         assert not stream.buffered
-
-    def test_dump_stream(self):
-        tmp = tempfile.mkdtemp()
-        try:
-            tmpl = env.from_string(u"\u2713")
-            stream = tmpl.stream()
-            stream.dump(os.path.join(tmp, 'dump.txt'), 'utf-8')
-            with open(os.path.join(tmp, 'dump.txt'), 'rb') as f:
-                self.assertEqual(f.read(), b'\xe2\x9c\x93')
-        finally:
-            shutil.rmtree(tmp)
 
 
 class UndefinedTestCase(JinjaTestCase):
@@ -229,7 +214,6 @@ class UndefinedTestCase(JinjaTestCase):
         self.assert_equal(env.from_string('{{ missing is not defined }}').render(), 'True')
         self.assert_raises(UndefinedError, env.from_string('{{ foo.missing }}').render, foo=42)
         self.assert_raises(UndefinedError, env.from_string('{{ not missing }}').render)
-        self.assert_equal(env.from_string('{{ missing|default("default", true) }}').render(), 'default')
 
     def test_indexing_gives_undefined(self):
         t = Template("{{ var[42].foo }}")
@@ -238,7 +222,7 @@ class UndefinedTestCase(JinjaTestCase):
     def test_none_gives_proper_error(self):
         try:
             Environment().getattr(None, 'split')()
-        except UndefinedError as e:
+        except UndefinedError, e:
             assert e.message == "'None' has no attribute 'split'"
         else:
             assert False, 'expected exception'
@@ -246,7 +230,7 @@ class UndefinedTestCase(JinjaTestCase):
     def test_object_repr(self):
         try:
             Undefined(obj=42, name='upper')()
-        except UndefinedError as e:
+        except UndefinedError, e:
             assert e.message == "'int object' has no attribute 'upper'"
         else:
             assert False, 'expected exception'

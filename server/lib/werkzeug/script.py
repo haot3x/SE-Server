@@ -67,16 +67,13 @@ r'''
     or as named parameters, pretty much like Python function calls.
 
 
-    :copyright: (c) 2013 by the Werkzeug Team, see AUTHORS for more details.
+    :copyright: (c) 2011 by the Werkzeug Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 '''
-from __future__ import print_function
-
 import sys
 import inspect
 import getopt
 from os.path import basename
-from werkzeug._compat import iteritems
 
 
 argument_types = {
@@ -141,7 +138,7 @@ def run(namespace=None, action_prefix='action_', args=None):
 
     try:
         optlist, posargs = getopt.gnu_getopt(args, formatstring, long_options)
-    except getopt.GetoptError as e:
+    except getopt.GetoptError, e:
         fail(str(e))
 
     specified_arguments = set()
@@ -171,7 +168,7 @@ def run(namespace=None, action_prefix='action_', args=None):
             fail('Invalid value for \'%s\': %s' % (key, value))
 
     newargs = {}
-    for k, v in iteritems(arguments):
+    for k, v in arguments.iteritems():
         newargs[k.startswith('no_') and k[3:] or k] = v
     arguments = newargs
     return func(**arguments)
@@ -179,14 +176,14 @@ def run(namespace=None, action_prefix='action_', args=None):
 
 def fail(message, code=-1):
     """Fail with an error."""
-    print('Error: %s' % message, file=sys.stderr)
+    print >> sys.stderr, 'Error:', message
     sys.exit(code)
 
 
 def find_actions(namespace, action_prefix):
     """Find all the actions in the namespace."""
     actions = {}
-    for key, value in iteritems(namespace):
+    for key, value in namespace.iteritems():
         if key.startswith(action_prefix):
             actions[key[len(action_prefix):]] = analyse_action(value)
     return actions
@@ -196,27 +193,27 @@ def print_usage(actions):
     """Print the usage information.  (Help screen)"""
     actions = actions.items()
     actions.sort()
-    print('usage: %s <action> [<options>]' % basename(sys.argv[0]))
-    print('       %s --help' % basename(sys.argv[0]))
-    print()
-    print('actions:')
+    print 'usage: %s <action> [<options>]' % basename(sys.argv[0])
+    print '       %s --help' % basename(sys.argv[0])
+    print
+    print 'actions:'
     for name, (func, doc, arguments) in actions:
-        print('  %s:' % name)
+        print '  %s:' % name
         for line in doc.splitlines():
-            print('    %s' % line)
+            print '    %s' % line
         if arguments:
-            print()
+            print
         for arg, shortcut, default, argtype in arguments:
             if isinstance(default, bool):
-                print('    %s' % (
+                print '    %s' % (
                     (shortcut and '-%s, ' % shortcut or '') + '--' + arg
-                ))
+                )
             else:
-                print('    %-30s%-10s%s' % (
+                print '    %-30s%-10s%s' % (
                     (shortcut and '-%s, ' % shortcut or '') + '--' + arg,
                     argtype, default
-                ))
-        print()
+                )
+        print
 
 
 def analyse_action(func):

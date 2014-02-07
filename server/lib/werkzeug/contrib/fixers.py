@@ -16,32 +16,22 @@
     :copyright: Copyright 2009 by the Werkzeug Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-try:
-    from urllib import unquote
-except ImportError:
-    from urllib.parse import unquote
-
+from urllib import unquote
 from werkzeug.http import parse_options_header, parse_cache_control_header, \
      parse_set_header
 from werkzeug.useragents import UserAgent
 from werkzeug.datastructures import Headers, ResponseCacheControl
 
-class CGIRootFix(object):
-    """Wrap the application in this middleware if you are using FastCGI or CGI
-    and you have problems with your app root being set to the cgi script's path
-    instead of the path users are going to visit
 
-    .. versionchanged:: 0.9
-       Added `app_root` parameter and renamed from `LighttpdCGIRootFix`.
+class LighttpdCGIRootFix(object):
+    """Wrap the application in this middleware if you are using lighttpd
+    with FastCGI or CGI and the application is mounted on the URL root.
 
     :param app: the WSGI application
-    :param app_root: Defaulting to ``'/'``, you can set this to something else
-        if your app is mounted somewhere else.
     """
 
-    def __init__(self, app, app_root='/'):
+    def __init__(self, app):
         self.app = app
-        self.app_root = app_root
 
     def __call__(self, environ, start_response):
         # only set PATH_INFO for older versions of Lighty or if no
@@ -53,11 +43,8 @@ class CGIRootFix(object):
            environ['SERVER_SOFTWARE'] < 'lighttpd/1.4.28':
             environ['PATH_INFO'] = environ.get('SCRIPT_NAME', '') + \
                                    environ.get('PATH_INFO', '')
-        environ['SCRIPT_NAME'] = self.app_root.strip('/')
+        environ['SCRIPT_NAME'] = ''
         return self.app(environ, start_response)
-
-# backwards compatibility
-LighttpdCGIRootFix = CGIRootFix
 
 
 class PathInfoFromRequestUriFix(object):
@@ -96,9 +83,6 @@ class ProxyFix(object):
     application that was not designed with HTTP proxies in mind.  It
     sets `REMOTE_ADDR`, `HTTP_HOST` from `X-Forwarded` headers.
 
-    If you have more than one proxy server in front of your app, set
-    `num_proxies` accordingly.
-
     Do not use this middleware in non-proxy setups for security reasons.
 
     The original values of `REMOTE_ADDR` and `HTTP_HOST` are stored in
@@ -106,22 +90,19 @@ class ProxyFix(object):
     `werkzeug.proxy_fix.orig_http_host`.
 
     :param app: the WSGI application
-    :param num_proxies: the number of proxy servers in front of the app.
     """
 
-    def __init__(self, app, num_proxies=1):
+    def __init__(self, app):
         self.app = app
-        self.num_proxies = num_proxies
 
     def get_remote_addr(self, forwarded_for):
         """Selects the new remote addr from the given list of ips in
-        X-Forwarded-For.  By default it picks the one that the `num_proxies`
-        proxy server provides.  Before 0.9 it would always pick the first.
+        X-Forwarded-For.  By default the first one is picked.
 
         .. versionadded:: 0.8
         """
-        if len(forwarded_for) >= self.num_proxies:
-            return forwarded_for[-1 * self.num_proxies]
+        if forwarded_for:
+            return forwarded_for[0]
 
     def __call__(self, environ, start_response):
         getter = environ.get
@@ -232,9 +213,8 @@ class InternetExplorerFix(object):
 
     def run_fixed(self, environ, start_response):
         def fixing_start_response(status, headers, exc_info=None):
-            headers = Headers(headers)
-            self.fix_headers(environ, headers, status)
-            return start_response(status, headers.to_wsgi_list(), exc_info)
+            self.fix_headers(environ, Headers.linked(headers), status)
+            return start_response(status, headers, exc_info)
         return self.app(environ, fixing_start_response)
 
     def __call__(self, environ, start_response):

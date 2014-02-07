@@ -48,7 +48,7 @@ r"""
                 response.set_cookie('cookie_name', request.session.sid)
             return response(environ, start_response)
 
-    :copyright: (c) 2013 by the Werkzeug Team, see AUTHORS for more details.
+    :copyright: (c) 2011 by the Werkzeug Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import re
@@ -58,14 +58,16 @@ import tempfile
 from os import path
 from time import time
 from random import random
-from hashlib import sha1
-from pickle import dump, load, HIGHEST_PROTOCOL
+try:
+    from hashlib import sha1
+except ImportError:
+    from sha import new as sha1
+from cPickle import dump, load, HIGHEST_PROTOCOL
 
 from werkzeug.datastructures import CallbackDict
 from werkzeug.utils import dump_cookie, parse_cookie
 from werkzeug.wsgi import ClosingIterator
 from werkzeug.posixemulation import rename
-from werkzeug._compat import PY2, text_type
 
 
 _sha1_re = re.compile(r'^[a-f0-9]{40}$')
@@ -78,13 +80,7 @@ def _urandom():
 
 
 def generate_key(salt=None):
-    if salt is None:
-        salt = repr(salt).encode('ascii')
-    return sha1(b''.join([
-        salt,
-        str(time()).encode('ascii'),
-        _urandom()
-    ])).hexdigest()
+    return sha1('%s%s%s' % (salt, time(), _urandom())).hexdigest()
 
 
 class ModificationTrackingDict(CallbackDict):
@@ -213,12 +209,12 @@ class FilesystemSessionStore(SessionStore):
     """
 
     def __init__(self, path=None, filename_template='werkzeug_%s.sess',
-                 session_class=None, renew_missing=False, mode=0o644):
+                 session_class=None, renew_missing=False, mode=0644):
         SessionStore.__init__(self, session_class)
         if path is None:
             path = tempfile.gettempdir()
         self.path = path
-        if isinstance(filename_template, text_type) and PY2:
+        if isinstance(filename_template, unicode):
             filename_template = filename_template.encode(
                 sys.getfilesystemencoding() or 'utf-8')
         assert not filename_template.endswith(_fs_transaction_suffix), \
@@ -231,7 +227,7 @@ class FilesystemSessionStore(SessionStore):
         # out of the box, this should be a strict ASCII subset but
         # you might reconfigure the session object to have a more
         # arbitrary string.
-        if isinstance(sid, text_type) and PY2:
+        if isinstance(sid, unicode):
             sid = sid.encode(sys.getfilesystemencoding() or 'utf-8')
         return path.join(self.path, self.filename_template % sid)
 

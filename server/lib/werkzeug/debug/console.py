@@ -5,13 +5,12 @@
 
     Interactive console support.
 
-    :copyright: (c) 2013 by the Werkzeug Team, see AUTHORS for more details.
+    :copyright: (c) 2011 by the Werkzeug Team, see AUTHORS for more details.
     :license: BSD.
 """
 import sys
 import code
 from types import CodeType
-
 from werkzeug.utils import escape
 from werkzeug.local import Local
 from werkzeug.debug.repr import debug_repr, dump, helper
@@ -51,7 +50,7 @@ class HTMLStringO(object):
         return val
 
     def _write(self, x):
-        if isinstance(x, bytes):
+        if isinstance(x, str):
             x = x.decode('utf-8', 'replace')
         self._buffer.append(x)
 
@@ -87,7 +86,6 @@ class ThreadedStream(object):
         # stream._write bypasses escaping as debug_repr is
         # already generating HTML for us.
         if obj is not None:
-            _local._current_ipy.locals['_'] = obj
             stream._write(debug_repr(obj))
     displayhook = staticmethod(displayhook)
 
@@ -174,7 +172,7 @@ class _InteractiveConsole(code.InteractiveInterpreter):
 
     def runcode(self, code):
         try:
-            eval(code, self.globals, self.locals)
+            exec code in self.globals, self.locals
         except Exception:
             self.showtraceback()
 
@@ -203,7 +201,6 @@ class Console(object):
         self._ipy = _InteractiveConsole(globals, locals)
 
     def eval(self, code):
-        _local._current_ipy = self._ipy
         old_sys_stdout = sys.stdout
         try:
             return self._ipy.runsource(code)

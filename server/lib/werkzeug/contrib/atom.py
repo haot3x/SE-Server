@@ -18,14 +18,12 @@
                          updated=post.last_update, published=post.pub_date)
             return feed.get_response()
 
-    :copyright: (c) 2013 by the Werkzeug Team, see AUTHORS for more details.
+    :copyright: (c) 2011 by the Werkzeug Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from datetime import datetime
-
 from werkzeug.utils import escape
 from werkzeug.wrappers import BaseResponse
-from werkzeug._compat import implements_to_string, string_types
 
 
 XHTML_NAMESPACE = 'http://www.w3.org/1999/xhtml'
@@ -47,7 +45,6 @@ def format_iso8601(obj):
     return obj.strftime('%Y-%m-%dT%H:%M:%SZ')
 
 
-@implements_to_string
 class AtomFeed(object):
     """A helper class that creates Atom feeds.
 
@@ -118,7 +115,7 @@ class AtomFeed(object):
         self.entries = entries and list(entries) or []
 
         if not hasattr(self.author, '__iter__') \
-           or isinstance(self.author, string_types + (dict,)):
+           or isinstance(self.author, (basestring, dict)):
             self.author = [self.author]
         for i, author in enumerate(self.author):
             if not isinstance(author, dict):
@@ -167,13 +164,13 @@ class AtomFeed(object):
         yield u'  <id>%s</id>\n' % escape(self.id)
         yield u'  <updated>%s</updated>\n' % format_iso8601(self.updated)
         if self.url:
-            yield u'  <link href="%s" />\n' % escape(self.url)
+            yield u'  <link href="%s" />\n' % escape(self.url, True)
         if self.feed_url:
             yield u'  <link href="%s" rel="self" />\n' % \
-                escape(self.feed_url)
+                escape(self.feed_url, True)
         for link in self.links:
             yield u'  <link %s/>\n' % ''.join('%s="%s" ' % \
-                (k, escape(link[k])) for k in link)
+                (k, escape(link[k], True)) for k in link)
         for author in self.author:
             yield u'  <author>\n'
             yield u'    <name>%s</name>\n' % escape(author['name'])
@@ -196,9 +193,9 @@ class AtomFeed(object):
         if generator_name or generator_url or generator_version:
             tmp = [u'  <generator']
             if generator_url:
-                tmp.append(u' uri="%s"' % escape(generator_url))
+                tmp.append(u' uri="%s"' % escape(generator_url, True))
             if generator_version:
-                tmp.append(u' version="%s"' % escape(generator_version))
+                tmp.append(u' version="%s"' % escape(generator_version, True))
             tmp.append(u'>%s</generator>\n' % escape(generator_name))
             yield u''.join(tmp)
         for entry in self.entries:
@@ -218,11 +215,13 @@ class AtomFeed(object):
         """Use the class as WSGI response object."""
         return self.get_response()(environ, start_response)
 
-    def __str__(self):
+    def __unicode__(self):
         return self.to_string()
 
+    def __str__(self):
+        return self.to_string().encode('utf-8')
 
-@implements_to_string
+
 class FeedEntry(object):
     """Represents a single entry in a feed.
 
@@ -240,11 +239,11 @@ class FeedEntry(object):
                not present the URL is used, but one of both is required.
     :param updated: the time the entry was modified the last time.  Must
                     be a :class:`datetime.datetime` object. Required.
-    :param author: the author of the entry.  Must be either a string (the
+    :param author: the author of the feed.  Must be either a string (the
                    name) or a dict with name (required) and uri or
                    email (both optional).  Can be a list of (may be
                    mixed, too) strings and dicts, too, if there are
-                   multiple authors. Required if the feed does not have an
+                   multiple authors. Required if not every entry has an
                    author element.
     :param published: the time the entry was initially published.  Must
                       be a :class:`datetime.datetime` object.
@@ -255,8 +254,6 @@ class FeedEntry(object):
     :param links: additional links.  Must be a list of dictionaries with
                   href (required) and rel, type, hreflang, title, length
                   (all optional)
-    :param categories: categories for the entry. Must be a list of dictionaries
-                       with term (required), scheme and label (all optional)
     :param xml_base: The xml base (url) for this feed item.  If not provided
                      it will default to the item url.
 
@@ -276,15 +273,14 @@ class FeedEntry(object):
         self.updated = kwargs.get('updated')
         self.summary = kwargs.get('summary')
         self.summary_type = kwargs.get('summary_type', 'html')
-        self.author = kwargs.get('author', ())
+        self.author = kwargs.get('author')
         self.published = kwargs.get('published')
         self.rights = kwargs.get('rights')
         self.links = kwargs.get('links', [])
-        self.categories = kwargs.get('categories', [])
         self.xml_base = kwargs.get('xml_base', feed_url)
 
         if not hasattr(self.author, '__iter__') \
-           or isinstance(self.author, string_types + (dict,)):
+           or isinstance(self.author, (basestring, dict)):
             self.author = [self.author]
         for i, author in enumerate(self.author):
             if not isinstance(author, dict):
@@ -307,7 +303,7 @@ class FeedEntry(object):
         """Yields pieces of ATOM XML."""
         base = ''
         if self.xml_base:
-            base = ' xml:base="%s"' % escape(self.xml_base)
+            base = ' xml:base="%s"' % escape(self.xml_base, True)
         yield u'<entry%s>\n' % base
         yield u'  ' + _make_text_block('title', self.title, self.title_type)
         yield u'  <id>%s</id>\n' % escape(self.id)
@@ -327,10 +323,7 @@ class FeedEntry(object):
             yield u'  </author>\n'
         for link in self.links:
             yield u'  <link %s/>\n' % ''.join('%s="%s" ' % \
-                (k, escape(link[k])) for k in link)
-        for category in self.categories:
-            yield u'  <category %s/>\n' % ''.join('%s="%s" ' % \
-                (k, escape(category[k])) for k in category)
+                (k, escape(link[k], True)) for k in link)
         if self.summary:
             yield u'  ' + _make_text_block('summary', self.summary,
                                            self.summary_type)
@@ -343,5 +336,8 @@ class FeedEntry(object):
         """Convert the feed item into a unicode object."""
         return u''.join(self.generate())
 
-    def __str__(self):
+    def __unicode__(self):
         return self.to_string()
+
+    def __str__(self):
+        return self.to_string().encode('utf-8')

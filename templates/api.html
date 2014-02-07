@@ -54,12 +54,20 @@
         $(document).ready(function() {   
           
             $('tr').each(function(i,dom){
+
                 if(dom.children[1].innerHTML.indexOf('GET') != -1)
                   $(this).addClass('success');
                 if(dom.children[1].innerHTML.indexOf('POST') != -1)
                   $(this).addClass('warning');
                 if(dom.children[1].innerHTML.indexOf('DELETE') != -1)
-                  $(this).addClass('danger  ');
+                  $(this).addClass('danger');
+
+                if(dom.children[0].innerHTML.indexOf('security') != -1)
+                {
+                  $(this).removeClass('success warning danger');
+                  $(this).addClass('info');
+                }
+                  
             });
         });
     </script>
