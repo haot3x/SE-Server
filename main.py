@@ -45,8 +45,21 @@ from flask.ext.mongoengine import MongoEngine
 from flask.ext.security import Security, MongoEngineUserDatastore, \
     UserMixin, RoleMixin, login_required
 
+
+from flask_wtf import Form
+from wtforms import TextField, BooleanField,IntegerField
+from wtforms.validators import Required
 from flask_mail import Mail
 
+
+
+from flask_security.forms import RegisterForm
+
+class ExtendedRegisterForm(RegisterForm):
+    first_name = TextField('First Name', [Required()])
+    last_name = TextField('Last Name', [Required()])
+    gender = TextField('Gender', [Required()])
+    age = IntegerField('Age', [Required()])
 
 
 
@@ -97,16 +110,17 @@ class User(db.Document, UserMixin):
     roles = db.ListField(db.ReferenceField(Role), default=[])
     
     # #above is the minimum, dont touch
-    # last_name = db.StringField(max_length=255)
-    # first_name = db.StringField(max_length=255)
-    # nickname = db.StringField(max_length=255)
-    # nickname = db.StringField(max_length=255)
-    # age = db.IntField()
+    last_name = db.StringField(max_length=255)
+    first_name = db.StringField(max_length=255)
+    gender = db.StringField(max_length=255)
+    age = db.IntField()
     # user_prof_id = db.ReferenceField("")
     
 
 user_datastore = MongoEngineUserDatastore(db, User, Role)
-security = Security(app, user_datastore)
+# security = Security(app, user_datastore)
+security = Security(app, user_datastore,
+         register_form=ExtendedRegisterForm)
 
 from controllers.test_controller import test_api
 app.register_blueprint(test_api)
