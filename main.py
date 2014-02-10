@@ -52,7 +52,6 @@ from wtforms.validators import Required
 from flask_mail import Mail
 
 
-
 from flask_security.forms import RegisterForm
 
 class ExtendedRegisterForm(RegisterForm):

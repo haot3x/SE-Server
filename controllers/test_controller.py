@@ -5,7 +5,13 @@ from google.appengine.ext import ndb
 
 from flask import json
 
-from models.models import TestModel
+import logging
+
+from flask_wtf import Form
+from wtforms.ext.appengine.db import model_form
+from main import app,db,security
+
+from models.models import TestModel, MongoTestModel
 
 test_api = Blueprint('test_api', __name__)
 
@@ -36,6 +42,28 @@ def test_random():
     x = random.randint(0,1000)
     y = random.randint(0,1000)
     return '{"a":%s, "b":%s}' % (x,y)
+
+
+@test_api.route("/api/tests/mongo", methods=['GET','POST'])
+def test_mongo():
+    
+    from bson import json_util
+    
+    if request.method == 'GET':
+        doc = MongoTestModel.objects.all()
+        app.logger.info(doc)
+        return render_template('mongo_test.html', model_only=True ,models=doc)
+
+    elif request.method == 'POST':
+        k1 = request.form['k1']
+        k2 = request.form['k2']
+        model = MongoTestModel(k1=k1,k2=k2)
+        doc = model.save()
+        print doc.k1
+        print doc.k2
+        print doc.id
+        app.logger.info(doc)
+        return json_util.dumps(doc)
 
 @test_api.route("/api/tests/sec", methods=['GET'])
 def test_sec():
