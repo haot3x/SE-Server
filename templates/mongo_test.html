@@ -21,14 +21,14 @@
 
     <div class='container'>
       <div class='row'>
-      <div class='col-md-6'>
-            <h2>TEST get and post</h2>
+      <div class='col-md-12'>
+            <h4>TEST get and post(form and ajax)</h4>
       </div>
       </div>
 
       <div class='row'>
 
-        <div class="col-md-6">    
+        <div class="col-md-8">    
                 
       
             <button id='getAjaxBtn' class="btn">GET AJAX</button>
@@ -39,6 +39,7 @@
                   <th>id</th>
                   <th>k1</th>
                   <th>k2</th>
+                  <th>D</th>
                 </tr>
               </thead>
               <tbody>
@@ -55,7 +56,7 @@
 
 
         </div>
-        <div class="col-md-6">    
+        <div class="col-md-4">    
        <form action="{{ url_for('test_api.test_mongo') }}" method="POST">
 
         <div class="form-group">
@@ -71,7 +72,7 @@
       
         </form>
       
-      <!-- <button id='postAjaxBtn' class="btn">POST AJAX</button> -->
+      <button id='postAjaxBtn' class="btn">POST AJAX</button>
 
 
           
@@ -102,11 +103,19 @@
             $.get( "{{ url_for('test_api.test_mongo') }}", function(data) {
               
               objs = $.parseJSON(data);
+
+              $.each($("#demoTable tr"),function(i,tr){
+                $(this).remove();
+              });
+              $('#demoTable thead').after("<tr><th>id</th><th>k1</th><th>k2</th><th>D</th></tr>");
+              
               $.each(objs,function(i,obj){
                 //console.log(obj);
                 newtr = "<tr><td>" + obj['_id']['$oid']+ "</td>" 
                 + "<td>" + obj['k1']+ "</td>" 
-                + "<td>" + obj['k2']+ "</td></tr>";
+                + "<td>" + obj['k2']+ "</td>"
+                + "<td><button class='deleteAjaxBtn btn-danger'>DELETE</button></td>"
+                + "</tr>";
 
                 $('#demoTable tr:last').after(newtr);
               });
@@ -115,25 +124,47 @@
 
           });
 
+
+          /*
+          The type of request to make ("POST" or "GET"), default is "GET". Note: Other HTTP request methods, such as PUT and DELETE, can also be used here, but they are not supported by all browsers.
+          */
           $("#postAjaxBtn").click(function(event){
 
-          var data = {"k1":$("#k1").val(),"k2":$("#k2").val()}
+          var data = {"_method":"POST","k1":$("#k1").val(),"k2":$("#k2").val()}
           var djson = JSON.stringify(data);
 
           console.log(djson);
           $.ajax({
-            type: "POST",
-            url: "{{ url_for('test_api.test_mongo') }}",
-            data: djson,
-            error: function(e) {
-              console.log("get an error");
-              console.log(e);
-            },
-            success: function(data){
-              alert(data);
-            },
-            dataType: "json"
+              type: "POST",
+              url: "{{ url_for('test_api.test_mongo_ajax') }}",
+              data: djson,
+              contentType: 'application/json;charset=UTF-8',
+              error: function(e) {
+                console.log("get an error");
+                console.log(e);
+              },
+              success: function(data){
+                obj = $.parseJSON(data);
+
+                newtr = "<tr class='success' ><td>" + obj['_id']['$oid']+ "</td>" 
+                  + "<td>" + obj['k1']+ "</td>" 
+                  + "<td>" + obj['k2']+ "</td></tr>";              
+
+                $('#demoTable tr:first').after(newtr);
+               }
+            
+            });
+
           });
+
+          $(document).on('click', '.deleteAjaxBtn', function(){
+          
+            var data = {"_method":"DELETE"}
+            var djson = JSON.stringify(data);
+            var _id = $(this).parent().siblings().first().text();
+            var url = "/api/tests/mongo/ajax/" +  _id;
+
+            alert(url);
 
           });
 

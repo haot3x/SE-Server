@@ -11,6 +11,8 @@ from flask_wtf import Form
 from wtforms.ext.appengine.db import model_form
 from main import app,db,security
 
+from bson import json_util
+
 from models.models import TestModel, MongoTestModel
 
 test_api = Blueprint('test_api', __name__)
@@ -47,10 +49,38 @@ def test_random():
 def test_mongo_demo():
     return render_template('mongo_test.html',models=[])
 
+@test_api.route("/api/tests/mongo/ajax/<_id>", methods=['GET','POST'])
+def test_mongo_id(_id = None):
+    if(request.method == 'GET'):
+        doc = MongoTestModel.objects.get(id=_id)
+        return json_util.dumps(doc.to_mongo())
+    if(request.method == 'POST'):
+        if(request.json['_method'] == 'POST'):
+            pass
+        elif(request.json['_method'] == 'DELETE'):
+            doc = MongoTestModel.objects.remove(id=_id)
+            print doc.k1
+            print doc.k2
+            print doc.id
+            return json_util.dumps(doc.to_mongo())
+
+@test_api.route("/api/tests/mongo/ajax", methods=['POST'])
+def test_mongo_ajax():
+    print request
+    if request.method == 'POST':
+        k1 = request.json['k1']
+        k2 = request.json['k2']
+        model = MongoTestModel(k1=k1,k2=k2)
+        doc = model.save()
+        print doc.k1
+        print doc.k2
+        print doc.id
+        app.logger.info(doc)
+        return json_util.dumps(doc.to_mongo())
+
+
 @test_api.route("/api/tests/mongo", methods=['GET','POST'])
 def test_mongo():
-    
-    from bson import json_util
     
     if request.method == 'GET':
         doc = MongoTestModel.objects.all()
