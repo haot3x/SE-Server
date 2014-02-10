@@ -61,6 +61,7 @@ def test_mongo():
     elif request.method == 'POST':
         k1 = request.form['k1']
         k2 = request.form['k2']
+        
         model = MongoTestModel(k1=k1,k2=k2)
         doc = model.save()
         print doc.k1
