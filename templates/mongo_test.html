@@ -25,7 +25,9 @@
                 
             <h2>TEST get and post</h2>
 
-            <table class="table table-striped table-hover">
+            <button id='getAjaxBtn' class="btn">GET AJAX</button>
+
+            <table id='demoTable' class="table table-striped table-hover">
               <thead>
                 <tr>
                   <th>id</th>
@@ -83,6 +85,25 @@
     <script>
         $(document).ready(function() {   
           
+          $("#getAjaxBtn").click(function(){
+            
+            $.get( "{{ url_for('test_api.test_mongo') }}", function(data) {
+              
+              objs = $.parseJSON(data);
+              $.each(objs,function(i,obj){
+                //console.log(obj);
+                newtr = "<tr><td>" + obj['_id']['$oid']+ "</td>" 
+                + "<td>" + obj['k1']+ "</td>" 
+                + "<td>" + obj['k2']+ "</td></tr>";
+
+                $('#demoTable tr:last').after(newtr);
+              });
+
+            });
+
+          });
+
+
         });
     </script>
   </body>

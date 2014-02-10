@@ -43,6 +43,9 @@ def test_random():
     y = random.randint(0,1000)
     return '{"a":%s, "b":%s}' % (x,y)
 
+@test_api.route("/api/tests/mongo_demo", methods=['GET'])
+def test_mongo_demo():
+    return render_template('mongo_test.html',models=[])
 
 @test_api.route("/api/tests/mongo", methods=['GET','POST'])
 def test_mongo():
@@ -52,7 +55,8 @@ def test_mongo():
     if request.method == 'GET':
         doc = MongoTestModel.objects.all()
         app.logger.info(doc)
-        return render_template('mongo_test.html', model_only=True ,models=doc)
+        return json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
+        #return render_template('mongo_test.html', model_only=True ,models=doc)
 
     elif request.method == 'POST':
         k1 = request.form['k1']
@@ -63,10 +67,9 @@ def test_mongo():
         print doc.k2
         print doc.id
         app.logger.info(doc)
-        return json_util.dumps(doc)
+        return json_util.dumps(doc.to_mongo())
 
 @test_api.route("/api/tests/sec", methods=['GET'])
 def test_sec():
     """ Test """
     return '{"a":%s, "b":%s}' % (x,y)
-
