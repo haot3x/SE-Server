@@ -23,7 +23,7 @@
       <div class='row'>
       <div class='col-md-12'>
             <h4>broswer ~ server ~ mongodb</h4>
-            <h6>CURD front to back test on GET/POST/DELETE/PUT all AJAX </h6>
+            <h6>CURD test on GET/POST/DELETE/PUT</h6>
       </div>
       </div>
 
@@ -55,9 +55,12 @@
               </tbody>
             </table>
 
+
+
         </div>
         <div class="col-md-4">    
           <h6>Create or Update</h6>
+       <form action="{{ url_for('test_api.test_mongo_form') }}" method="POST">
 
         <div class="form-group">
           <input type="text" id="k1" name="k1" placeholder="k1" class="form-control" />
@@ -70,6 +73,7 @@
 
       
       
+        </form>
         <input id='postAjaxBtn' class="btn btn-info" value='POST AJAX' >
           
 
