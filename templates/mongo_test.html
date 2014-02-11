@@ -22,7 +22,8 @@
     <div class='container'>
       <div class='row'>
       <div class='col-md-12'>
-            <h4>TEST get and post(form and ajax)</h4>
+            <h4>broswer ~ server ~ mongodb</h4>
+            <h6>CURD test on GET/POST/DELETE/PUT</h6>
       </div>
       </div>
 
@@ -31,8 +32,8 @@
         <div class="col-md-8">    
                 
       
-            <button id='getAjaxBtn' class="btn">GET AJAX</button>
-
+            <input id='getAjaxBtn' class="btn btn-primary" value='GET AJAX' >
+            
             <table id='demoTable' class="table table-striped table-hover">
               <thead>
                 <tr>
@@ -40,6 +41,7 @@
                   <th>k1</th>
                   <th>k2</th>
                   <th>D</th>
+                  <th>U</th>
                 </tr>
               </thead>
               <tbody>
@@ -57,7 +59,8 @@
 
         </div>
         <div class="col-md-4">    
-       <form action="{{ url_for('test_api.test_mongo') }}" method="POST">
+          <h6>Create or Update</h6>
+       <form action="{{ url_for('test_api.test_mongo_form') }}" method="POST">
 
         <div class="form-group">
           <input type="text" id="k1" name="k1" placeholder="k1" class="form-control" />
@@ -66,15 +69,12 @@
           <input type="text" id="k2" name="k2" placeholder="k2" class="form-control" />
         </div>
         
-      <input class="btn btn-primary btn-lg btn-block" id="submit" name="submit" type="submit" value="POST FORM">
+      <!-- <input class="btn btn-primary btn-lg btn-block" id="submit" name="submit" type="submit" value="POST FORM"> -->
 
       
       
         </form>
-      
-      <button id='postAjaxBtn' class="btn">POST AJAX</button>
-
-
+        <input id='postAjaxBtn' class="btn btn-info" value='POST AJAX' >
           
 
         </div>
@@ -96,47 +96,69 @@
     <script src={{ url_for('static', filename='../static/Flat-UI-master/js/jquery.scrollTo.min.js')}} ></script>
    
     <script>
-        $(document).ready(function() {   
+      $(document).ready(function() {   
           
-          $("#getAjaxBtn").click(function(){
-            
-            $.get( "{{ url_for('test_api.test_mongo') }}", function(data) {
-              
-              objs = $.parseJSON(data);
-
+          function tableReset()
+          {
               $.each($("#demoTable tr"),function(i,tr){
                 $(this).remove();
               });
-              $('#demoTable thead').after("<tr><th>id</th><th>k1</th><th>k2</th><th>D</th></tr>");
               
+              $('#demoTable thead').after("<tr><th>id</th><th>k1</th><th>k2</th><th>D</th><th>U</th></tr>");
+          }
+
+          function tableInsert(obj)
+          {
+            var newtr = "<tr><td>" + obj['_id']['$oid']+ "</td>" 
+            + "<td>" + obj['k1']+ "</td>" 
+            + "<td>" + obj['k2']+ "</td>"
+            + "<td><button class='deleteAjaxBtn btn-xs btn-danger'>DELETE</button></td>"
+            + "<td><button class='updateAjaxBtn btn-xs btn-warning'>UPDATE</button></td>"
+            + "</tr>";
+
+            $('#demoTable tr:last').after(newtr);
+          }
+
+          //Assume the same id
+          function tableRemove(obj)
+          {
+            var id = obj['_id']['$oid'];
+            $("#demoTable tr td:contains('"+id+"')").parent().remove();
+          }
+
+          //Assume the same id
+          function tableUpate(obj)
+          {
+            var id = obj['_id']['$oid'];
+            //$("#demoTable tr td:contains('"+id+"')").parent().remove();
+          }
+
+          $("#getAjaxBtn").click(function(){
+            
+            $.get( "{{ url_for('test_api.test_mongo_getputdelete') }}", function(data) {
+              
+              objs = $.parseJSON(data);
+              tableReset();
+      
               $.each(objs,function(i,obj){
                 //console.log(obj);
-                newtr = "<tr><td>" + obj['_id']['$oid']+ "</td>" 
-                + "<td>" + obj['k1']+ "</td>" 
-                + "<td>" + obj['k2']+ "</td>"
-                + "<td><button class='deleteAjaxBtn btn-danger'>DELETE</button></td>"
-                + "</tr>";
-
-                $('#demoTable tr:last').after(newtr);
-              });
-
+                tableInsert(obj);
+               });
             });
 
           });
 
 
-          /*
-          The type of request to make ("POST" or "GET"), default is "GET". Note: Other HTTP request methods, such as PUT and DELETE, can also be used here, but they are not supported by all browsers.
-          */
           $("#postAjaxBtn").click(function(event){
 
           var data = {"_method":"POST","k1":$("#k1").val(),"k2":$("#k2").val()}
           var djson = JSON.stringify(data);
-
+          var url = "{{ url_for('test_api.test_mongo_post') }}";
+    
           console.log(djson);
           $.ajax({
               type: "POST",
-              url: "{{ url_for('test_api.test_mongo_ajax') }}",
+              url: url,
               data: djson,
               contentType: 'application/json;charset=UTF-8',
               error: function(e) {
@@ -145,26 +167,75 @@
               },
               success: function(data){
                 obj = $.parseJSON(data);
-
-                newtr = "<tr class='success' ><td>" + obj['_id']['$oid']+ "</td>" 
-                  + "<td>" + obj['k1']+ "</td>" 
-                  + "<td>" + obj['k2']+ "</td></tr>";              
-
-                $('#demoTable tr:first').after(newtr);
+                tableInsert(obj);
                }
             
             });
 
           });
 
+
+
+          /*
+          The type of request to make ("POST" or "GET"), default is "GET". Note: Other HTTP request methods, such as PUT and DELETE, can also be used here, but they are not supported by all browsers.
+          */
           $(document).on('click', '.deleteAjaxBtn', function(){
           
             var data = {"_method":"DELETE"}
             var djson = JSON.stringify(data);
-            var _id = $(this).parent().siblings().first().text();
-            var url = "/api/tests/mongo/ajax/" +  _id;
+            var docid = $(this).parent().siblings().first().text();
+            var url = "{{ url_for('test_api.test_mongo_getputdelete', _id=null) }}";
+            url = url +  docid;
 
-            alert(url);
+            console.log(djson);
+            console.log(url);
+            
+            $.ajax({
+              type: "POST",
+              url: url,
+              data: djson,
+              contentType: 'application/json;charset=UTF-8',
+              error: function(e) {
+                console.log("get an error");
+                console.log(e);
+                alert("error");
+              },
+              success: function(data){
+                //alert("DELETEed + " + data);
+                obj = $.parseJSON(data);
+                tableRemove(obj);
+              }
+            
+            });
+
+          });
+
+          $(document).on('click', '.updateAjaxBtn', function(){
+            var docid = $(this).parent().siblings().first().text();
+            var url = "{{ url_for('test_api.test_mongo_getputdelete', _id=null) }}";
+            url = url +  docid;
+            
+            var data = {"_method":"PUT","k1":$("#k1").val(),"k2":$("#k2").val()}
+            var djson = JSON.stringify(data);
+            
+            $.ajax({
+              type: "POST",
+              url: url,
+              data: djson,
+              contentType: 'application/json;charset=UTF-8',
+              error: function(e) {
+                console.log("get an error");
+                console.log(e);
+                alert("error");
+              },
+              success: function(data){
+                //alert("Updated + " + data);
+                obj = $.parseJSON(data);
+                tableRemove(obj);
+                tableInsert (obj); 
+              }
+            
+            });
 
           });
 
