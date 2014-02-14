@@ -118,8 +118,7 @@ class User(db.Document, UserMixin):
 
 user_datastore = MongoEngineUserDatastore(db, User, Role)
 # security = Security(app, user_datastore)
-security = Security(app, user_datastore,
-         register_form=ExtendedRegisterForm)
+security = Security(app, user_datastore,register_form=ExtendedRegisterForm)
 
 from controllers.test_controller import test_api
 app.register_blueprint(test_api)
@@ -131,7 +130,6 @@ app.register_blueprint(test_api)
 @app.errorhandler(404)
 def not_found(error):
     return render_template('404.html'), 404
-
 
 @app.route('/')
 def hello():

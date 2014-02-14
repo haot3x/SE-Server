@@ -6,10 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Loading Bootstrap -->
+    
 
     <link href={{ url_for('static', filename='../static/Flat-UI-master/bootstrap/css/bootstrap.css' )}} rel="stylesheet">
     <link href={{ url_for('static', filename='../static/Flat-UI-master/css/flat-ui.css' )}} rel="stylesheet">
     <link href={{ url_for('static', filename='../static/Flat-UI-master/images/favicon.ico' )}} rel="shortcut icon">
+
 
 <!--     <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
 
@@ -32,7 +34,7 @@
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-01">
               <span class="sr-only">Toggle navigation</span>
             </button>
-            <a class="navbar-brand">HOUT</a>
+            <a class="navbar-brand"  id='navi-menu' href="#left-menu">HOUT</a>
             </div>
 
             <div class="collapse navbar-collapse" id="navbar-collapse-01">
@@ -63,6 +65,15 @@
 
         </nav><!-- /navbar -->
 
+   
+   <div id="left-menu" style="display:none">
+    
+    <a href="">Home</a><br>
+    <a href="">Events</a><br>
+    <a href="">Matches</a><br>
+    <a href="">Requests</a><br>
+    <a href="javascript:$.pageslide.close()">Close</a>
+</div>
 
         
         <div id='feature-div' class='container-fluid palette-sun-flower' style='height:700px;padding-top:53px'>
@@ -150,25 +161,15 @@
     <script src={{ url_for('static', filename='../static/Flat-UI-master/js/jquery.tagsinput.js')}} ></script>
     <script src={{ url_for('static', filename='../static/Flat-UI-master/js/jquery.placeholder.js')}} ></script>
     <script src={{ url_for('static', filename='../static/Flat-UI-master/js/jquery.scrollTo.min.js')}} ></script>
-    
-    <!--
+        
 
-    <script src="js/jquery-1.8.3.min.js"></script>
-    <script src="js/jquery-ui-1.10.3.custom.min.js"></script>
-    <script src="js/jquery.ui.touch-punch.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/bootstrap-select.js"></script>
-    <script src="js/bootstrap-switch.js"></script>
-    <script src="js/flatui-checkbox.js"></script>
-    <script src="js/flatui-radio.js"></script>
-    <script src="js/jquery.tagsinput.js"></script>
-    <script src="js/jquery.placeholder.js"></script>
-    <script src="js/jquery.scrollTo.min.js"></script>
+    <script src={{ url_for('static', filename='../static/jquery-pageslide/jquery.pageslide.min.js')}} ></script>
+    <link href={{ url_for('static', filename='../static/jquery-pageslide/jquery.pageslide.css' )}} rel="stylesheet">
 
--->
     <script>
         $(document).ready(function() {   
           
+
           $('#team-div h6,button,div').tooltip();
 
           $('#nav-feature-div').click(function(event){
@@ -198,8 +199,16 @@
             });
             $(this).addClass('active');
           });
-          
+        
+
+        $("#navi-menu").pageslide({ 
+            direction:"right", 
+            speed:60,
+            iframe:false,
+            modal:true 
         });
+        
+      });
     </script>
   </body>
 </html>

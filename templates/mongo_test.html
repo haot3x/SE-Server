@@ -122,12 +122,6 @@
             $("#demoTable tr td:contains('"+id+"')").parent().remove();
           }
 
-          //Assume the same id
-          function tableUpate(obj)
-          {
-            var id = obj['_id']['$oid'];
-            //$("#demoTable tr td:contains('"+id+"')").parent().remove();
-          }
 
           $("#getAjaxBtn").click(function(){
             
@@ -180,7 +174,7 @@
             var data = {"_method":"DELETE"}
             var djson = JSON.stringify(data);
             var docid = $(this).parent().siblings().first().text();
-            var url = "{{ url_for('test_api.test_mongo_getputdelete', _id=null) }}";
+            var url = "{{ url_for('test_api.test_mongo_getputdelete', _id=null) }}"; // page generated from server...
             url = url +  docid;
 
             console.log(djson);
