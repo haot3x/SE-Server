@@ -63,17 +63,19 @@
             </form>
             </div><!-- /.navbar-collapse -->
 
+            <div id="left-menu" style="display:none">
+                <a href="#">Home</a><br>
+                <a href="#">Events</a><br>
+                <a href="#">Matches</a><br>
+                <a href="#">Requests</a><br>
+                <a href="#">Settings</a><br>
+                <a href="javascript:$.pageslide.close()"><strong>Close</strong></a>
+            </div>
+
         </nav><!-- /navbar -->
 
    
-    <div id="left-menu" style="display:none">
-    <a href="#">Home</a><br>
-    <a href="#">Events</a><br>
-    <a href="#">Matches</a><br>
-    <a href="#">Requests</a><br>
-    <a href="#">Settings</a><br>
-    <a href="javascript:$.pageslide.close()"><strong>Close</strong></a>
-    </div>
+
 
         
         <div id='feature-div' class='container-fluid palette-sun-flower' style='height:700px;padding-top:53px'>
@@ -203,7 +205,7 @@
 
         $("#navi-menu").pageslide({ 
             direction:"right", 
-            speed:30,
+            speed:10,
             iframe:false,
             modal:true 
         });

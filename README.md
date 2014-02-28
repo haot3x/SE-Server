@@ -5,6 +5,10 @@ Last Update:    Feb 13, 2014
 ----
 # Setup
 
+#### Bootstrap
+
+
+
 All assume MAC, PC please do the equivalent and ask me 
 install Python (you should have by default)
 

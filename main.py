@@ -123,6 +123,9 @@ security = Security(app, user_datastore,register_form=ExtendedRegisterForm)
 from controllers.test_controller import test_api
 app.register_blueprint(test_api)
 
+from controllers.event_controller import event_api
+app.register_blueprint(event_api)
+
 # @app.before_first_request
 # def create_user():
 #     user_datastore.create_user(email='test@yale.edu', password='qwe123')
@@ -134,6 +137,25 @@ def not_found(error):
 @app.route('/')
 def hello():
     return render_template('landing.html')
+
+
+@app.route('/events_old')
+def events():
+
+    from random import randint 
+    def m():
+        m.id = randint(1,1000)
+        m.name = 'bar %s' % (randint(1,1000),)
+        m.time = 'time %s' % (randint(1,1000),)
+
+    #l = [m().__dict__ for i in xrange(1,100)]
+    
+    for i in xrange(1,100):
+        t = m()
+        l.append(t.__dict__)
+
+    return render_template('list_page.html',events=l)
+
 
 @app.route('/basic')
 def basic():
