@@ -161,6 +161,8 @@ def events():
 def basic():
     return render_template('basic.html')
 
+
+
 @app.route('/a_page_requires_login')
 @login_required
 def login_required_page():

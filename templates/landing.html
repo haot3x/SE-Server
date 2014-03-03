@@ -28,7 +28,6 @@
   <body style=''> <!--for the navibar always top-->
     
     <div>
-            
         <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
             <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-01">
@@ -39,15 +38,27 @@
 
             <div class="collapse navbar-collapse" id="navbar-collapse-01">
             <ul class="nav navbar-nav">           
+            {% if not current_user.is_authenticated() %}  
+
               <li class="active" href='#'id="nav-feature-div"><a>Features</a></li>
               <li id="nav-map-div"><a >Live Map</a></li>
               <li id="nav-team-div"><a>Team</a></li>
-
-              {% if not current_user.is_authenticated() %}
+            <!-- 
+                <li id="nav-propose-div"><a href='/login'>Propose</a></li>
+                <li id="nav-myevents-div"><a href='/login'>My Events</a></li>
+                <li id="nav-myrequest-div"><a href='/login'>My Requests</a></li>
+                <li id="nav-setting-div"><a href='/login'>Settings</a></li> -->
+                
                 <li><a href='/login'>Login</a></li>
               {% else %}
+                <li id="nav-events-div"><a href='/events'>Events</a></li>
+                <li id="nav-propose-div"><a href='/create_events'>Propose</a></li>
+                <li id="nav-myrequest-div"><a>My Requests</a></li>
+                <li id="nav-myevent-div"><a>My Events</a></li>
+                <li id="nav-setting-div"><a>Settings</a></li>
                 <li><a href='/logout'>Logout - {{ current_user.email }}</a></li>
               {% endif %}
+            
             
             </ul>           
 
@@ -74,15 +85,15 @@
 
         </nav><!-- /navbar -->
 
-   
-
 
         
+    </div>
         <div id='feature-div' class='container-fluid palette-sun-flower' style='height:700px;padding-top:53px'>
             
             <div class='row'>
             <div style='height:140px'></div>
-            <div class='col-md-offset-4 col-md-4'><h2>Coming Soon</h2>
+            <div class='col-md-offset-4 col-md-4'><h2 align="center">Welcome!</h2>
+            <h5 align="center">Hout is an event-driven social platform for users to make friends with people nearby.</h5>
             </div>
 
             <!-- 
@@ -114,12 +125,14 @@
             </div>
         </div>
         
-       
+       <div id='map-div' class='container-fluid ' style='padding-top:53px'>
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d11986.673523220672!2d-72.92226630003638!3d41.31607728730603!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89e7d9b6cd624945%3A0xae34a2c4b4d30427!2sYale+University!5e0!3m2!1sen!2sus!4v1393836015333" width="100%" height="680" padding='0' margin='0' frameborder="0" style="border:0"></iframe>
+        </div>
 
 
-    <div id='map-div' class='container-fluid ' style='padding-top:53px'>
+    <!-- <div id='map-div' class='container-fluid ' style='padding-top:53px'>
         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d47967.07159745638!2d-72.95904475000005!3d41.288367300000026!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89e7d9b6cd624945%3A0xae34a2c4b4d30427!2sYale+University%2C+New+Haven%2C+CT!5e0!3m2!1sen!2sus!4v1391542312443" width="100%" height="680" padding='0' margin='0' frameborder="0" style="border:0"></iframe>
-    </div>
+    </div> -->
     
 
     
@@ -205,7 +218,7 @@
 
         $("#navi-menu").pageslide({ 
             direction:"right", 
-            speed:10,
+            speed:60,
             iframe:false,
             modal:true 
         });
