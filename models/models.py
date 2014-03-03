@@ -8,7 +8,7 @@ class EventModel(db.Document):
     title = db.StringField()
     description = db.StringField()  
     location = db.StringField()  
-    time = db.DateTimeField()
+    time = db.StringField()
     userID = db.StringField()
     ZIP = db.StringField()
     Status = db.StringField()

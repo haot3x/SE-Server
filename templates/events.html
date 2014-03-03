@@ -18,13 +18,62 @@
     <![endif]-->
   </head>
   <body style=''> <!--for the navibar always top-->
+   <div> 
+ 
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-01">
+              <span class="sr-only">Toggle navigation</span>
+            </button>
+            <a class="navbar-brand" id='navi-menu' href = '/'>HOUT</a>
+            </div>
 
-    <div class='container'>
+            <div class="collapse navbar-collapse" id="navbar-collapse-01">
+            <ul class="nav navbar-nav">           
+              
+              <li class = "active" id="nav-event-div"><a href='/events'>Events</a></li>
+              
+              {% if not current_user.is_authenticated() %}  
+                <li id="nav-propose-div"><a href='/login'>Propose</a></li>
+                <li id="nav-myevents-div"><a href='/login'>My Events</a></li>
+                <li id="nav-myrequest-div"><a href='/login'>My Requests</a></li>
+                <li id="nav-setting-div"><a href='/login'>Settings</a></li>
+                <li><a href='/login'>Login</a></li>
+              {% else %}
+                <li id="nav-propose-div"><a href='/create_events'>Propose</a></li>
+                <li id="nav-myevents-div"><a>My Events</a></li>
+                <li id="nav-myrequest-div"><a>My Requests</a></li>
+                <li id="nav-setting-div"><a>Settings</a></li>
+                <li><a href='/logout'>Logout - {{ current_user.email }}</a></li>
+              {% endif %}
+            
+
+            </ul>           
+
+            <!-- <form class="navbar-form navbar-right" action="#" role="search">
+              <div class="form-group">
+                <div class="input-group">
+                  <input class="form-control" id="navbarInput-01" type="search" placeholder="Search">
+                  <span class="input-group-btn">
+                    <button type="submit" class="btn"><span class="fui-search"></span></button>
+                  </span>            
+                </div>
+              </div>               
+            </form> -->
+            </div><!-- /.navbar-collapse -->
+
+        </nav><!-- /navbar -->
+
+
+
+
+    <div id = 'list-div' class='container-fluid'>
         
+        <div style='height:50px'></div>
         <div class='row'>
 
-            <div class="text-center col-md-3">    
-                <h2>list_page</h2>
+            <div class="text-center col-md-12">    
+                <h3>Current Events</h3>
             </div>
              
         </div>
@@ -63,7 +112,11 @@
         
        
     </div>
-
+    
+<div id='map-div' class='container-fluid ' style='padding-top:53px'>
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1498.4190376502813!2d-72.9252033804389!3d41.31238607118412!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89e7d9b65177b49f%3A0x6578b668c5b5f983!2sArthur+K.+Watson+Hall%2C+51+Prospect+St!5e0!3m2!1sen!2sus!4v1393835623123" width="100%" height="680" padding='0' margin='0' frameborder="0" style="border:0"></iframe>
+    </div>
+  </div>
 
     <!-- Load JS here for greater good =============================-->
     <script src={{ url_for('static', filename='../static/Flat-UI-master/js/jquery-1.8.3.min.js')}} ></script>
