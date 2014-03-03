@@ -16,13 +16,15 @@ def test_mongo_demo():
     # app.logger.info(docs)
     return render_template('events.html',events=doc)
 
-@event_api.route("/api/event/create", methods=['GET'])
+@event_api.route("/create_events", methods=['GET'])
 def test_mongo_post():
-    model = EventModel(title = 'hout',description = 'yoyo')
-    doc = model.save()
-    print json_util.dumps(doc.to_mongo())
-    app.logger.info(doc)
-    return json_util.dumps(doc.to_mongo())
+    #model = EventModel(title = 'hout',description = 'yoyo')
+    #doc = model.save()
+    #print json_util.dumps(doc.to_mongo())
+    #app.logger.info(doc)
+    #return json_util.dumps(doc.to_mongo())
+    doc = EventModel.objects.all()
+    return render_template('create_events.html', events=doc)
 
 @event_api.route("/api/event", methods=['GET'])
 @event_api.route("/api/event/<_id>", methods=['GET','POST'])
