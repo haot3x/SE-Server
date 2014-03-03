@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Hout</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Loading Bootstrap -->
+
+    <link href={{ url_for('static', filename='../static/Flat-UI-master/bootstrap/css/bootstrap.css' )}} rel="stylesheet">
+    <link href={{ url_for('static', filename='../static/Flat-UI-master/css/flat-ui.css' )}} rel="stylesheet">
+    <link href={{ url_for('static', filename='../static/Flat-UI-master/images/favicon.ico' )}} rel="shortcut icon">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.js"></script>
+      <script src="js/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body style=''> <!--for the navibar always top-->
+
+    <div class='container'>
+
+  <div>
+            
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-01">
+              <span class="sr-only">Toggle navigation</span>
+            </button>
+            <a class="navbar-brand" id='navi-menu' href = '/'>HOUT</a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="navbar-collapse-01">
+            <ul class="nav navbar-nav">           
+              
+              <li id="nav-event-div"><a href='/events'>Events</a></li>
+              
+              {% if not current_user.is_authenticated() %}  
+                <li id="nav-propose-div"><a href='/login'>Propose</a></li>
+                <li id="nav-myevents-div"><a href='/login'>My Events</a></li>
+                <li id="nav-myrequest-div"><a href='/login'>My Requests</a></li>
+                <li id="nav-setting-div"><a href='/login'>Settings</a></li>
+                <li><a href='/login'>Login</a></li>
+              {% else %}
+                <li class = "active" id="nav-propose-div"><a href='/create_events'>Propose</a></li>
+                <li id="nav-myevents-div"><a>My Events</a></li>
+                <li id="nav-myrequest-div"><a>My Requests</a></li>
+                <li id="nav-setting-div"><a>Settings</a></li>
+                <li><a href='/logout'>Logout - {{ current_user.email }}</a></li>
+              {% endif %}
+            
+            </ul>           
+
+            <form class="navbar-form navbar-right" action="#" role="search">
+              <div class="form-group">
+                <div class="input-group">
+                  <input class="form-control" id="navbarInput-01" type="search" placeholder="Search">
+                  <span class="input-group-btn">
+                    <button type="submit" class="btn"><span class="fui-search"></span></button>
+                  </span>            
+                </div>
+              </div>               
+            </form>
+            </div><!-- /.navbar-collapse -->
+
+            <div id="left-menu" style="display:none">
+                <a href="#">Home</a><br>
+                <a href="#">Events</a><br>
+                <a href="#">Matches</a><br>
+                <a href="#">Requests</a><br>
+                <a href="#">Settings</a><br>
+                <a href="javascript:$.pageslide.close()"><strong>Close</strong></a>
+            </div>
+
+        </nav><!-- /navbar -->
+
+            <div style='height:50px'></div>
+            </div>
+
+
+
+
+
+
+
+        
+        <div class='row'>
+
+            <div class="col-md-6">    
+                <h2>Create Event</h2>
+            </div>
+          </div>
+    
+    <div class="col-md-3">
+
+ <form action="{{ url_for_security('login') }}" method="POST" name="login_user_form">
+
+    <div class="form-group">
+      <input type="text" id="title" name="title" placeholder="Event Title" class="form-control" />
+      
+    </div>
+
+    <div class="form-group">
+      <input type="text" id="description" name="description" placeholder="Description" class="form-control" />
+    </div>
+
+
+    <input class="btn btn-primary btn-lg btn-block" id="create" name="create" type="create" value="Create">
+
+</form>
+</div>
+
+</div>
+
+
+    <!-- Load JS here for greater good =============================-->
+    <script src={{ url_for('static', filename='../static/Flat-UI-master/js/jquery-1.8.3.min.js')}} ></script>
+    <script src={{ url_for('static', filename='../static/Flat-UI-master/js/jquery-ui-1.10.3.custom.min.js')}} ></script>
+    <script src={{ url_for('static', filename='../static/Flat-UI-master/js/jquery.ui.touch-punch.min.js')}} ></script>
+    <script src={{ url_for('static', filename='../static/Flat-UI-master/js/bootstrap.min.js')}} ></script>
+    <script src={{ url_for('static', filename='../static/Flat-UI-master/js/bootstrap-select.js')}} ></script>
+    <script src={{ url_for('static', filename='../static/Flat-UI-master/js/bootstrap-switch.js')}} ></script>
+    <script src={{ url_for('static', filename='../static/Flat-UI-master/js/flatui-checkbox.js')}} ></script>
+    <script src={{ url_for('static', filename='../static/Flat-UI-master/js/flatui-radio.js')}} ></script>
+    <script src={{ url_for('static', filename='../static/Flat-UI-master/js/jquery.tagsinput.js')}} ></script>
+    <script src={{ url_for('static', filename='../static/Flat-UI-master/js/jquery.placeholder.js')}} ></script>
+    <script src={{ url_for('static', filename='../static/Flat-UI-master/js/jquery.scrollTo.min.js')}} ></script>
+   
+    <script>
+        $(document).ready(function() {   
+          
+        });
+    </script>
+  </body>
+</html>
