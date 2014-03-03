@@ -1,12 +1,21 @@
 Author:         Haotian
 
-Last Update:    Feb 13, 2014 
+Last Update:    March 3, 2014 
+
+----
+### front end
+	bootstrap
+	javascript
+
+### back end
+	python
+	flask
+	jinja
+	mongodb
+	
 
 ----
 # Setup
-
-#### Bootstrap
-
 
 
 All assume MAC, PC please do the equivalent and ask me 
