@@ -1,17 +1,23 @@
 from main import app,db,security
+import datetime
 
 class MongoTestModel(db.Document):
     k1 = db.StringField(required=True)
-    k2 = db.StringField()  
+    k2 = db.StringField()
 
 class EventModel(db.Document):
     title = db.StringField()
     description = db.StringField()  
-    location = db.StringField()  
-    time = db.StringField()
+    createTime = db.DateTimeField(default=datetime.datetime.now)
+    startTime = db.StringField()
+    endTime = db.StringField()
     userID = db.StringField()
+    location =  db.StringField()
+    # latitude = db.FloatField()  
+    # longitude = db.FloatField()
+    LatLng = db.PointField()
     ZIP = db.StringField()
-    Status = db.StringField()
+    status = db.StringField(default='new')
 
 # no use now
 from google.appengine.ext import ndb
