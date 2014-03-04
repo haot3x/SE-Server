@@ -68,7 +68,7 @@
     }
     
 
-    $('.navbar-nav li').click(function(event){
+    $('.navbar-nav li:not(.dropdown)').click(function(event){
       $('.navbar-nav li').each(function(i,dom){
         $(dom).removeClass('active')
       });
