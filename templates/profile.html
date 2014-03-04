@@ -30,78 +30,12 @@
 
   <div>
             
-        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-            <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-01">
-              <span class="sr-only">Toggle navigation</span>
-            </button>
-            <a class="navbar-brand" id='navi-menu' href = '/'>HOUT</a>
-            </div>
+      {% with active_nav='nav-setting' %}
+        {% include "_header.html" %}
+      {% endwith %}
 
-            <div class="collapse navbar-collapse" id="navbar-collapse-01">
-            <ul class="nav navbar-nav">           
-              
-              <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Events<b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="/events">List View</a></li> <!-- not implemented -->
-                        <li><a href="#">Map View</a></li> <!-- not implemented -->
-                    </ul>
-                </li>
-              
-              {% if not current_user.is_authenticated() %}  
-                <li id="nav-propose-div"><a href='/login'>Propose</a></li>
-                <li id="nav-myevents-div"><a href='/login'>My Events</a></li>
-                <li id="nav-myrequest-div"><a href='/login'>My Requests</a></li>
-                <li id="nav-setting-div"><a href='/login'>Settings</a></li>
-                <li><a href='/login'>Login</a></li>
-              {% else %}
-                <li id="nav-propose-div"><a href='/event/create'>Propose</a></li>
-                <li id="nav-myevents-div"><a>My Events</a></li>
-                <li id="nav-myrequest-div"><a>My Requests</a></li>
-                
-                <li class="dropdown active">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Settings<b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="/profile">My Profile</a></li>
-                        <li><a href="#">Account</a></li>
-                        <li class="divider"></li>
-                        <li><a href="#">Search Radius</a></li>
-                    </ul>
-                </li>
-                <li><a href='/logout'>Logout - {{ current_user.email }}</a></li>
-              {% endif %}
-            
-            </ul>           
-
-            <!-- <form class="navbar-form navbar-right" action="#" role="search">
-              <div class="form-group">
-                <div class="input-group">
-                  <input class="form-control" id="navbarInput-01" type="search" placeholder="Search">
-                  <span class="input-group-btn">
-                    <button type="Submit" class="btn btn-success"><span class="fui-search"></span></button>
-                  </span>            
-                </div>
-              </div>               
-            </form> -->
-            </div><!-- /.navbar-collapse -->
-
-            <div id="left-menu" style="display:none">
-                <a href="#">Home</a><br>
-                <a href="#">Events</a><br>
-                <a href="#">Matches</a><br>
-                <a href="#">Requests</a><br>
-                <a href="#">Settings</a><br>
-                <a href="javascript:$.pageslide.close()"><strong>Close</strong></a>
-            </div>
-
-        </nav><!-- /navbar -->
-
-            <div style='height:50px'></div>
-            </div>
-
-
-        <div class='row'>
+        
+        <div class='row' style='padding-top:53px'>
 
             <div class="col-md-6">    
                 <h2>Profile</h2>
