@@ -8,6 +8,13 @@
     <!-- Loading Bootstrap -->
 
     <link href={{ url_for('static', filename='../static/Flat-UI-master/bootstrap/css/bootstrap.css' )}} rel="stylesheet">
+
+    <link href={{ url_for('static', filename='../static/jasny-bootstrap/css/jasny-bootstrap.min.css' )}} rel="stylesheet">
+
+     <link href={{ url_for('static', filename='../static/jasny-bootstrap/css/jasny-bootstrap.css' )}} rel="stylesheet">
+
+
+
     <link href={{ url_for('static', filename='../static/Flat-UI-master/css/flat-ui.css' )}} rel="stylesheet">
     <link href={{ url_for('static', filename='../static/Flat-UI-master/images/favicon.ico' )}} rel="shortcut icon">
 
@@ -82,7 +89,7 @@
         <div class='row'>
 
             <div class="col-md-6">    
-                <h2>Edit Profile</h2>
+                <h2>Profile</h2>
                 <h6></h6>
             </div>
           </div>
@@ -90,6 +97,18 @@
   <div class="col-md-4">
     <form class="form-horizontal" role="form">
       <fieldset disabled>
+
+      <div class="from-group">
+
+      <div class="fileinput fileinput-new" data-provides="fileinput">
+        <div class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: 200px; height: 150px;"></div>
+
+    </div>
+
+
+
+
+
 
       <div class="form-group">
         <label class="col-sm-2 control-label">Name</label>
@@ -148,6 +167,13 @@
     <script src={{ url_for('static', filename='../static/Flat-UI-master/js/jquery-ui-1.10.3.custom.min.js')}} ></script>
     <script src={{ url_for('static', filename='../static/Flat-UI-master/js/jquery.ui.touch-punch.min.js')}} ></script>
     <script src={{ url_for('static', filename='../static/Flat-UI-master/js/bootstrap.min.js')}} ></script>
+
+
+    <script src={{ url_for('static', filename='../static/jasny-bootstrap/js/jasny-bootstrap.min.js')}} ></script>
+    <script src={{ url_for('static', filename='../static/jasny-bootstrap/js/jasny-bootstrap.js')}} ></script>
+
+
+
     <script src={{ url_for('static', filename='../static/Flat-UI-master/js/bootstrap-select.js')}} ></script>
     <script src={{ url_for('static', filename='../static/Flat-UI-master/js/bootstrap-switch.js')}} ></script>
     <script src={{ url_for('static', filename='../static/Flat-UI-master/js/flatui-checkbox.js')}} ></script>
