@@ -37,16 +37,12 @@
               <li id="nav-event-div"><a href='/events'>Events</a></li>
               
               {% if not current_user.is_authenticated() %}  
-                <li id="nav-propose-div"><a href='/login'>Propose</a></li>
-                <li id="nav-myevents-div"><a href='/login'>My Events</a></li>
-                <li id="nav-myrequest-div"><a href='/login'>My Requests</a></li>
-                <li id="nav-setting-div"><a href='/login'>Settings</a></li>
                 <li><a href='/login'>Login</a></li>
               {% else %}
-                <li class = "active" id="nav-propose-div"><a href='/create_events'>Propose</a></li>
-                <li id="nav-myevents-div"><a>My Events</a></li>
-                <li id="nav-myrequest-div"><a>My Requests</a></li>
-                <li id="nav-setting-div"><a>Settings</a></li>
+                <li id="nav-propose-div"><a href="{{ url_for('event_api.api_event_create') }}">Propose</a></li>
+                <li id="nav-myevents-div"><a href="/event/mine/{{ current_user.id }}">My Events</a></li>
+                <li id="nav-myrequest-div"><a href="#">My Requests</a></li>
+                <li id="nav-setting-div"><a href="#">Settings</a></li>
                 <li><a href='/logout'>Logout - {{ current_user.email }}</a></li>
               {% endif %}
             
@@ -64,58 +60,61 @@
             </form>
             </div><!-- /.navbar-collapse -->
 
-            <div id="left-menu" style="display:none">
-                <a href="#">Home</a><br>
-                <a href="#">Events</a><br>
-                <a href="#">Matches</a><br>
-                <a href="#">Requests</a><br>
-                <a href="#">Settings</a><br>
-                <a href="javascript:$.pageslide.close()"><strong>Close</strong></a>
-            </div>
-
         </nav><!-- /navbar -->
 
-            <div style='height:50px'></div>
+
+
+        <div class='row' style='padding-top:53px'>
+
+            <div class="col-md-12">    
+                <h2>Create an Event!</h2>                
             </div>
-
-
-        <div class='row'>
-
-            <div class="col-md-6">    
-                <h2>Create an Event!</h2>
-                <h6></h6>
-            </div>
-          </div>
+        </div>
     
-    <div class="col-md-3">
-
- <form action="{{ url_for_security('login') }}" method="POST" name="login_user_form">
-
-    <div class="form-group">
-      <input type="text" id="title" name="title" placeholder="Event Title" class="form-control" />
       
+      <div class="col-md-3">
+
+    
+
+      <div class="form-group">
+        <input type="text" id="title" placeholder="Event Title" class="form-control" />
+        <span class="input-icon fui-new"></span>      
+      </div>
+
+    <div class="form-group">
+      <input type="text" id="description" placeholder="Description" class="form-control" />
+      <span class="input-icon fui-list"></span>      
     </div>
 
     <div class="form-group">
-      <input type="text" id="description" name="description" placeholder="Description" class="form-control" />
+      <input type="text" id="location" placeholder="Location" class="form-control" />
+      <span class="input-icon fui-location"></span>      
     </div>
 
-    <div class="form-group">
-      <input type="text" id="location" name="location" placeholder="Location" class="form-control" />
+    <div class="form-group input-append bootstrap-timepicker">
+      <input type="text" id="startTime" placeholder="Event Start Time" class="form-control" />
+      <span class="input-icon fui-time"></span>      
     </div>
 
-
-    <div class="form-group">
-      <input type="text" id="time" name="time" placeholder="Event Time" class="form-control" />
+    <div class="form-group input-append bootstrap-timepicker">
+      <input type="text" id="endTime" placeholder="Event End Time" class="form-control" />
+      <span class="input-icon fui-time"></span>      
     </div>
+
 
 
     <input id='postAjaxBtn' class="btn btn-primary btn-lg btn-block" value='Create' >
-    <h6> </h6>
+    
     <a class="btn btn-warning btn-lg btn-block" href="/" role="button">Cancel</a>
-                
-</form>
-</div>
+             
+  </div>
+  
+  <div class="col-md-9" id ='mapcanvas' style='height:400px;width:400px;'>
+    
+
+  </div>
+
+
 
 </div>
 
@@ -132,42 +131,113 @@
     <script src={{ url_for('static', filename='../static/Flat-UI-master/js/jquery.tagsinput.js')}} ></script>
     <script src={{ url_for('static', filename='../static/Flat-UI-master/js/jquery.placeholder.js')}} ></script>
     <script src={{ url_for('static', filename='../static/Flat-UI-master/js/jquery.scrollTo.min.js')}} ></script>
-   
+    
+    <script src={{ url_for('static', filename='../static/bootstrap-timepicker/js/bootstrap-timepicker.js')}} ></script>
+    <link href={{ url_for('static', filename='../static/bootstrap-timepicker/css/bootstrap-timepicker.css' )}} rel="stylesheet">
+
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
+
+
      <script>
       $(document).ready(function() {   
           
-          function tableReset()
-          {
-              $.each($("#demoTable tr"),function(i,tr){
-                $(this).remove();
-              });
+        console.log('{{ current_user.email }}');
+        console.log('{{ current_user.id }}');
+
+        $('#timse').timepicker({
+                minuteStep: 5,
+                showInputs: false,
+                disableFocus: true
+        });
+
+        userID = '{{ current_user.id }}';
+        locGeoLat = 0;
+        locGeoLng = 0;
+
+        function getZIP(latlng)
+        {
+          return "06511";
+        }
+
+        function getGeoLocation()
+        {
+
+          function geoSuccess(position) {
+            console.log(position);
+            
+
+            locGeoLat = position.coords.latitude;
+            locGeoLng = position.coords.longitude;
+            // var mapcanvas = document.createElement('div');
+            // mapcanvas.id = 'mapcanvas';
+            // mapcanvas.style.height = '400px';
+            // mapcanvas.style.width = '560px';
               
-              $('#demoTable thead').after("<tr><th>id</th><th>k1</th><th>k2</th><th>D</th><th>U</th></tr>");
+            // $("#maphere").after(mapcanvas);
+            
+            var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+            var myOptions = {
+              zoom: 15,
+              center: latlng,
+              mapTypeControl: false,
+              navigationControlOptions: {style: google.maps.NavigationControlStyle.SMALL},
+              mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+
+            var map = new google.maps.Map(document.getElementById("mapcanvas"), myOptions);
+            
+            var marker = new google.maps.Marker({
+                position: latlng, 
+                map: map, 
+                description:$("#title").val(),
+                title:"You are here! (at least within a "+position.coords.accuracy+" meter radius)",
+                draggable:true
+            });
+          
+          
+            google.maps.event.addListener(marker, 'dragend', function(data){
+              //alert(this.position.e);
+              //alert(this.position.d);
+              locGeoLat = this.position.e;
+              locGeoLng = this.position.d;
+            });
+
+            google.maps.event.addListener(marker, 'click', function(data) {
+              var infowindow = new google.maps.InfoWindow();
+              infowindow.setContent(this.description);
+              infowindow.open(map, this);
+            });
+
           }
 
-          function tableInsert(obj)
-          {
-            var newtr = "<tr><td>" + obj['_id']['$oid']+ "</td>" 
-            + "<td>" + obj['k1']+ "</td>" 
-            + "<td>" + obj['k2']+ "</td>"
-            + "<td><button class='deleteAjaxBtn btn-xs btn-danger'>DELETE</button></td>"
-            + "<td><button class='updateAjaxBtn btn-xs btn-warning'>UPDATE</button></td>"
-            + "</tr>";
-
-            $('#demoTable tr:last').after(newtr);
+          function geoError(msg) {
+            console.log(msg);
           }
 
-          //Assume the same id
-          function tableRemove(obj)
-          {
-            var id = obj['_id']['$oid'];
-            $("#demoTable tr td:contains('"+id+"')").parent().remove();
-          }
+
+
+          navigator.geolocation.getCurrentPosition(geoSuccess, geoError);
+
+        }
+
+        getGeoLocation();
+        
 
 
           $("#postAjaxBtn").click(function(event){
 
-          var data = {"_method":"POST","title":$("#title").val(),"description":$("#description").val(),"location":$("#location").val(),"time":$("#time").val()}
+          var data = {"_method":"POST",
+              "title":$("#title").val(),
+              "description":$("#description").val(),
+              "location":$("#location").val(),
+              "startTime":$("#startTime").val(),
+              "endTime":$("#endTime").val(),
+              "latitude":locGeoLat,
+              "longitude":locGeoLng,
+              "ZIP":getZIP(locGeoLat + "," + locGeoLng),
+              "userID": userID
+            }
+
           var djson = JSON.stringify(data);
           var url = "{{ url_for('event_api.api_event_post') }}";
     
@@ -184,71 +254,6 @@
               success: function(data){
                 window.location = '/events';
                }
-            
-            });
-
-          });
-
-
-
-          /*
-          The type of request to make ("POST" or "GET"), default is "GET". Note: Other HTTP request methods, such as PUT and DELETE, can also be used here, but they are not supported by all browsers.
-          */
-          $(document).on('click', '.deleteAjaxBtn', function(){
-          
-            var data = {"_method":"DELETE"}
-            var djson = JSON.stringify(data);
-            var docid = $(this).parent().siblings().first().text();
-            var url = "{{ url_for('test_api.test_mongo_getputdelete', _id=null) }}"; // page generated from server...
-            url = url +  docid;
-
-            console.log(djson);
-            console.log(url);
-            
-            $.ajax({
-              type: "POST",
-              url: url,
-              data: djson,
-              contentType: 'application/json;charset=UTF-8',
-              error: function(e) {
-                console.log("get an error");
-                console.log(e);
-                alert("error");
-              },
-              success: function(data){
-                //alert("DELETEed + " + data);
-                obj = $.parseJSON(data);
-                tableRemove(obj);
-              }
-            
-            });
-
-          });
-
-          $(document).on('click', '.updateAjaxBtn', function(){
-            var docid = $(this).parent().siblings().first().text();
-            var url = "{{ url_for('test_api.test_mongo_getputdelete', _id=null) }}";
-            url = url +  docid;
-            
-            var data = {"_method":"PUT","k1":$("#k1").val(),"k2":$("#k2").val()}
-            var djson = JSON.stringify(data);
-            
-            $.ajax({
-              type: "POST",
-              url: url,
-              data: djson,
-              contentType: 'application/json;charset=UTF-8',
-              error: function(e) {
-                console.log("get an error");
-                console.log(e);
-                alert("error");
-              },
-              success: function(data){
-                //alert("Updated + " + data);
-                obj = $.parseJSON(data);
-                tableRemove(obj);
-                tableInsert (obj); 
-              }
             
             });
 
