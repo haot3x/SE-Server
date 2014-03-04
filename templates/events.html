@@ -31,7 +31,14 @@
             <div class="collapse navbar-collapse" id="navbar-collapse-01">
             <ul class="nav navbar-nav">           
               
-              <li class = "active" id="nav-event-div"><a href='/events'>Events</a></li>
+
+                <li class="active dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Events<b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/events">List View</a></li> <!-- not implemented -->
+                        <li><a href="#">Map View</a></li> <!-- not implemented -->
+                    </ul>
+                </li>
               
               {% if not current_user.is_authenticated() %}  
                 <li><a href='/login'>Login</a></li>
@@ -39,7 +46,18 @@
                 <li id="nav-propose-div"><a href="{{ url_for('event_api.api_event_create') }}" >Propose</a></li>
                 <li id="nav-myevents-div"><a href="/event/mine/{{ current_user.id }}">My Events</a></li>
                 <li id="nav-myrequest-div"><a href="#">My Requests</a></li>
-                <li id="nav-setting-div"><a href="#">Settings</a></li>
+                
+
+                <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Settings<b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/profile">My Profile</a></li>
+                        <li><a href="#">Account</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">Search Radius</a></li>
+                    </ul>
+                </li>
+
                 <li><a href='/logout'>Logout - {{ current_user.email }}</a></li>
               {% endif %}
             
