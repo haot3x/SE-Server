@@ -169,6 +169,15 @@ def login_required_page():
     return render_template('a_page_requires_login.html')
 
 
+@app.route('/edit_profile')
+def edit_profile():
+    return render_template('edit_profile.html')
+
+@app.route('/profile')
+def profile():
+    return render_template('profile.html')
+
+
 @app.route('/api')
 def sitemap():
     links = []
