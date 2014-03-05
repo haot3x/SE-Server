@@ -14,18 +14,33 @@ def api_event_demo():
     doc = EventModel.objects.all()
     # docs =  json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
     # app.logger.info(docs)
-    return render_template('events.html',events=doc)
+    return render_template('event_list.html',events=doc,paras={"title":"All Events"})
+
 
 @event_api.route("/event/mine/<_uid>", methods=['GET'])
 def api_event_mine(_uid = None):
     doc = EventModel.objects(userID=_uid)
-    return  json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
+    return render_template('event_list.html',events=doc,paras={"title":"My Events"})
+    #return  json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
     # app.logger.info(docs)
     #return render_template('events.html',events=doc)
 
 @event_api.route("/event/create", methods=['GET'])
 def api_event_create():
-    return render_template('create_events.html', events=[])
+    return render_template('event.html', ev={},paras={"action":"create"})
+
+
+@event_api.route("/event/view/<_eid>", methods=['GET'])
+def api_event_view(_eid = None):
+    doc = EventModel.objects.get(id=_eid)
+    print doc['title']
+    return render_template('event.html', ev=doc,paras={"action":"view"})
+
+@event_api.route("/event/edit/<_eid>", methods=['GET'])
+def api_event_edit(_eid = None):
+    doc = EventModel.objects.get(id=_eid)
+    return render_template('event.html', ev=doc,paras={"action":"edit"})
+
 
 ######################## APIs BELOW ########################
 
