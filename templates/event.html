@@ -175,7 +175,7 @@
             var marker = new google.maps.Marker({
                 position: latlng, 
                 map: map, 
-                description:$("#title").val(),
+                description: ("GEO [" + locGeoLat + ":" + locGeoLng + "]") ,  
                 title:"You are here! (at least within a "+position.coords.accuracy+" meter radius)",
                 draggable:true
             });
@@ -186,6 +186,7 @@
               //alert(this.position.d);
               locGeoLat = this.position.e;
               locGeoLng = this.position.d;
+              this.description = "GEO [" + locGeoLat + ":" + locGeoLng + "]";
             });
 
             google.maps.event.addListener(marker, 'click', function(data) {
