@@ -62,7 +62,7 @@
     if('{{active_nav}}' != '')
     {
       $('.navbar-nav li').each(function(i,dom){
-      if(this.id.indexOf('{{active_nav}}') != -1)
+      if(this.id == '{{active_nav}}')
         $(this).addClass('active');
       });
     }

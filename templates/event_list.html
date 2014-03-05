@@ -20,11 +20,19 @@
   <body style=''> <!--for the navibar always top-->
    <div> 
  
-       {% with active_nav='nav-events' %}
+       
+{% if paras.action == 'all' %}
+    
+        {% with active_nav='nav-events' %}
           {% include "_header.html" %}
         {% endwith %}
 
+{% elif paras.action == 'mine' %}
 
+        {% with active_nav='nav-myevents' %}
+          {% include "_header.html" %}
+        {% endwith %}
+{% endif %} 
 
 <!-- Event List View -->
 

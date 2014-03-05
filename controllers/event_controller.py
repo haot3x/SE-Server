@@ -14,13 +14,13 @@ def api_event_demo():
     doc = EventModel.objects.all()
     # docs =  json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
     # app.logger.info(docs)
-    return render_template('event_list.html',events=doc,paras={"title":"All Events"})
+    return render_template('event_list.html',events=doc,paras={"title":"All Events",'action':'all'})
 
 
 @event_api.route("/event/mine/<_uid>", methods=['GET'])
 def api_event_mine(_uid = None):
     doc = EventModel.objects(userID=_uid)
-    return render_template('event_list.html',events=doc,paras={"title":"My Events"})
+    return render_template('event_list.html',events=doc,paras={"title":"My Events",'action':'mine'})
     #return  json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
     # app.logger.info(docs)
     #return render_template('events.html',events=doc)
