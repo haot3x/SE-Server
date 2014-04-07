@@ -16,11 +16,27 @@
       <script src="js/html5shiv.js"></script>
       <script src="js/respond.min.js"></script>
     <![endif]-->
+
+  <!-- search box style -->
+   <Style>
+       #pac-input {
+        background-color: #fff;
+        padding: 0 11px 0 13px;
+        width: 240px;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        text-overflow: ellipsis;
+      }
+   </Style>
+
+
+
   </head>
   <body style=''> <!--for the navibar always top-->
 
     <div class='container'>
-
+    <input id="pac-input"></input>
   <div>
             
         {% with active_nav='nav-propose' %}
@@ -89,7 +105,7 @@
   </div>
   
   <div class="col-md-9" id ='mapcanvas' style='height:400px;width:400px;'>
-    
+  <input id="pac-input" class="controls" type="text" placeholder="Search Box">
 
   </div>
 
@@ -99,6 +115,11 @@
 
 
     <!-- Load JS here for greater good =============================-->
+
+    <!-- import the Google map api -->
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true&language=en"></script>
+
+
     <script src={{ url_for('static', filename='../static/Flat-UI-master/js/jquery-1.8.3.min.js')}} ></script>
     <script src={{ url_for('static', filename='../static/Flat-UI-master/js/jquery-ui-1.10.3.custom.min.js')}} ></script>
     <script src={{ url_for('static', filename='../static/Flat-UI-master/js/jquery.ui.touch-punch.min.js')}} ></script>
@@ -115,7 +136,7 @@
     <link href={{ url_for('static', filename='../static/bootstrap-timepicker/css/bootstrap-timepicker.css' )}} rel="stylesheet">
 
     <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
-
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
 
      <script>
       $(document).ready(function() {   
@@ -171,6 +192,7 @@
             };
 
             var map = new google.maps.Map(document.getElementById("mapcanvas"), myOptions);
+
             
             var marker = new google.maps.Marker({
                 position: latlng, 
@@ -180,12 +202,88 @@
                 draggable:true
             });
           
+
+
+
+          // Create the search box and link it to the UI element.
+            var input = /** @type {HTMLInputElement} */(
+            document.getElementById('pac-input'));
+            map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+           var searchBox = new google.maps.places.SearchBox(
+           /** @type {HTMLInputElement} */(input));
+
+          
+          // [START region_getplaces]
+          // Listen for the event fired when the user selects an item from the
+          // pick list. Retrieve the matching places for that item.
+          google.maps.event.addListener(searchBox, 'places_changed', function(data) 
+          {
+
+              // markers = [];
+               var bounds = new google.maps.LatLngBounds();
+
+
+               var places = searchBox.getPlaces();
+             
+
+                 place = places[0];
+                  // Create a marker for each place.
+                 marker = new google.maps.Marker({
+                 map: map,
+                 
+                 title: place.name,
+                 position: place.geometry.location,
+                 description: ("GEO [" + position.coords.latitude + ":" + position.coords.longitude + "]") ,  
+                 title:"You are here! (at least within a "+position.coords.accuracy+" meter radius)",
+                 draggable:true
+                 
+               });
+
+
+
+
+                 google.maps.event.addListener(marker, 'click', function(data)
+                  {
+                    var infowindow = new google.maps.InfoWindow();
+                    infowindow.setContent(this.description);
+                    infowindow.open(map, this);
+                 });
+
+
+                 // markers.push(marker);
+
+                  bounds.extend(place.geometry.location)
+
+               
+
+                 google.maps.event.addListener(marker, 'dragend', function(data){
+                 //alert(this.position.e);
+                 //alert(this.position.d);
+                 locGeoLat = this.position.A;
+                 locGeoLng = this.position.k;
+                 this.description = "GEO [" + locGeoLat + ":" + locGeoLng + "]";
+                 });
+
+           
+
+               map.fitBounds(bounds);
+
+          });
+          // [END region_getplaces]
+
+        google.maps.event.addListener(map, 'bounds_changed', function()
+         {
+           var bounds = map.getBounds();
+           searchBox.setBounds(bounds);
+         });
+
           
             google.maps.event.addListener(marker, 'dragend', function(data){
               //alert(this.position.e);
               //alert(this.position.d);
-              locGeoLat = this.position.e;
-              locGeoLng = this.position.d;
+              locGeoLat = this.position.A;
+              locGeoLng = this.position.k;
               this.description = "GEO [" + locGeoLat + ":" + locGeoLng + "]";
             });
 
