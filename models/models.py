@@ -9,6 +9,7 @@ class EventModel(db.Document):
     title = db.StringField()
     description = db.StringField()  
     createTime = db.DateTimeField(default=datetime.datetime.now)
+    eventDate = db.StringField()
     startTime = db.StringField()
     endTime = db.StringField()
     userID = db.StringField()
