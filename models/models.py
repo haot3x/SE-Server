@@ -25,6 +25,13 @@ class ProfileModel(db.Document):
     gender = db.StringField()
     description = db.StringField()
 
+class EventMatchModel(db.Document):
+    eventId = db.StringField()
+    eventOwnerId = db.StringField()
+    reqUserId = db.StringField()
+    status = db.StringField(default='open')
+
+
 # no use now
 from google.appengine.ext import ndb
 class TestModel(ndb.Model):
