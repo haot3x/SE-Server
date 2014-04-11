@@ -71,7 +71,7 @@
 	    <div class="form-group">
 	      <label class="col-sm-2 control-label">Gender</label>
         <div class="col-sm-10">
-        <select id="disabledSelect" class="form-control">
+        <select id="gender" class="form-control">
           <option>Male</option>
           <option>Female</option>
         </select>
@@ -82,7 +82,7 @@
       <div class="form-group">
         <label class="col-sm-2 control-label">Age</label>
         <div class="col-sm-10">
-          <input type="text" id="name" class="form-control" placeholder="age_from_server">
+          <input type="text" id="age" class="form-control" placeholder="age_from_server">
         </div>    
       </div>
 
@@ -91,7 +91,7 @@
       <div class="form-group">
         <label class="col-sm-2 control-label">Description</label>
         <div class="col-sm-12">
-          <textarea class="form-control" rows="3">description_from_server</textarea>
+          <textarea id = "description" class="form-control" rows="3">description_from_server</textarea>
         </div>    
       </div>
 
@@ -99,7 +99,7 @@
     </fieldset>
 
       <div class="from-group">
-        <a type="button" class="btn btn-primary" href="/profile">Done</a>
+        <input id='postAjaxBtn' class="btn btn-primary btn-block" value='Done' >
         <a type="button" class="btn btn-danger" href="/profile">Cancel</a>
         
       </div>
@@ -165,10 +165,17 @@
 
 
           $("#postAjaxBtn").click(function(event){
-
-          var data = {"_method":"POST","title":$("#title").val(),"description":$("#description").val(),"location":$("#location").val(),"time":$("#time").val()}
+            console.log('=============');
+            console.log('=============');
+            console.log('=============');
+            var data = {"_method":"POST",
+              "name":$("#name").val(),
+              "gender":$("#gender").val(),
+              "age":$("#age").val(),
+              "description":$("#description").val()
+            }
           var djson = JSON.stringify(data);
-          var url = "{{ url_for('event_api.api_event_post') }}";
+          var url = "{{ url_for('profile_api.api_profile_post') }}";
     
           console.log(djson);
           $.ajax({
@@ -181,7 +188,7 @@
                 console.log(e);
               },
               success: function(data){
-                window.location = '/events';
+                window.location = '/profile';
                }
             
             });

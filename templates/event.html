@@ -113,6 +113,13 @@
 
 </div>
 
+{% if paras.user_id == ev.userID %}
+<input id='postAjaxBtn' class="btn btn-primary btn-lg btn-block" value='yes' >
+{% else %}
+<input id='postAjaxBtn' class="btn btn-primary btn-lg btn-block" value='no' >
+{% endif %}
+
+
 
     <!-- Load JS here for greater good =============================-->
 
@@ -143,6 +150,9 @@
           
         console.log('{{ current_user.email }}');
         console.log('{{ current_user.id }}');
+        console.log('{{ paras.user_id }}');
+        console.log('{{ ev.userID }}');
+
 
         ACTION =  "{{paras.action}}"; //create view edit
 

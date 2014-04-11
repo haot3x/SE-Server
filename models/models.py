@@ -25,6 +25,7 @@ class ProfileModel(db.Document):
     gender = db.StringField()
     description = db.StringField()
 
+
 # no use now
 from google.appengine.ext import ndb
 class TestModel(ndb.Model):

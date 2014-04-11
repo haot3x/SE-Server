@@ -56,19 +56,14 @@ def api_profile_edit():
 def api_profile_post():
     print request
     if request.method == 'POST':
-        title = request.json['title']
+        name = request.json['name']
+        gender = request.json['gender']
+        age = request.json['age']
         description = request.json['description']
-        location = request.json['location']
-        startTime = request.json['startTime']
-        endTime = request.json['endTime']
-        startTime = request.json['startTime']
-        userID = request.json['userID']
-        latitude = request.json['latitude']
-        longitude = request.json['longitude']
-        ZIP = request.json['ZIP']
+        
 
         #model = ProfileModel(title=title,description=description,location=location,startTime=startTime,endTime=endTime,userID=userID,latitude=latitude,longitude=longitude,ZIP=ZIP)
-        model = ProfileModel(title=title,description=description,location=location,startTime=startTime,endTime=endTime,userID=userID,LatLng={"type":"Point","coordinates":[latitude,longitude]},ZIP=ZIP)
+        model = ProfileModel(name=name,gender = gender, age = age, description=description)
         doc = model.save()
         print json_util.dumps(doc.to_mongo())
         app.logger.info(doc)

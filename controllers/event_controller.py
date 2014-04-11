@@ -30,11 +30,13 @@ def api_event_create():
     return render_template('event.html', ev={},paras={"action":"create"})
 
 
-@event_api.route("/event/view/<_eid>", methods=['GET'])
-def api_event_view(_eid = None):
+@event_api.route("/event/view/<_eid>/<_uid>", methods=['GET'])
+def api_event_view(_eid = None, _uid = None):
     doc = EventModel.objects.get(id=_eid)
-    print doc['title']
-    return render_template('event.html', ev=doc,paras={"action":"view"})
+    print "==================="
+    print doc['userID']
+    
+    return render_template('event.html', ev=doc, paras={"user_id" : _uid, "action":"view"})
 
 @event_api.route("/event/edit/<_eid>", methods=['GET'])
 def api_event_edit(_eid = None):
