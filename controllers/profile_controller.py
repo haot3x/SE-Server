@@ -11,9 +11,8 @@ profile_api = Blueprint('profile_api', __name__)
 
 
 @profile_api.route("/profile/<_uid>", methods=['GET'])
-def profile_show(_uid = None):
+def api_profile_show(_uid = None):
     doc = ProfileModel.objects.get(_id=_uid)
-    #return render_template('profile.html')
     return json_util.dumps(doc.to_mongo(), default=json_util.default)
 
 
