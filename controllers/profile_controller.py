@@ -21,14 +21,6 @@ def api_profile_edit():
     return render_template('edit_profile.html')
 
 
-@profile_api.route("/profile/mine/<_uid>", methods=['GET'])
-def api_profile_show(_uid = None):
-    doc = ProfileModel.objects(userID=_uid)
-    return render_template('profile_list.html',profiles=doc,paras={"title":"My profiles",'action':'mine'})
-    #return  json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
-    # app.logger.info(docs)
-    #return render_template('profiles.html',profiles=doc)
-
 # @profile_api.route("/profile/create", methods=['GET'])
 # def api_profile_create():
 #     return render_template('profile.html', ev={},paras={"action":"create"})
@@ -60,27 +52,27 @@ def api_profile_show(_uid = None):
 #     else:
 #         return '[]'
 
-# @profile_api.route("/api/profile/create", methods=['POST'])
-# def api_profile_post():
-#     print request
-#     if request.method == 'POST':
-#         title = request.json['title']
-#         description = request.json['description']
-#         location = request.json['location']
-#         startTime = request.json['startTime']
-#         endTime = request.json['endTime']
-#         startTime = request.json['startTime']
-#         userID = request.json['userID']
-#         latitude = request.json['latitude']
-#         longitude = request.json['longitude']
-#         ZIP = request.json['ZIP']
+@profile_api.route("/api/profile/create", methods=['POST'])
+def api_profile_post():
+    print request
+    if request.method == 'POST':
+        title = request.json['title']
+        description = request.json['description']
+        location = request.json['location']
+        startTime = request.json['startTime']
+        endTime = request.json['endTime']
+        startTime = request.json['startTime']
+        userID = request.json['userID']
+        latitude = request.json['latitude']
+        longitude = request.json['longitude']
+        ZIP = request.json['ZIP']
 
-#         #model = ProfileModel(title=title,description=description,location=location,startTime=startTime,endTime=endTime,userID=userID,latitude=latitude,longitude=longitude,ZIP=ZIP)
-#         model = ProfileModel(title=title,description=description,location=location,startTime=startTime,endTime=endTime,userID=userID,LatLng={"type":"Point","coordinates":[latitude,longitude]},ZIP=ZIP)
-#         doc = model.save()
-#         print json_util.dumps(doc.to_mongo())
-#         app.logger.info(doc)
-#         return json_util.dumps(doc.to_mongo())
+        #model = ProfileModel(title=title,description=description,location=location,startTime=startTime,endTime=endTime,userID=userID,latitude=latitude,longitude=longitude,ZIP=ZIP)
+        model = ProfileModel(title=title,description=description,location=location,startTime=startTime,endTime=endTime,userID=userID,LatLng={"type":"Point","coordinates":[latitude,longitude]},ZIP=ZIP)
+        doc = model.save()
+        print json_util.dumps(doc.to_mongo())
+        app.logger.info(doc)
+        return json_util.dumps(doc.to_mongo())
 
 
 
