@@ -228,6 +228,12 @@
              
 
                  place = places[0];
+                 disc = place['formatted_address'];
+                 //set location box to search box value
+                 $("#location").val(disc);
+                 
+
+
                   // Create a marker for each place.
                  marker = new google.maps.Marker({
                  map: map,

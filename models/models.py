@@ -19,6 +19,12 @@ class EventModel(db.Document):
     ZIP = db.StringField()
     status = db.StringField(default='new')
 
+
+class ProfileModel(db.Document):
+    name = db.StringField()
+    gender = db.StringField()
+    description = db.StringField()
+
 # no use now
 from google.appengine.ext import ndb
 class TestModel(ndb.Model):
@@ -29,3 +35,4 @@ class TestModel(ndb.Model):
     @classmethod
     def query_testmodel(cls, ancestor_key):
         return cls.query(ancestor=ancestor_key).order(-cls.date)
+

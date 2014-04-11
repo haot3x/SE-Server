@@ -66,7 +66,7 @@ app = Flask(__name__.split('.')[0])
 app.config['DEBUG'] = True
 app.config['SECRET_KEY'] = 'super-secret'
 app.config['SECURITY_REGISTERABLE'] = True
-app.config['SECURITY_POST_LOGIN_VIEW'] = 'a_page_requires_login'
+app.config['SECURITY_POST_LOGIN_VIEW'] = '/'
 
 
 # # At top of file
@@ -125,6 +125,9 @@ app.register_blueprint(test_api)
 
 from controllers.event_controller import event_api
 app.register_blueprint(event_api)
+
+from controllers.profile_controller import profile_api
+app.register_blueprint(profile_api)
 
 # @app.before_first_request
 # def create_user():
