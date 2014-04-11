@@ -62,17 +62,32 @@
       <div class="form-group">
         <label class="col-sm-2 control-label">Name</label>
         <div class="col-sm-10">
-          <input type="text" id="name" class="form-control" placeholder="name_from_server">
+          {% if action == 'exist' %}
+          <input type="text" id="name" class="form-control" value = '{{profile.name}}'>
+          {% elif action == 'create'%}
+          <input type="text" id="name" class="form-control" value = 'your name'>
+          {% else %}
+          {% endif %}
         </div>
       </div>
       
       <div class="form-group">
         <label class="col-sm-2 control-label">Gender</label>
         <div class="col-sm-10">
+
+        {% if action == 'exist' %}
+        <select id="gender" class="form-control" value = '{{profile.gender}}'>
+          <option>Male</option>
+          <option>Female</option>
+        </select>
+
+        {% elif action == 'create'%}
         <select id="gender" class="form-control">
           <option>Male</option>
           <option>Female</option>
         </select>
+        {% else %}
+        {% endif %}
         </div>
       </div>
 
@@ -80,7 +95,13 @@
       <div class="form-group">
         <label class="col-sm-2 control-label">Age</label>
         <div class="col-sm-10">
-          <input type="text" id="age" class="form-control" placeholder="age_from_server">
+
+          {% if action == 'exist' %}
+          <input type="text" id="age" class="form-control" value = '{{profile.age}}'>
+          {% elif action == 'create'%}
+          <input type="text" id="age" class="form-control" value = 'your age'>
+          {% else %}
+          {% endif %}
         </div>    
       </div>
 
@@ -89,7 +110,12 @@
       <div class="form-group">
         <label class="col-sm-2 control-label">Description</label>
         <div class="col-sm-12">
-          <textarea class="form-control" rows="3">description_from_server</textarea>
+          {% if action == 'exist' %}
+          <textarea class="form-control" rows="3" value = '{{profile.description}}'></textarea>
+          {% elif action == 'create'%}
+          <textarea class="form-control" rows="3" value = 'breifly describe yourself'></textarea>
+          {% else %}
+          {% endif %}
         </div>    
       </div>
 
@@ -97,7 +123,14 @@
     </fieldset>
 
       <div class="from-group">
-        <a type="button" class="btn btn-primary" href="{{ url_for('profile_api.api_profile_edit') }}">Edit</a>
+
+        {% if action == 'exist' %}
+        <a type="button" class="btn btn-primary" href="{{ url_for('profile_api.api_profile_edit',  _uid = current_user.id ) }}">Edit</a>
+        {% elif action == 'create'%}
+        <a type="button" class="btn btn-primary" href="{{ url_for('profile_api.api_profile_create',  _uid = current_user.id ) }}">Edit</a>
+        {% else %}
+          {% endif %}
+
         <button type="button" class="btn btn-default" disabled="disabled">Cancel</button>
         
       </div>

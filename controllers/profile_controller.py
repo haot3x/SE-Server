@@ -10,15 +10,31 @@ from models.models import ProfileModel
 profile_api = Blueprint('profile_api', __name__)
 
 
-@profile_api.route("/profile", methods=['GET'])
-def api_profile_show():
-    return render_template('profile.html')
+@profile_api.route("/profile/view/<_uid>", methods=['GET'])
+def api_profile_show(_uid = None):
+    try:
+        doc = ProfileModel.objects.get(userID=_uid)
+        return render_template('profile.html', profile = doc, action = 'exist')
+    except Exception,e:
+        #TODO: clean up here
+        #for first time create
+        return render_template('profile.html', action = 'create')
+    
 
 
+@profile_api.route("/profile/create/<_uid>", methods=['GET'])
+def api_profile_create(_uid = None):
+    return render_template('edit_profile.html', action='create')
+    
 
-@profile_api.route("/edit_profile", methods=['GET'])
-def api_profile_edit():
-    return render_template('edit_profile.html')
+
+@profile_api.route("/profile/edit/<_uid>", methods=['GET'])
+def api_profile_edit(_uid = None):
+    try:
+        doc = ProfileModel.objects.get(userID=_uid)
+        return render_template('edit_profile.html', profile = doc, action='edit')
+    except Exception,e:
+        pass
 
 
 # @profile_api.route("/profile/create", methods=['GET'])
@@ -60,14 +76,36 @@ def api_profile_post():
         gender = request.json['gender']
         age = request.json['age']
         description = request.json['description']
-        
+        userID = request.json['userID']        
 
         #model = ProfileModel(title=title,description=description,location=location,startTime=startTime,endTime=endTime,userID=userID,latitude=latitude,longitude=longitude,ZIP=ZIP)
-        model = ProfileModel(name=name,gender = gender, age = age, description=description)
+        model = ProfileModel(name=name,gender = gender, age = age, description=description, userID=userID)
         doc = model.save()
         print json_util.dumps(doc.to_mongo())
         app.logger.info(doc)
         return json_util.dumps(doc.to_mongo())
+    elif request.method == 'PUT':
+        userID = request.json['userID']
+        doc = ProfileModel.objects.get(userID=userID)
+        if doc is None:
+            return "{'status':'error'}"
+        else:
+            name = request.json['name']
+            gender = request.json['gender']
+            age = request.json['age']
+            description = request.json['description']
+
+            if not name is None and name == '':
+                doc.name = name
+            if not gender is None and gender == '':
+                doc.gender = gender
+            if not age is None and age == '':
+                doc.age = age
+            if not description is None and description == '':
+                doc.description = description
+            doc.save()
+            return json_util.dumps(doc.to_mongo())
+
 
 
 
