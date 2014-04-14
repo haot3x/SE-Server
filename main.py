@@ -129,6 +129,9 @@ app.register_blueprint(event_api)
 from controllers.profile_controller import profile_api
 app.register_blueprint(profile_api)
 
+from controllers.match_controller import eventmatch_api
+app.register_blueprint(eventmatch_api)
+
 # @app.before_first_request
 # def create_user():
 #     user_datastore.create_user(email='test@yale.edu', password='qwe123')
