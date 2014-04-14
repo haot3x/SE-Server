@@ -71,7 +71,9 @@ def api_profile_edit(_uid = None):
 @profile_api.route("/api/profile/create", methods=['POST'])
 def api_profile_post():
     print request
-    if request.method == 'POST':
+    _method = request.json['_method']
+
+    if _method == 'POST':
         name = request.json['name']
         gender = request.json['gender']
         age = request.json['age']
@@ -84,27 +86,27 @@ def api_profile_post():
         print json_util.dumps(doc.to_mongo())
         app.logger.info(doc)
         return json_util.dumps(doc.to_mongo())
-    elif request.method == 'PUT':
+    elif _method == 'PUT':
         userID = request.json['userID']
         doc = ProfileModel.objects.get(userID=userID)
-        if doc is None:
-            return "{'status':'error'}"
-        else:
-            name = request.json['name']
-            gender = request.json['gender']
-            age = request.json['age']
-            description = request.json['description']
 
-            if not name is None and name == '':
-                doc.name = name
-            if not gender is None and gender == '':
-                doc.gender = gender
-            if not age is None and age == '':
-                doc.age = age
-            if not description is None and description == '':
-                doc.description = description
-            doc.save()
-            return json_util.dumps(doc.to_mongo())
+        name = request.json['name']
+        gender = request.json['gender']
+        age = request.json['age']
+        description = request.json['description']
+
+        print "here"
+
+        if not name is None and name == '':
+            doc.name = name
+        if not gender is None and gender == '':
+            doc.gender = gender
+        if not age is None and age == '':
+            doc.age = age
+        if not description is None and description == '':
+            doc.description = description
+        doc.save()
+        return json_util.dumps(doc.to_mongo())
 
 
 

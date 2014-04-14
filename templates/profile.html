@@ -76,10 +76,18 @@
         <div class="col-sm-10">
 
         {% if action == 'exist' %}
-        <select id="gender" class="form-control" value = '{{profile.gender}}'>
-          <option>Male</option>
-          <option>Female</option>
-        </select>
+        
+          {% if profile.gender == 'Male' %}
+          <select id="gender" class="form-control">
+            <option selected>Male</option>
+            <option>Female</option>
+          </select>
+          {% else%}
+          <select id="gender" class="form-control">
+            <option>Male</option>
+            <option selected>Female</option>
+          </select>
+          {% endif%}
 
         {% elif action == 'create'%}
         <select id="gender" class="form-control">
@@ -111,9 +119,9 @@
         <label class="col-sm-2 control-label">Description</label>
         <div class="col-sm-12">
           {% if action == 'exist' %}
-          <textarea class="form-control" rows="3" value = '{{profile.description}}'></textarea>
+          <textarea class="form-control" rows="3">{{profile.description}}</textarea>
           {% elif action == 'create'%}
-          <textarea class="form-control" rows="3" value = 'breifly describe yourself'></textarea>
+          <textarea class="form-control" rows="3">breifly describe yourself</textarea>
           {% else %}
           {% endif %}
         </div>    

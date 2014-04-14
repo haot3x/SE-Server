@@ -113,12 +113,12 @@
 
 </div>
 
-{% if paras.user_id == ev.userID %}
-<input id='postAjaxBtn' class="btn btn-primary btn-lg btn-block" value='yes' >
-{% else %}
-<input id='postAjaxBtn' class="btn btn-primary btn-lg btn-block" value='no' >
-{% endif %}
 
+{% if paras.user_id == ev.userID %}
+<a type="button" class="btn btn-primary" >yes</a>
+{% else %}
+<a type="button" class="btn btn-primary" >no</a>
+{% endif %}
 
 
     <!-- Load JS here for greater good =============================-->
