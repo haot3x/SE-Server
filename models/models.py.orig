@@ -25,8 +25,12 @@ class ProfileModel(db.Document):
     gender = db.StringField()
     age = db.StringField()
     description = db.StringField()
+<<<<<<< HEAD
+    
+=======
     userID = db.StringField()
-    photo = db.FileField()
+
+>>>>>>> 6882ead5e65c7fec46914801b76c8682de1b11c7
 
 class EventMatchModel(db.Document):
     eventId = db.StringField()

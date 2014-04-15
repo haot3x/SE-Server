@@ -21,6 +21,11 @@ def api_profile_show(_uid = None):
         return render_template('profile.html', action = 'create')
     
 
+<<<<<<< HEAD
+@profile_api.route("/edit_profile", methods=['GET'])
+def api_profile_edit():
+    return render_template('edit_profile.html')
+=======
 
 @profile_api.route("/profile/create/<_uid>", methods=['GET'])
 def api_profile_create(_uid = None):
@@ -38,19 +43,6 @@ def api_profile_edit(_uid = None):
 
 # ######################## APIs BELOW ########################
 
-
-@profile_api.route("/api/profile/image/<_uid>", methods=['POST'])
-def api_profile_image(_uid = None):
-    doc = ProfileModel.objects.get(userID=_uid)
-    print doc
-    try:
-        img = request.files['img']
-        doc.photo.put(img, content_type = 'image/jpeg') 
-    except Exception, e:
-        return str(e)
-    
-    
-    return json_util.dumps(doc.to_mongo())
 
 @profile_api.route("/api/profile/create", methods=['POST'])
 def api_profile_post():
@@ -123,3 +115,4 @@ def api_profile_post():
 #             doc.save()
 #             print json_util.dumps(doc.to_mongo())
 #             return json_util.dumps(doc.to_mongo())
+>>>>>>> 6882ead5e65c7fec46914801b76c8682de1b11c7
