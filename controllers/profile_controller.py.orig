@@ -10,6 +10,7 @@ from models.models import ProfileModel
 profile_api = Blueprint('profile_api', __name__)
 
 
+<<<<<<< HEAD
 @profile_api.route("/profile/view/<_uid>", methods=['GET'])
 def api_profile_show(_uid = None):
     try:
@@ -20,6 +21,12 @@ def api_profile_show(_uid = None):
         #for first time create
         return render_template('profile.html', action = 'create')
     
+=======
+@profile_api.route("/profile/<_uid>", methods=['GET'])
+def api_profile_show(_uid = None):
+    doc = ProfileModel.objects.get(_id=_uid)
+    return json_util.dumps(doc.to_mongo(), default=json_util.default)
+>>>>>>> 676062dc004644c0d5c16834d4f66876a499488f
 
 
 @profile_api.route("/profile/create/<_uid>", methods=['GET'])
@@ -27,6 +34,7 @@ def api_profile_create(_uid = None):
     return render_template('edit_profile.html', action='create')
     
 
+<<<<<<< HEAD
 
 @profile_api.route("/profile/edit/<_uid>", methods=['GET'])
 def api_profile_edit(_uid = None):
@@ -36,8 +44,37 @@ def api_profile_edit(_uid = None):
     except Exception,e:
         pass
 
+
+# @profile_api.route("/profile/create", methods=['GET'])
+# def api_profile_create():
+#     return render_template('profile.html', ev={},paras={"action":"create"})
+
+
+# @profile_api.route("/profile/view/<_eid>", methods=['GET'])
+# def api_profile_view(_eid = None):
+#     doc = ProfileModel.objects.get(id=_eid)
+#     print doc['title']
+#     return render_template('profile.html', ev=doc,paras={"action":"view"})
+
+# @profile_api.route("/profile/edit/<_eid>", methods=['GET'])
+# def api_profile_edit(_eid = None):
+#     doc = ProfileModel.objects.get(id=_eid)
+#     return render_template('profile.html', ev=doc,paras={"action":"edit"})
+
+
 # ######################## APIs BELOW ########################
 
+# @profile_api.route("/api/profile/near/<_eid>/<_dist>", methods=['GET'])
+# def api_profile_near(_eid = None, _dist = 10):
+#     """ http://mongoengine-odm.readthedocs.org/guide/querying.html#geo-queries """
+#     if _eid is not None:
+#         ev = ProfileModel.objects.get(id=_eid)
+#         LatLng = ev['LatLng']['coordinates']
+#         dist = int(_dist)
+#         doc = ProfileModel.objects(LatLng__geo_within_center=[[LatLng[0], LatLng[1]],dist])
+#         return json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
+#     else:
+#         return '[]'
 
 @profile_api.route("/api/profile/create", methods=['POST'])
 def api_profile_post():
@@ -66,16 +103,16 @@ def api_profile_post():
         age = request.json['age']
         description = request.json['description']
 
-        if not name is None or name == '':
-            print "heheehehehe"
-            doc.name = name
-        if not gender is None or gender == '':
-            doc.gender = gender
-        if not age is None or age == '':
-            doc.age = age
-        if not description is None or description == '':
-            doc.description = description
+        print "here"
 
+        if not name is None and name == '':
+            doc.name = name
+        if not gender is None and gender == '':
+            doc.gender = gender
+        if not age is None and age == '':
+            doc.age = age
+        if not description is None and description == '':
+            doc.description = description
         doc.save()
         return json_util.dumps(doc.to_mongo())
 
@@ -110,3 +147,8 @@ def api_profile_post():
 #             doc.save()
 #             print json_util.dumps(doc.to_mongo())
 #             return json_util.dumps(doc.to_mongo())
+=======
+@profile_api.route("/edit_profile", methods=['GET'])
+def api_profile_edit():
+    return render_template('edit_profile.html')
+>>>>>>> 676062dc004644c0d5c16834d4f66876a499488f

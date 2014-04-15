@@ -175,36 +175,9 @@
           
           var _uid = '{{current_user.id}}';
           console.log(_uid);
+          console.log($("#img").val);
 
-          function tableReset()
-          {
-              $.each($("#demoTable tr"),function(i,tr){
-                $(this).remove();
-              });
-              
-              $('#demoTable thead').after("<tr><th>id</th><th>k1</th><th>k2</th><th>D</th><th>U</th></tr>");
-          }
-
-          function tableInsert(obj)
-          {
-            var newtr = "<tr><td>" + obj['_id']['$oid']+ "</td>" 
-            + "<td>" + obj['k1']+ "</td>" 
-            + "<td>" + obj['k2']+ "</td>"
-            + "<td><button class='deleteAjaxBtn btn-xs btn-danger'>DELETE</button></td>"
-            + "<td><button class='updateAjaxBtn btn-xs btn-warning'>UPDATE</button></td>"
-            + "</tr>";
-
-            $('#demoTable tr:last').after(newtr);
-          }
-
-          //Assume the same id
-          function tableRemove(obj)
-          {
-            var id = obj['_id']['$oid'];
-            $("#demoTable tr td:contains('"+id+"')").parent().remove();
-          }
-
-
+          
           $("#createAjaxBtn").click(function(event){
             var data = {"_method":"POST",
               "userID":_uid,
@@ -266,69 +239,6 @@
 
           });
 
-
-          /*
-          The type of request to make ("POST" or "GET"), default is "GET". Note: Other HTTP request methods, such as PUT and DELETE, can also be used here, but they are not supported by all browsers.
-          */
-          $(document).on('click', '.deleteAjaxBtn', function(){
-          
-            var data = {"_method":"DELETE"}
-            var djson = JSON.stringify(data);
-            var docid = $(this).parent().siblings().first().text();
-            var url = "{{ url_for('test_api.test_mongo_getputdelete', _id=null) }}"; // page generated from server...
-            url = url +  docid;
-
-            console.log(djson);
-            console.log(url);
-            
-            $.ajax({
-              type: "POST",
-              url: url,
-              data: djson,
-              contentType: 'application/json;charset=UTF-8',
-              error: function(e) {
-                console.log("get an error");
-                console.log(e);
-                alert("error");
-              },
-              success: function(data){
-                //alert("DELETEed + " + data);
-                obj = $.parseJSON(data);
-                tableRemove(obj);
-              }
-            
-            });
-
-          });
-
-          $(document).on('click', '.updateAjaxBtn', function(){
-            var docid = $(this).parent().siblings().first().text();
-            var url = "{{ url_for('test_api.test_mongo_getputdelete', _id=null) }}";
-            url = url +  docid;
-            
-            var data = {"_method":"PUT","k1":$("#k1").val(),"k2":$("#k2").val()}
-            var djson = JSON.stringify(data);
-            
-            $.ajax({
-              type: "POST",
-              url: url,
-              data: djson,
-              contentType: 'application/json;charset=UTF-8',
-              error: function(e) {
-                console.log("get an error");
-                console.log(e);
-                alert("error");
-              },
-              success: function(data){
-                //alert("Updated + " + data);
-                obj = $.parseJSON(data);
-                tableRemove(obj);
-                tableInsert (obj); 
-              }
-            
-            });
-
-          });
 
 
         });
