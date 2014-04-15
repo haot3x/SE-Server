@@ -6,6 +6,9 @@ from bson import json_util
 
 from main import app,db,security
 from models.models import EventMatchModel
+from models.models import EventModel
+
+
 from mongoengine.queryset import Q
 
 import random, string

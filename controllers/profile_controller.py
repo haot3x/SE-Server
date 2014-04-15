@@ -39,6 +39,19 @@ def api_profile_edit(_uid = None):
 # ######################## APIs BELOW ########################
 
 
+@profile_api.route("/api/profile/image/<_uid>", methods=['POST'])
+def api_profile_image(_uid = None):
+    doc = ProfileModel.objects.get(userID=_uid)
+    print doc
+    try:
+        img = request.files['img']
+        doc.photo.put(img, content_type = 'image/jpeg') 
+    except Exception, e:
+        return str(e)
+    
+    
+    return json_util.dumps(doc.to_mongo())
+
 @profile_api.route("/api/profile/create", methods=['POST'])
 def api_profile_post():
     print request
