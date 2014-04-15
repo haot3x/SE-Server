@@ -95,16 +95,18 @@
       </div>     
     </div>
 
-    <div class="form-group input-append bootstrap-timepicker">
-       <label class="col-md-4 control-label">Start Time</label>
-       <div class="col-md-3">
+    {% if paras.action == 'create' %}
+    Create An Event!
+      <div class="form-group input-append bootstrap-timepicker">
+        <label class="col-md-4 control-label">Start Time</label>
+        <div class="col-md-3">
           <input type="text" id="startTimeHH" placeholder="HH" class="form-control" value='{{ev.startTimeHH}}'/>
-       </div> 
-       <div class="col-md-3">
+        </div> 
+        <div class="col-md-3">
           <input type="text" id="startTimeMM" placeholder="MM" class="form-control" value='{{ev.startTimeMM}}'/> 
-       </div> 
+        </div> 
 
-       <div class="col-md-2">
+        <div class="col-md-2">
           <select id="startTimeAP" class="form-control" "caret">
               <option>AM</option>
               <option>PM</option>
@@ -135,10 +137,28 @@
           </select>
        </div>   
     </div> 
+    {% elif paras.action == 'view' %}
+       <div class="form-group">
+       <label class="col-sm-4 control-label">Start Time</label>
+        <div class="col-sm-8">
+          <input type="text" id="startTime" placeholder="HH-MM" class="form-control" value='{{ev.startTime}}' />
+          <!--span class="input-icon fui-location"></span--> 
+        </div>     
+      </div>
+
+       <div class="form-group">
+       <label class="col-sm-4 control-label">End Time</label>
+        <div class="col-sm-8">
+          <input type="text" id="endTime" placeholder="HH-MM" class="form-control" value='{{ev.endTime}}' />
+          <!--span class="input-icon fui-location"></span--> 
+        </div>     
+      </div>
+
+    {% endif %}
 
 
 {% if paras.action == 'create' %}
-<input id='postAjaxBtn' class="btn btn-primary btn-lg btn-block" value='Create' >
+<input id='postAjaxBtn' class="btn btn-primary btn-lg" value='Create' >
 {% elif paras.action == 'view' %}
 <!--a class="btn btn-success btn-lg btn-block" href="/event/edit/{{ev.id}}" role="button">Edit</a-->
   <div class="form-group">
@@ -149,17 +169,17 @@
       </div>     
     </div>
   {% if current_user.id|string==ev.userID %} <!--TBD-->
-    <a class="btn btn-success btn-lg btn-block" href="/event/edit/{{ev.id}}" role="button">Edit</a> 
+    <a class="btn btn-success btn-lg " href="/event/edit/{{ev.id}}" role="button">Edit</a> 
   {% else %}
-    <input id='postAjaxBtn' class="btn btn-primary btn-lg btn-block" value='Request' >
+    <input id='requestAjaxBtn' class="btn btn-primary btn-lg" event = {{ev.id}} eventowner = {{ev.userID}} value='Request' >
     <!-- <a class="btn btn-success btn-lg btn-block" href="/" role="button">Request</a>  -->
   {% endif %}  
 {% elif paras.action == 'edit' %}
-<input id='editAjaxBtn' class="btn btn-primary btn-lg btn-block" value='Finish' disabled>
+<input id='editAjaxBtn' class="btn btn-primary btn-lg" abc = {{ev.id}} value='Finish' >
 {% else %}
 
 {% endif %}
-<a class="btn btn-warning btn-lg btn-block" href="/events" role="button">Cancel</a>
+<a class="btn btn-warning btn-lg " href="/events" role="button">Cancel</a>
              
   </div>
   
@@ -170,7 +190,6 @@
 
   {% if current_user.id|string == ev.userID %}
 
-    <input id='postAjaxBtn' class="col-md-9 btn btn-primary btn-lg btn-block" value='yes' >
     <div>
 
     <table id='requestList' class="table table-striped table-hover">
@@ -198,7 +217,7 @@
                       <!-- <b>Created On</b>: {{ev.createTime}}> -->
                     </td>
                   <td style="vertical-align:middle">
-                    <input class="btn btn-warning btn-mini btn-block" id = "updateAjaxBtn" href="/event/view/{{ev.id}}" role="button" value='Accept'>
+                    <input class="btn btn-warning btn-mini btn-block" id = "updateAjaxBtn" href="/event/view/{{ev.id}}" for = {{rq.reqUserId}} abc = {{rq.eventId}} role="button" value='Accept'>
                     <!-- <a class="btn btn-primary btn-mini btn-block" href="/event/view/{{ev.id}}" role="button">View Requester Profile</a>  -->
                     
                    </td>
@@ -210,7 +229,6 @@
     </table> 
   </div>
   {% else %}
-    <input id='postAjaxBtn' class="col-md-9 btn btn-primary btn-lg btn-block" value='no'><br>
     
   {% endif %}
 
@@ -458,16 +476,100 @@
 
           });
 
+
+
+        $("#requestAjaxBtn").click(function(event){
+          var eid = $(this).attr('event');
+          var oid = $(this).attr('eventowner');
+          var uid = userID;
+          var data = {"_method":"POST", 
+                      "eventId": eid, 
+                      "reqUserId": uid,
+                      "eventOwnerId":oid}
+
+          var djson = JSON.stringify(data);
+          var url = "{{ url_for('eventmatch_api.eventmatch_join_request') }}";
+    
+          console.log(djson);
+          $.ajax({
+              type: "POST",
+              url: url,
+              data: djson,
+              contentType: 'application/json;charset=UTF-8',
+              error: function(e) {
+                console.log("get an error");
+                console.log(e);
+              },
+              success: function(data){
+                window.location = '/events';
+               }
+            
+            });
+
+          });
+
+
+          $("#editAjaxBtn").click(function(event){
+
+          var eid = $(this).attr('abc');
+          var data = {"_method":"PUT",
+              "eventId":eid,
+              "title":$("#title").val(),
+              "description":$("#description").val(),
+              "location":$("#location").val(),
+              "eventDate": $("#eventDate").val(),
+              "startTime":$("#startTimeHH").val()+":"+$("#startTimeMM").val()+$("#startTimeAP").val(),
+              "endTime":$("#endTimeHH").val()+":"+$("#endTimeMM").val()+$("#endTimeAP").val(),
+              "latitude":locGeoLat,
+              "longitude":locGeoLng,
+              "ZIP":getZIP(locGeoLat + "," + locGeoLng),
+              "userID": userID
+            }
+
+          var djson = JSON.stringify(data);
+          var url = "{{ url_for('event_api.api_event_post') }}";
+    
+          console.log(djson);
+          $.ajax({
+              type: "POST",
+              url: url,
+              data: djson,
+              contentType: 'application/json;charset=UTF-8',
+              error: function(e) {
+                console.log("get an error");
+                console.log(e);
+              },
+              success: function(data){
+                window.location = '/events';
+               }
+            
+            });
+
+          });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
           $("#updateAjaxBtn").click(function(event){
-           var data = {"_method":"PUT",
-             "reqUserId":_uid,
-             "name":$("#name").val(),
-             "gender":$("#gender").val(),
-             "age":$("#age").val(),
-             "description":$("#description").val()
-           }
+           
+            var uid  = $(this).attr('for');
+            var eid = $(this).attr('abc');
+            var data = {"_method":"POST", "eventId": eid, "reqUserId": uid}
+
          var djson = JSON.stringify(data);
-         var url = "{{ url_for('profile_api.api_profile_post') }}";
+         var url = "{{ url_for('eventmatch_api.eventmatch_test_accept') }}";
    
          console.log(djson);
          $.ajax({
@@ -480,7 +582,7 @@
                console.log(e);
              },
              success: function(data){
-               window.location = '/profile/view/' + _uid;
+               window.location = '/event/view/' + eid;
               }
            
            });

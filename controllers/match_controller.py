@@ -6,6 +6,9 @@ from bson import json_util
 
 from main import app,db,security
 from models.models import EventMatchModel
+from models.models import EventModel
+
+
 from mongoengine.queryset import Q
 
 import random, string
@@ -63,12 +66,17 @@ def eventmatch_accept_request():
 			return json_util.dumps(doc.to_mongo())
 '''
 
-@eventmatch_api.route("/match/accept/eventid=<_eventid>&requserid=<_requserid>", methods=['GET'])
-def eventmatch_test_accept(_eventid = None, _requserid = None):
-	doc = EventMatchModel.objects(eventId=_eventid)
-	print doc
+@eventmatch_api.route("/match/accept", methods=['POST'])
+def eventmatch_test_accept():
+	print request
+	if request.method == "POST":
+		eventId = request.json['eventId']
+		reqUserId = request.json['reqUserId']
+	doc = EventMatchModel.objects(eventId=eventId)
+	doc2 = EventModel.objects.get(id=eventId)
 	for d in doc:
-		if (d.reqUserId == _requserid):
+		if (d.reqUserId == reqUserId):
+			doc2.status = "closed"
 			d.status = "matched"
 		else:
 			d.status = "declined"
@@ -89,6 +97,7 @@ def eventmatch_test():
 @eventmatch_api.route("/match/join/request", methods=['POST'])
 def eventmatch_join_request():
 	print request
+	print "abcdef"
 	if request.method == 'POST':
 		eventId = request.json['eventId']
 		eventOwnerId = request.json['eventOwnerId']

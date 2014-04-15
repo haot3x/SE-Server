@@ -31,15 +31,19 @@ def api_event_create():
     return render_template('event.html', ev={},paras={"action":"create"})
 
 
-@event_api.route("/event/view/<_eid>", methods=['GET'])
-def api_event_view(_eid = None):
+@event_api.route("/event/view/<_eid>/<_uid>", methods=['GET'])
+def api_event_view(_eid = None, _uid = None):
     doc = EventModel.objects.get(id=_eid)
-    print "doc="
-    print doc['startTime']
+<<<<<<< HEAD
     doc2 = EventMatchModel.objects(eventId = _eid)
-        
     print doc['title']
     return render_template('event.html', ev=doc, match=doc2,paras={"action":"view"})
+=======
+    print "==================="
+    print doc['userID']
+    
+    return render_template('event.html', ev=doc, paras={"user_id" : _uid, "action":"view"})
+>>>>>>> fd34db6375a1b66b22283c0ec383135ed3f21649
 
 @event_api.route("/event/edit/<_eid>", methods=['GET'])
 def api_event_edit(_eid = None):
@@ -63,18 +67,15 @@ def api_event_near(_eid = None, _dist = 10):
 
 @event_api.route("/api/event/create", methods=['POST'])
 def api_event_post():
-    
-    _method = request.json['_method']
-
-    if _method == 'POST':
-        print "entering here POST"
-
+    print request
+    if request.method == 'POST':
         title = request.json['title']
         description = request.json['description']
         location = request.json['location']
-        eventDate = request.json['eventDate']
+        eventDate = request.json['location']
         startTime = request.json['startTime']
         endTime = request.json['endTime']
+        startTime = request.json['startTime']
         userID = request.json['userID']
         latitude = request.json['latitude']
         longitude = request.json['longitude']
@@ -85,46 +86,6 @@ def api_event_post():
         doc = model.save()
         print json_util.dumps(doc.to_mongo())
         app.logger.info(doc)
-        return json_util.dumps(doc.to_mongo())
-    elif _method == 'PUT':
-        
-        eventId = request.json['eventId']
-        doc = EventModel.objects.get(id=eventId)
-        print "entering here PUT"
-        title = request.json['title']
-        description = request.json['description']
-        location = request.json['location']
-        eventDate = request.json['eventDate']
-        startTime = request.json['startTime']
-        endTime = request.json['endTime']
-        userID = request.json['userID']
-        latitude = request.json['latitude']
-        longitude = request.json['longitude']
-        ZIP = request.json['ZIP']
-
-        if not title is None or title == '':
-           doc.title = title
-        if not description is None or description == '':
-           doc.description = description
-        if not location is None or location == '':
-           doc.location = location
-        if not eventDate is None or eventDate == '':
-           doc.eventDate = eventDate
-        if not startTime is None or startTime == '':
-           doc.startTime = startTime
-        if not endTime is None or endTime == '':
-           doc.endTime = endTime
-        if not userID is None or userID == '':
-           doc.userID = userID
-        if not latitude is None or latitude == '':
-           doc.latitude = latitude
-        if not longitude is None or longitude == '':
-           doc.longitude = longitude 
-        if not ZIP is None or ZIP == '':
-           doc.ZIP = ZIP 
-
-
-        doc.save()
         return json_util.dumps(doc.to_mongo())
 
 
