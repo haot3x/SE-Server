@@ -186,19 +186,19 @@
            <a href="#"> <!-- (TBD) click to see event details -->
                 <tr>
                     <td valign="middle"> 
-                        <a href="/profile/{{current_user.id}}}"><img src="http://www.b2match.com/assets/fallback/default.png" alt="User Profile Photo" class="img-thumbnail img-responsive" > </a>
+                        <a href="{{ url_for('profile_api.api_profile_show',  _uid = rq.reqUserId )}}"><img src="http://www.b2match.com/assets/fallback/default.png" alt="User Profile Photo" class="img-thumbnail img-responsive" > </a>
         
                     </td>
                     <td style="vertical-align:middle">
-                      <b>Title</b>: {{ rq.eventId }}<br>
-                      <!-- <b>Time</b>: {{ ev.startTime }} <br> -->
-                      <!-- <b>Location</b>: {{ev.location}} [Lat,Lng]={{ev.LatLng.coordinates}} <br> -->
-                      <!-- <b>Description</b>: {{ ev.description }} -->
+                      <b>EventId</b>: {{ rq.eventId }}<br>
+                      <b>ReqUserId</b>: {{ rq.reqUserId }} <br> 
+                      <b>Status</b>: {{rq.status}} <br>
+                      <b>OwnerId</b>: {{ rq.eventOwnerId }}
                       <!-- <br> -->
                       <!-- <b>Created On</b>: {{ev.createTime}}> -->
                     </td>
                   <td style="vertical-align:middle">
-                    <a class="btn btn-warning btn-mini btn-block" href="/event/view/{{ev.id}}" role="button">Accept</a>
+                    <input class="btn btn-warning btn-mini btn-block" id = "updateAjaxBtn" href="/event/view/{{ev.id}}" role="button" value='Accept'>
                     <!-- <a class="btn btn-primary btn-mini btn-block" href="/event/view/{{ev.id}}" role="button">View Requester Profile</a>  -->
                     
                    </td>
@@ -457,6 +457,35 @@
             });
 
           });
+
+          $("#updateAjaxBtn").click(function(event){
+           var data = {"_method":"PUT",
+             "reqUserId":_uid,
+             "name":$("#name").val(),
+             "gender":$("#gender").val(),
+             "age":$("#age").val(),
+             "description":$("#description").val()
+           }
+         var djson = JSON.stringify(data);
+         var url = "{{ url_for('profile_api.api_profile_post') }}";
+   
+         console.log(djson);
+         $.ajax({
+             type: "POST",
+             url: url,
+             data: djson,
+             contentType: 'application/json;charset=UTF-8',
+             error: function(e) {
+               console.log("get an error");
+               console.log(e);
+             },
+             success: function(data){
+               window.location = '/profile/view/' + _uid;
+              }
+           
+           });
+
+         });
 
 
         });
