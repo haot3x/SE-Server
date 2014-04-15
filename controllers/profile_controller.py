@@ -15,8 +15,6 @@ def api_profile_show(_uid = None):
     doc = ProfileModel.objects.get(_id=_uid)
     return json_util.dumps(doc.to_mongo(), default=json_util.default)
 
-
-
 @profile_api.route("/edit_profile", methods=['GET'])
 def api_profile_edit():
     return render_template('edit_profile.html')
