@@ -6,7 +6,8 @@ from bson import json_util
 
 from main import app,db,security
 from models.models import EventModel
-
+from models.models import EventMatchModel
+eventmatch_api = Blueprint('eventmatch_api', __name__)
 event_api = Blueprint('event_api', __name__)
 
 @event_api.route("/events", methods=['GET'])
@@ -33,8 +34,9 @@ def api_event_create():
 @event_api.route("/event/view/<_eid>", methods=['GET'])
 def api_event_view(_eid = None):
     doc = EventModel.objects.get(id=_eid)
+    doc2 = EventMatchModel.objects(eventId = _eid)
     print doc['title']
-    return render_template('event.html', ev=doc,paras={"action":"view"})
+    return render_template('event.html', ev=doc, match=doc2,paras={"action":"view"})
 
 @event_api.route("/event/edit/<_eid>", methods=['GET'])
 def api_event_edit(_eid = None):
