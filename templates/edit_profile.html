@@ -42,7 +42,7 @@
           </div>
     
 	<div class="col-md-4">
-	  <form class="form-horizontal" role="form">
+	  <form class="form-horizontal" role="form" id='imgForm' enctype="multipart/form-data">
       <fieldset>
 
       <div class="from-group">
@@ -50,7 +50,7 @@
       <div class="fileinput fileinput-new" data-provides="fileinput">
         <div class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: 200px; height: 150px;"></div>
         <div>
-          <span class="btn btn-default btn-file"><span class="fileinput-new">Select image</span><span class="fileinput-exists">Change</span><input type="file" name="img"></span>
+          <span class="btn btn-default btn-file"><span class="fileinput-new">Select image</span><span class="fileinput-exists">Change</span><input type="file" id='img' name="img"></span>
           <a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
         </div>
       </div>
@@ -169,40 +169,16 @@
     <script src={{ url_for('static', filename='../static/Flat-UI-master/js/jquery.tagsinput.js')}} ></script>
     <script src={{ url_for('static', filename='../static/Flat-UI-master/js/jquery.placeholder.js')}} ></script>
     <script src={{ url_for('static', filename='../static/Flat-UI-master/js/jquery.scrollTo.min.js')}} ></script>
+
+
+    <script src={{ url_for('static', filename='../static/jquery/jquery.form.js')}} ></script>
    
      <script>
       $(document).ready(function() {   
           
           var _uid = '{{current_user.id}}';
           console.log(_uid);
-
-          function tableReset()
-          {
-              $.each($("#demoTable tr"),function(i,tr){
-                $(this).remove();
-              });
-              
-              $('#demoTable thead').after("<tr><th>id</th><th>k1</th><th>k2</th><th>D</th><th>U</th></tr>");
-          }
-
-          function tableInsert(obj)
-          {
-            var newtr = "<tr><td>" + obj['_id']['$oid']+ "</td>" 
-            + "<td>" + obj['k1']+ "</td>" 
-            + "<td>" + obj['k2']+ "</td>"
-            + "<td><button class='deleteAjaxBtn btn-xs btn-danger'>DELETE</button></td>"
-            + "<td><button class='updateAjaxBtn btn-xs btn-warning'>UPDATE</button></td>"
-            + "</tr>";
-
-            $('#demoTable tr:last').after(newtr);
-          }
-
-          //Assume the same id
-          function tableRemove(obj)
-          {
-            var id = obj['_id']['$oid'];
-            $("#demoTable tr td:contains('"+id+"')").parent().remove();
-          }
+          console.log($("#img").val);
 
 
           $("#createAjaxBtn").click(function(event){
@@ -235,9 +211,52 @@
           });
 
 
+          $('#img').change(function () {
+              console.log(this.files[0]);
+              //$("#img")[0].files[0]
+              //file = $("#img")[0].files[0];
+              
+              var formData = new FormData($('#imgForm')[0]);
+
+              $.ajax({
+                  type: 'POST',
+                  contentType:'multipart/form-data',
+                  url: '/api/profile/image/' + _uid,
+                  data: formData,
+                  success: function (data) {
+                    console.log(data);
+                  },
+                  error: function (data) {
+                    console.log(data);
+                  },
+                  // xhrFields: {
+                  //   // add listener to XMLHTTPRequest object directly for progress (jquery doesn't have this yet)
+                  //   onprogress: function (progress) {
+                  //     // calculate upload progress
+                  //     var percentage = Math.floor((progress.total / progress.totalSize) * 100);
+                  //     // log upload progress to console
+                  //     console.log('progress', percentage);
+                  //     if (percentage === 100) {
+                  //       console.log('DONE!');
+                  //     }
+                  //   }
+                  // },
+                  processData: false
+                  //contentType: file.type
+                });
+
+          });
+
+
+
 
 
           $("#updateAjaxBtn").click(function(event){
+            
+
+            var photo = $("#img").val();
+            console.log(photo);
+
             var data = {"_method":"PUT",
               "userID":_uid,
               "name":$("#name").val(),
@@ -266,69 +285,6 @@
 
           });
 
-
-          /*
-          The type of request to make ("POST" or "GET"), default is "GET". Note: Other HTTP request methods, such as PUT and DELETE, can also be used here, but they are not supported by all browsers.
-          */
-          $(document).on('click', '.deleteAjaxBtn', function(){
-          
-            var data = {"_method":"DELETE"}
-            var djson = JSON.stringify(data);
-            var docid = $(this).parent().siblings().first().text();
-            var url = "{{ url_for('test_api.test_mongo_getputdelete', _id=null) }}"; // page generated from server...
-            url = url +  docid;
-
-            console.log(djson);
-            console.log(url);
-            
-            $.ajax({
-              type: "POST",
-              url: url,
-              data: djson,
-              contentType: 'application/json;charset=UTF-8',
-              error: function(e) {
-                console.log("get an error");
-                console.log(e);
-                alert("error");
-              },
-              success: function(data){
-                //alert("DELETEed + " + data);
-                obj = $.parseJSON(data);
-                tableRemove(obj);
-              }
-            
-            });
-
-          });
-
-          $(document).on('click', '.updateAjaxBtn', function(){
-            var docid = $(this).parent().siblings().first().text();
-            var url = "{{ url_for('test_api.test_mongo_getputdelete', _id=null) }}";
-            url = url +  docid;
-            
-            var data = {"_method":"PUT","k1":$("#k1").val(),"k2":$("#k2").val()}
-            var djson = JSON.stringify(data);
-            
-            $.ajax({
-              type: "POST",
-              url: url,
-              data: djson,
-              contentType: 'application/json;charset=UTF-8',
-              error: function(e) {
-                console.log("get an error");
-                console.log(e);
-                alert("error");
-              },
-              success: function(data){
-                //alert("Updated + " + data);
-                obj = $.parseJSON(data);
-                tableRemove(obj);
-                tableInsert (obj); 
-              }
-            
-            });
-
-          });
 
 
         });

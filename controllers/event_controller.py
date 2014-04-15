@@ -5,9 +5,8 @@ from bson import json_util
 
 
 from main import app,db,security
-from models.models import EventModel
-from models.models import EventMatchModel
-eventmatch_api = Blueprint('eventmatch_api', __name__)
+from models.models import EventModel,EventMatchModel
+
 event_api = Blueprint('event_api', __name__)
 
 @event_api.route("/events", methods=['GET'])
@@ -31,6 +30,21 @@ def api_event_create():
     return render_template('event.html', ev={},paras={"action":"create"})
 
 
+
+#My Requests
+@event_api.route("/event/myrequest/<_uid>", methods=['GET'])
+def api_event_myrequest(_uid = None):
+    match = EventMatchModel.objects().filter(reqUserId = _uid)
+    eids = [d.eventId for d in match]
+
+
+    matchDict = dict((key, value) for (key, value) in [(d.eventId,d.status) for d in match])
+    print matchDict
+    print eids
+    event = EventModel.objects(id__in=eids)
+    #return json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
+    return render_template('event_list.html',events=event,matchDict=matchDict,paras={"title":"My Requests",'action':'myrequest'})
+
 @event_api.route("/event/view/<_eid>", methods=['GET'])
 def api_event_view(_eid = None):
     doc = EventModel.objects.get(id=_eid)
@@ -48,18 +62,21 @@ def api_event_edit(_eid = None):
 
 
 ######################## APIs BELOW ########################
-
-@event_api.route("/api/event/near/<_eid>/<_dist>", methods=['GET'])
-def api_event_near(_eid = None, _dist = 10):
+@event_api.route("/events/near", methods=['POST'])
+def api_event_near():
     """ http://mongoengine-odm.readthedocs.org/guide/querying.html#geo-queries """
-    if _eid is not None:
-        ev = EventModel.objects.get(id=_eid)
-        LatLng = ev['LatLng']['coordinates']
-        dist = int(_dist)
-        doc = EventModel.objects(LatLng__geo_within_center=[[LatLng[0], LatLng[1]],dist])
+    print request
+    if request.method == "POST":
+        dist = float(request.json['dist'])
+        _lat = float(request.json['lat'])
+        _lng = float(request.json['lng'])
+
+        doc = EventModel.objects(LatLng__geo_within_center=[[_lat, _lng], dist])
+        print len(doc)
+        #print json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
         return json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
-    else:
-        return '[]'
+        #return render_template('event_list.html', ev=doc, paras={"action": "radius_refresh"})
+
 
 @event_api.route("/api/event/create", methods=['POST'])
 def api_event_post():

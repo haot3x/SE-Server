@@ -36,37 +36,21 @@ def api_profile_edit(_uid = None):
     except Exception,e:
         pass
 
-
-# @profile_api.route("/profile/create", methods=['GET'])
-# def api_profile_create():
-#     return render_template('profile.html', ev={},paras={"action":"create"})
-
-
-# @profile_api.route("/profile/view/<_eid>", methods=['GET'])
-# def api_profile_view(_eid = None):
-#     doc = ProfileModel.objects.get(id=_eid)
-#     print doc['title']
-#     return render_template('profile.html', ev=doc,paras={"action":"view"})
-
-# @profile_api.route("/profile/edit/<_eid>", methods=['GET'])
-# def api_profile_edit(_eid = None):
-#     doc = ProfileModel.objects.get(id=_eid)
-#     return render_template('profile.html', ev=doc,paras={"action":"edit"})
-
-
 # ######################## APIs BELOW ########################
 
-# @profile_api.route("/api/profile/near/<_eid>/<_dist>", methods=['GET'])
-# def api_profile_near(_eid = None, _dist = 10):
-#     """ http://mongoengine-odm.readthedocs.org/guide/querying.html#geo-queries """
-#     if _eid is not None:
-#         ev = ProfileModel.objects.get(id=_eid)
-#         LatLng = ev['LatLng']['coordinates']
-#         dist = int(_dist)
-#         doc = ProfileModel.objects(LatLng__geo_within_center=[[LatLng[0], LatLng[1]],dist])
-#         return json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
-#     else:
-#         return '[]'
+
+@profile_api.route("/api/profile/image/<_uid>", methods=['POST'])
+def api_profile_image(_uid = None):
+    doc = ProfileModel.objects.get(userID=_uid)
+    print doc
+    try:
+        img = request.files['img']
+        doc.photo.put(img, content_type = 'image/jpeg') 
+    except Exception, e:
+        return str(e)
+    
+    
+    return json_util.dumps(doc.to_mongo())
 
 @profile_api.route("/api/profile/create", methods=['POST'])
 def api_profile_post():
@@ -95,16 +79,16 @@ def api_profile_post():
         age = request.json['age']
         description = request.json['description']
 
-        print "here"
-
-        if not name is None and name == '':
+        if not name is None or name == '':
+            print "heheehehehe"
             doc.name = name
-        if not gender is None and gender == '':
+        if not gender is None or gender == '':
             doc.gender = gender
-        if not age is None and age == '':
+        if not age is None or age == '':
             doc.age = age
-        if not description is None and description == '':
+        if not description is None or description == '':
             doc.description = description
+
         doc.save()
         return json_util.dumps(doc.to_mongo())
 
