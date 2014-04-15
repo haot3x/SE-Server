@@ -64,17 +64,38 @@
 	    <div class="form-group">
 	      <label class="col-sm-2 control-label">Name</label>
 	      <div class="col-sm-10">
-		      <input type="text" id="name" class="form-control" placeholder="name_from_server">
+		      {% if action == 'edit' %}
+          <input type="text" id="name" class="form-control" value = '{{profile.name}}'>
+          {% elif action == 'create'%}
+          <input type="text" id="name" class="form-control" value = 'your name'>
+          {% else %}
+          {% endif %}
 	      </div>
 	    </div>
       
 	    <div class="form-group">
 	      <label class="col-sm-2 control-label">Gender</label>
         <div class="col-sm-10">
-        <select id="disabledSelect" class="form-control">
+        {% if action == 'edit' %}
+
+          {% if profile.gender == 'Male' %}
+          <select id="gender" class="form-control">
+            <option selected>Male</option>
+            <option>Female</option>
+          </select>
+          {% else%}
+          <select id="gender" class="form-control">
+            <option>Male</option>
+            <option selected>Female</option>
+          </select>
+          {% endif%}
+        {% elif action == 'create'%}
+        <select id="gender" class="form-control">
           <option>Male</option>
           <option>Female</option>
         </select>
+        {% else %}
+        {% endif %}
         </div>
 	    </div>
 
@@ -82,7 +103,12 @@
       <div class="form-group">
         <label class="col-sm-2 control-label">Age</label>
         <div class="col-sm-10">
-          <input type="text" id="name" class="form-control" placeholder="age_from_server">
+           {% if action == 'edit' %}
+          <input type="text" id="age" class="form-control" value = '{{profile.age}}'>
+          {% elif action == 'create'%}
+          <input type="text" id="age" class="form-control" value = 'your age'>
+          {% else %}
+          {% endif %}
         </div>    
       </div>
 
@@ -91,7 +117,12 @@
       <div class="form-group">
         <label class="col-sm-2 control-label">Description</label>
         <div class="col-sm-12">
-          <textarea class="form-control" rows="3">description_from_server</textarea>
+          {% if action == 'edit' %}
+          <textarea class="form-control" id = "description" rows="3">{{profile.description}}</textarea>
+          {% elif action == 'create'%}
+          <textarea class="form-control" id = "description" rows="3" placeholder = 'breifly describe yourself'></textarea>
+          {% else %}
+          {% endif %}
         </div>    
       </div>
 
@@ -99,8 +130,15 @@
     </fieldset>
 
       <div class="from-group">
-        <a type="button" class="btn btn-primary" href="/profile">Done</a>
-        <a type="button" class="btn btn-danger" href="/profile">Cancel</a>
+
+          {% if action == 'create' %}
+          <a type = 'button' id='createAjaxBtn' class="btn btn-primary " >Done</a>
+          {% elif action == 'edit' %}
+          <a type = 'button' id='updateAjaxBtn' class="btn btn-primary " >Done</a>
+          
+          {% endif %}
+        
+        <a type="button" class="btn btn-danger" href="{{ url_for('profile_api.api_profile_show',  _uid = current_user.id ) }}">Cancel</a>
         
       </div>
 
@@ -135,6 +173,9 @@
      <script>
       $(document).ready(function() {   
           
+          var _uid = '{{current_user.id}}';
+          console.log(_uid);
+
           function tableReset()
           {
               $.each($("#demoTable tr"),function(i,tr){
@@ -164,11 +205,16 @@
           }
 
 
-          $("#postAjaxBtn").click(function(event){
-
-          var data = {"_method":"POST","title":$("#title").val(),"description":$("#description").val(),"location":$("#location").val(),"time":$("#time").val()}
+          $("#createAjaxBtn").click(function(event){
+            var data = {"_method":"POST",
+              "userID":_uid,
+              "name":$("#name").val(),
+              "gender":$("#gender").val(),
+              "age":$("#age").val(),
+              "description":$("#description").val()
+            }
           var djson = JSON.stringify(data);
-          var url = "{{ url_for('event_api.api_event_post') }}";
+          var url = "{{ url_for('profile_api.api_profile_post') }}";
     
           console.log(djson);
           $.ajax({
@@ -181,13 +227,44 @@
                 console.log(e);
               },
               success: function(data){
-                window.location = '/events';
+                window.location = '/profile/view/' + _uid;
                }
             
             });
 
           });
 
+
+
+
+          $("#updateAjaxBtn").click(function(event){
+            var data = {"_method":"PUT",
+              "userID":_uid,
+              "name":$("#name").val(),
+              "gender":$("#gender").val(),
+              "age":$("#age").val(),
+              "description":$("#description").val()
+            }
+          var djson = JSON.stringify(data);
+          var url = "{{ url_for('profile_api.api_profile_post') }}";
+    
+          console.log(djson);
+          $.ajax({
+              type: "POST",
+              url: url,
+              data: djson,
+              contentType: 'application/json;charset=UTF-8',
+              error: function(e) {
+                console.log("get an error");
+                console.log(e);
+              },
+              success: function(data){
+                window.location = '/profile/view/' + _uid;
+               }
+            
+            });
+
+          });
 
 
           /*
