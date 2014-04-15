@@ -5,13 +5,17 @@ from bson import json_util
 
 
 from main import app,db,security
-from models.models import EventModel,EventMatchModel
+from models.models import EventModel,EventMatchModel,ProfileModel
 
 event_api = Blueprint('event_api', __name__)
 
 @event_api.route("/events", methods=['GET'])
 def api_event_demo():
-    doc = EventModel.objects.all()
+    doc = EventModel.objects(status='new')
+    for d in doc:
+        num = EventMatchModel.objects(eventId=str(d.id)).count()
+        setattr(d, 'numOfRequests', num)
+
     # docs =  json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
     # app.logger.info(docs)
     return render_template('event_list.html',events=doc,paras={"title":"All Events",'action':'all'})
@@ -20,6 +24,9 @@ def api_event_demo():
 @event_api.route("/event/mine/<_uid>", methods=['GET'])
 def api_event_mine(_uid = None):
     doc = EventModel.objects(userID=_uid)
+    for d in doc:
+        num = EventMatchModel.objects(eventId=str(d.id)).count()
+        setattr(d, 'numOfRequests', num)
     return render_template('event_list.html',events=doc,paras={"title":"My Events",'action':'mine'})
     #return  json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
     # app.logger.info(docs)
@@ -42,13 +49,27 @@ def api_event_myrequest(_uid = None):
     print matchDict
     print eids
     event = EventModel.objects(id__in=eids)
+    for d in event:
+        num = EventMatchModel.objects(eventId=str(d.id)).count()
+        setattr(d, 'numOfRequests', num)
     #return json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
     return render_template('event_list.html',events=event,matchDict=matchDict,paras={"title":"My Requests",'action':'myrequest'})
 
 @event_api.route("/event/view/<_eid>", methods=['GET'])
 def api_event_view(_eid = None):
     doc = EventModel.objects.get(id=_eid)
-    print doc['title']
+
+    doc2 = EventMatchModel.objects(eventId=_eid)
+
+    for d in doc2:
+        doc3 = ProfileModel.objects.get(userID=d.reqUserId)
+        setattr(d, "reqProfile", doc3)
+
+    setattr(doc, "Requests", doc2)
+
+    #for d in doc.Requests:
+    #    print d.reqProfile.name
+
     return render_template('event.html', ev=doc,paras={"action":"view"})
 
 @event_api.route("/event/edit/<_eid>", methods=['GET'])
