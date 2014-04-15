@@ -64,17 +64,38 @@
 	    <div class="form-group">
 	      <label class="col-sm-2 control-label">Name</label>
 	      <div class="col-sm-10">
-		      <input type="text" id="name" class="form-control" placeholder="name_from_server">
+		      {% if action == 'edit' %}
+          <input type="text" id="name" class="form-control" value = '{{profile.name}}'>
+          {% elif action == 'create'%}
+          <input type="text" id="name" class="form-control" value = 'your name'>
+          {% else %}
+          {% endif %}
 	      </div>
 	    </div>
       
 	    <div class="form-group">
 	      <label class="col-sm-2 control-label">Gender</label>
         <div class="col-sm-10">
-        <select id="disabledSelect" class="form-control">
+        {% if action == 'edit' %}
+
+          {% if profile.gender == 'Male' %}
+          <select id="gender" class="form-control">
+            <option selected>Male</option>
+            <option>Female</option>
+          </select>
+          {% else%}
+          <select id="gender" class="form-control">
+            <option>Male</option>
+            <option selected>Female</option>
+          </select>
+          {% endif%}
+        {% elif action == 'create'%}
+        <select id="gender" class="form-control">
           <option>Male</option>
           <option>Female</option>
         </select>
+        {% else %}
+        {% endif %}
         </div>
 	    </div>
 
@@ -82,7 +103,12 @@
       <div class="form-group">
         <label class="col-sm-2 control-label">Age</label>
         <div class="col-sm-10">
-          <input type="text" id="name" class="form-control" placeholder="age_from_server">
+           {% if action == 'edit' %}
+          <input type="text" id="age" class="form-control" value = '{{profile.age}}'>
+          {% elif action == 'create'%}
+          <input type="text" id="age" class="form-control" value = 'your age'>
+          {% else %}
+          {% endif %}
         </div>    
       </div>
 
@@ -91,7 +117,12 @@
       <div class="form-group">
         <label class="col-sm-2 control-label">Description</label>
         <div class="col-sm-12">
-          <textarea class="form-control" rows="3">description_from_server</textarea>
+          {% if action == 'edit' %}
+          <textarea class="form-control" id = "description" rows="3">{{profile.description}}</textarea>
+          {% elif action == 'create'%}
+          <textarea class="form-control" id = "description" rows="3" placeholder = 'breifly describe yourself'></textarea>
+          {% else %}
+          {% endif %}
         </div>    
       </div>
 
@@ -99,8 +130,15 @@
     </fieldset>
 
       <div class="from-group">
-        <a type="button" class="btn btn-primary" href="/profile">Done</a>
-        <a type="button" class="btn btn-danger" href="/profile">Cancel</a>
+
+          {% if action == 'create' %}
+          <a type = 'button' id='createAjaxBtn' class="btn btn-primary " >Done</a>
+          {% elif action == 'edit' %}
+          <a type = 'button' id='updateAjaxBtn' class="btn btn-primary " >Done</a>
+          
+          {% endif %}
+        
+        <a type="button" class="btn btn-danger" href="{{ url_for('profile_api.api_profile_show',  _uid = current_user.id ) }}">Cancel</a>
         
       </div>
 
@@ -135,40 +173,21 @@
      <script>
       $(document).ready(function() {   
           
-          function tableReset()
-          {
-              $.each($("#demoTable tr"),function(i,tr){
-                $(this).remove();
-              });
-              
-              $('#demoTable thead').after("<tr><th>id</th><th>k1</th><th>k2</th><th>D</th><th>U</th></tr>");
-          }
+          var _uid = '{{current_user.id}}';
+          console.log(_uid);
+          console.log($("#img").val);
 
-          function tableInsert(obj)
-          {
-            var newtr = "<tr><td>" + obj['_id']['$oid']+ "</td>" 
-            + "<td>" + obj['k1']+ "</td>" 
-            + "<td>" + obj['k2']+ "</td>"
-            + "<td><button class='deleteAjaxBtn btn-xs btn-danger'>DELETE</button></td>"
-            + "<td><button class='updateAjaxBtn btn-xs btn-warning'>UPDATE</button></td>"
-            + "</tr>";
-
-            $('#demoTable tr:last').after(newtr);
-          }
-
-          //Assume the same id
-          function tableRemove(obj)
-          {
-            var id = obj['_id']['$oid'];
-            $("#demoTable tr td:contains('"+id+"')").parent().remove();
-          }
-
-
-          $("#postAjaxBtn").click(function(event){
-
-          var data = {"_method":"POST","title":$("#title").val(),"description":$("#description").val(),"location":$("#location").val(),"time":$("#time").val()}
+          
+          $("#createAjaxBtn").click(function(event){
+            var data = {"_method":"POST",
+              "userID":_uid,
+              "name":$("#name").val(),
+              "gender":$("#gender").val(),
+              "age":$("#age").val(),
+              "description":$("#description").val()
+            }
           var djson = JSON.stringify(data);
-          var url = "{{ url_for('event_api.api_event_post') }}";
+          var url = "{{ url_for('profile_api.api_profile_post') }}";
     
           console.log(djson);
           $.ajax({
@@ -181,7 +200,7 @@
                 console.log(e);
               },
               success: function(data){
-                window.location = '/events';
+                window.location = '/profile/view/' + _uid;
                }
             
             });
@@ -190,21 +209,20 @@
 
 
 
-          /*
-          The type of request to make ("POST" or "GET"), default is "GET". Note: Other HTTP request methods, such as PUT and DELETE, can also be used here, but they are not supported by all browsers.
-          */
-          $(document).on('click', '.deleteAjaxBtn', function(){
-          
-            var data = {"_method":"DELETE"}
-            var djson = JSON.stringify(data);
-            var docid = $(this).parent().siblings().first().text();
-            var url = "{{ url_for('test_api.test_mongo_getputdelete', _id=null) }}"; // page generated from server...
-            url = url +  docid;
 
-            console.log(djson);
-            console.log(url);
-            
-            $.ajax({
+          $("#updateAjaxBtn").click(function(event){
+            var data = {"_method":"PUT",
+              "userID":_uid,
+              "name":$("#name").val(),
+              "gender":$("#gender").val(),
+              "age":$("#age").val(),
+              "description":$("#description").val()
+            }
+          var djson = JSON.stringify(data);
+          var url = "{{ url_for('profile_api.api_profile_post') }}";
+    
+          console.log(djson);
+          $.ajax({
               type: "POST",
               url: url,
               data: djson,
@@ -212,46 +230,15 @@
               error: function(e) {
                 console.log("get an error");
                 console.log(e);
-                alert("error");
               },
               success: function(data){
-                //alert("DELETEed + " + data);
-                obj = $.parseJSON(data);
-                tableRemove(obj);
-              }
+                window.location = '/profile/view/' + _uid;
+               }
             
             });
 
           });
 
-          $(document).on('click', '.updateAjaxBtn', function(){
-            var docid = $(this).parent().siblings().first().text();
-            var url = "{{ url_for('test_api.test_mongo_getputdelete', _id=null) }}";
-            url = url +  docid;
-            
-            var data = {"_method":"PUT","k1":$("#k1").val(),"k2":$("#k2").val()}
-            var djson = JSON.stringify(data);
-            
-            $.ajax({
-              type: "POST",
-              url: url,
-              data: djson,
-              contentType: 'application/json;charset=UTF-8',
-              error: function(e) {
-                console.log("get an error");
-                console.log(e);
-                alert("error");
-              },
-              success: function(data){
-                //alert("Updated + " + data);
-                obj = $.parseJSON(data);
-                tableRemove(obj);
-                tableInsert (obj); 
-              }
-            
-            });
-
-          });
 
 
         });

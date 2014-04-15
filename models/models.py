@@ -23,8 +23,10 @@ class EventModel(db.Document):
 class ProfileModel(db.Document):
     name = db.StringField()
     gender = db.StringField()
+    age = db.StringField()
     description = db.StringField()
-    
+    userID = db.StringField()
+
 
 class EventMatchModel(db.Document):
     eventId = db.StringField()
