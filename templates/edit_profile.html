@@ -48,9 +48,12 @@
       <div class="from-group">
 
       <div class="fileinput fileinput-new" data-provides="fileinput">
-        <div class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: 200px; height: 150px;"></div>
+        <div class="fileinput-preview thumbnail" src= '{{profile.image}}' data-trigger="fileinput" style="width: 200px; height: 150px;"></div>
         <div>
           <span class="btn btn-default btn-file"><span class="fileinput-new">Select image</span><span class="fileinput-exists">Change</span><input type="file" id='img' name="img"></span>
+
+
+          <!-- <div id="base">    </div> -->
           <a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
         </div>
       </div>
@@ -210,14 +213,46 @@
 
           });
 
+          function readImage(input) {
+            if ( input.files && input.files[0] ) {
+              var FR = new FileReader();
+              FR.onload = function(e) {
+                $('#img').attr( "src", e.target.result );
+                console.log( e.target.result );
+                var data = {"image":e.target.result};
+                var djson = JSON.stringify(data);
 
-          $('#img').change(function () {
+                $.ajax({
+                    type: 'POST',
+                    contentType:'application/json;charset=UTF-8',
+                    url: '/api/profile/image/' + _uid,
+                    data: djson,
+                    success: function (data) {
+                      console.log(data);
+                    },
+                    error: function (data) {
+                      console.log("error");
+                      console.log(data);
+                    },
+                    processData: false
+                });
+              };       
+              FR.readAsDataURL( input.files[0] );
+            }
+          }
+
+          $("#img").change(function(){
+            readImage(this);
+          });
+
+
+          $('.img').change(function () {
               console.log(this.files[0]);
-              //$("#img")[0].files[0]
-              //file = $("#img")[0].files[0];
-              
-              var formData = new FormData($('#imgForm')[0]);
+              $("#img")[0].files[0]
+              file = $("#img")[0].files[0];
 
+              var formData = new FormData(file);
+              console.log(formData);
               $.ajax({
                   type: 'POST',
                   contentType:'multipart/form-data',
