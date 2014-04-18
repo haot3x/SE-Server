@@ -18,6 +18,12 @@
     <link href={{ url_for('static', filename='../static/Flat-UI-master/css/flat-ui.css' )}} rel="stylesheet">
     <link href={{ url_for('static', filename='../static/Flat-UI-master/images/favicon.ico' )}} rel="shortcut icon">
 
+    <style>
+    .form-control {
+      color: #000000 !important;
+    }
+    </style>
+
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
     <!--[if lt IE 9]>
       <script src="js/html5shiv.js"></script>
@@ -67,7 +73,7 @@
           {% if action == 'exist' %}
           <input type="text" id="name" class="form-control" value = '{{profile.name}}'>
           {% elif action == 'create'%}
-          <input type="text" id="name" class="form-control" value = 'your name'>
+          <input type="text" id="name" class="form-control" value = 'Your name'>
           {% else %}
           {% endif %}
         </div>
@@ -109,7 +115,7 @@
           {% if action == 'exist' %}
           <input type="text" id="age" class="form-control" value = '{{profile.age}}'>
           {% elif action == 'create'%}
-          <input type="text" id="age" class="form-control" value = 'your age'>
+          <input type="text" id="age" class="form-control" value = 'Your age'>
           {% else %}
           {% endif %}
         </div>    
@@ -123,7 +129,7 @@
           {% if action == 'exist' %}
           <textarea class="form-control" rows="3">{{profile.description}}</textarea>
           {% elif action == 'create'%}
-          <textarea class="form-control" rows="3">breifly describe yourself</textarea>
+          <textarea class="form-control" rows="3">Briefly describe yourself</textarea>
           {% else %}
           {% endif %}
         </div>    
@@ -177,6 +183,11 @@
      <script>
       $(document).ready(function() {   
           
+
+          // $("input").each(function(i,dom){
+          //   $(dom).css("fieldset[disabled] .form-control")
+          // });
+
           function tableReset()
           {
               $.each($("#demoTable tr"),function(i,tr){

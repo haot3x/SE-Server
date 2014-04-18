@@ -31,7 +31,7 @@ def login_required_page():
         return render_template('profile.html', action = 'create')
     else:
         return render_template('landing.html')
-  
+        
 
 
 @profile_api.route("/profile/create/<_uid>", methods=['GET'])

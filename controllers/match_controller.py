@@ -5,9 +5,9 @@ from bson import json_util
 
 
 from main import app,db,security
-from models.models import EventMatchModel
-from models.models import EventModel
+from models.models import EventMatchModel, EventModel, ProfileModel
 
+from flask.ext.security import current_user
 
 from mongoengine.queryset import Q
 
@@ -78,8 +78,10 @@ def eventmatch_test():
 
 @eventmatch_api.route("/match/join/request", methods=['POST'])
 def eventmatch_join_request():
-	print request
-	if request.method == 'POST':
+    cnt = ProfileModel.objects(userID=str(current_user.id)).count()
+    if cnt == 0:
+    	raise Exception("no profile")
+    else:
 		eventId = request.json['eventId']
 		eventOwnerId = request.json['eventOwnerId']
 		reqUserId = request.json['reqUserId']

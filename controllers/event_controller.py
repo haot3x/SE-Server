@@ -37,7 +37,16 @@ def api_event_mine(_uid = None):
 
 @event_api.route("/event/create", methods=['GET'])
 def api_event_create():
-    return render_template('event.html', ev={},paras={"action":"create"})
+    from flask.ext.security import current_user
+    print current_user.id
+    cnt = ProfileModel.objects(userID=str(current_user.id)).count()
+    print cnt
+    
+    #return render_template('landing.html')
+    if cnt == 0:
+        return render_template('profile.html', action = 'create')
+    else:
+        return render_template('event.html', ev=None ,paras={"action":"create"})
 
 
 
