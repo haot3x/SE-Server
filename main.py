@@ -56,9 +56,9 @@ from flask_security.forms import RegisterForm
 
 class ExtendedRegisterForm(RegisterForm):
     first_name = TextField('First Name', [])
-    # last_name = TextField('Last Name', [])
-    # gender = TextField('Gender', [])
-    # age = IntegerField('Age', [])
+    last_name = TextField('Last Name', [])
+    gender = TextField('Gender', [])
+    age = IntegerField('Age', [])
 
 
 
