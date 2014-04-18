@@ -34,7 +34,7 @@ class EventMatchModel(db.Document):
     eventId = db.StringField()
     eventOwnerId = db.StringField()
     reqUserId = db.StringField()
-    status = db.StringField(default='open')
+    status = db.StringField(default='pending')
 
 
 # no use now
