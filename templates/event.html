@@ -96,7 +96,6 @@
     </div>
 
     {% if paras.action == 'create' %}
-    Create An Event!
       <div class="form-group input-append bootstrap-timepicker">
         <label class="col-md-4 control-label">Start Time</label>
         <div class="col-md-3">
@@ -201,7 +200,7 @@
         </thead>
         <tbody>
           
-           {% for rq in match %} 
+           {% for rq in ev.Requests %} 
            <a href="#"> <!-- (TBD) click to see event details -->
                 <tr>
                     <td valign="middle"> 
@@ -209,9 +208,9 @@
         
                     </td>
                     <td style="vertical-align:middle">
-                      <b>EventId</b>: {{ rq.eventId }}<br>
-                      <b>ReqUserId</b>: {{ rq.reqUserId }} <br> 
-                      <b>Status</b>: {{rq.status}} <br>
+                      <b>Name</b>: {{ rq.reqProfile.name }}<br>
+                      <b>Gender</b>: {{ rq.reqProfile.gender }} <br> 
+                      <b>Age</b>: {{rq.reqProfile.age}} <br>
                       <b>OwnerId</b>: {{ rq.eventOwnerId }}
                       <!-- <br> -->
                       <!-- <b>Created On</b>: {{ev.createTime}}> -->
