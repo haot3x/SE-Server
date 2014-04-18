@@ -96,8 +96,8 @@
     </div>
 
     {% if paras.action == 'create' %}
-      <div class="form-group input-append bootstrap-timepicker">
-        <label class="col-md-4 control-label">Start Time</label>
+      <div class="form-group">
+        <label class="col-md-3 control-label">Start</label>
         <div class="col-md-3">
           <input type="text" id="startTimeHH" placeholder="HH" class="form-control" value='{{ev.startTimeHH}}'/>
         </div> 
@@ -105,7 +105,7 @@
           <input type="text" id="startTimeMM" placeholder="MM" class="form-control" value='{{ev.startTimeMM}}'/> 
         </div> 
 
-        <div class="col-md-2">
+        <div class="col-md-3">
           <select id="startTimeAP" class="form-control" "caret">
               <option>AM</option>
               <option>PM</option>
@@ -120,8 +120,8 @@
         </div>
     </div-->
 
-    <div class="form-group input-append bootstrap-timepicker">
-       <label class="col-sm-4 control-label">End Time</label>
+    <div class="form-group">
+       <label class="col-sm-3 control-label">End</label>
        <div class="col-sm-3">
           <input type="text" id="endTimeHH" placeholder="HH" class="form-control" value='{{ev.endTimeHH}}'/>
        </div> 
@@ -129,7 +129,7 @@
           <input type="text" id="endTimeMM" placeholder="MM" class="form-control" value='{{ev.endTimeMM}}'/>
           
        </div>  
-       <div class="col-sm-2">
+       <div class="col-sm-3">
           <select id="endTimeAP" class="form-control">
               <option>AM</option>
               <option>PM</option>
@@ -157,7 +157,8 @@
 
 
 {% if paras.action == 'create' %}
-<input id='postAjaxBtn' class="btn btn-primary btn-lg" value='Create' >
+<input id='postAjaxBtn' class="col-sm-4 btn btn-primary btn-lg" value='Create' >
+<label class="col-sm-1 control-label"></label>
 {% elif paras.action == 'view' %}
 <!--a class="btn btn-success btn-lg btn-block" href="/event/edit/{{ev.id}}" role="button">Edit</a-->
   {% if current_user.id|string==ev.userID %} <!--TBD-->
@@ -182,7 +183,7 @@
 {% else %}
 
 {% endif %}
-<a class="btn btn-warning btn-lg " href="/events" role="button">Cancel</a>
+<a class="col-sm-4 btn btn-warning btn-lg " href="/events" role="button">Cancel</a>
              
   </div>
   

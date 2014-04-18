@@ -16,10 +16,22 @@ def api_profile_show(_uid = None):
         doc = ProfileModel.objects.get(userID=_uid)
         return render_template('profile.html', profile = doc, action = 'exist')
     except Exception,e:
-        #TODO: clean up here
-        #for first time create
         return render_template('profile.html', action = 'create')
     
+
+@app.route('/a_page_requires_login')
+def login_required_page():
+    from flask.ext.security import current_user
+    print current_user.id
+    cnt = ProfileModel.objects(userID=str(current_user.id)).count()
+    print cnt
+    
+    #return render_template('landing.html')
+    if cnt == 0:
+        return render_template('profile.html', action = 'create')
+    else:
+        return render_template('landing.html')
+  
 
 
 @profile_api.route("/profile/create/<_uid>", methods=['GET'])
