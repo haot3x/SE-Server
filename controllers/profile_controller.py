@@ -42,12 +42,17 @@ def api_profile_edit(_uid = None):
 @profile_api.route("/api/profile/image/<_uid>", methods=['POST'])
 def api_profile_image(_uid = None):
     doc = ProfileModel.objects.get(userID=_uid)
-    print doc
     try:
-        img = request.files['img']
-        doc.photo.put(img, content_type = 'image/jpeg') 
+        # img = request.files['img']
+        # doc.photo.put(img, content_type = 'image/jpeg') 
+        doc.image = request.json['image']
+        # print(doc.image)
+        doc.save();
+
     except Exception, e:
+        print e
         return str(e)
+
     
     
     return json_util.dumps(doc.to_mongo())

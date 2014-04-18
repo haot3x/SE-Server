@@ -53,9 +53,12 @@
         <div class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: 200px; height: 150px;"></div>
 
     </div> -->
-    <img src= '{{profile.image}}' alt="Profile photo" style="border: 2px solid #000; max-width:300px; max-height:450px;"/>  
+    <h6>{{profile}}</h6>
+    {% if profile != '' %}
+   
     <h6></h6>
-
+    {% else %}
+    {% endif %}
 
       <div class="form-group">
         <label class="col-sm-2 control-label">Name</label>
