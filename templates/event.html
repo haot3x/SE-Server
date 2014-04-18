@@ -30,7 +30,11 @@
       }
    </Style>
 
-
+    <style>
+    .form-control {
+     color: #000000 !important;
+    }
+   </style>
 
   </head>
   <body style=''> <!--for the navibar always top-->
@@ -63,15 +67,15 @@
       
 <div class="col-md-4">
 
-    <div class="form-group">
+    <div class="form-group col-md-12">
       <label class="col-md-4 control-label">Event Title</label>
        <div class="col-md-8">
-        <input type="text" id="title" placeholder="Event Title" class="form-control" value='{{ev.title}}' />
+        <input type="text" id="title" placeholder="Event Title" class="form-control" value='{{ev.title}}'>
         <!--span class="input-icon fui-new"></span-->
        </div>     
     </div>
 
-    <div class="form-group">
+    <div class="form-group col-md-12">
        <label class="col-sm-4 control-label">Description</label>
        <div class="col-sm-8">
           <input type="text" id="description" placeholder="Description" class="form-control" value='{{ev.description}}'/>
@@ -79,15 +83,8 @@
       </div>      
     </div>
 
-    <div class="form-group">
-       <label class="col-sm-4 control-label">Location</label>
-       <div class="col-sm-8">
-          <input type="text" id="location" placeholder="Location" class="form-control" value='{{ev.location}}' />
-          <!--span class="input-icon fui-location"></span--> 
-      </div>     
-    </div>
 
-    <div class="form-group">
+    <div class="form-group col-md-12">
        <label class="col-sm-4 control-label">Event Date</label>
        <div class="col-sm-8">
           <input type="text" id="eventDate" placeholder="MM-DD-YYYY" class="form-control" value='{{ev.eventDate}}' />
@@ -96,7 +93,7 @@
     </div>
 
     {% if paras.action == 'create' %}
-      <div class="form-group">
+      <div class="form-group col-md-12">
         <label class="col-md-3 control-label">Start</label>
         <div class="col-md-3">
           <input type="text" id="startTimeHH" placeholder="HH" class="form-control" value='{{ev.startTimeHH}}'/>
@@ -120,14 +117,13 @@
         </div>
     </div-->
 
-    <div class="form-group">
+    <div class="form-group col-md-12">
        <label class="col-sm-3 control-label">End</label>
        <div class="col-sm-3">
           <input type="text" id="endTimeHH" placeholder="HH" class="form-control" value='{{ev.endTimeHH}}'/>
        </div> 
        <div class="col-sm-3">
           <input type="text" id="endTimeMM" placeholder="MM" class="form-control" value='{{ev.endTimeMM}}'/>
-          
        </div>  
        <div class="col-sm-3">
           <select id="endTimeAP" class="form-control">
@@ -137,7 +133,7 @@
        </div>   
     </div> 
     {% elif paras.action == 'view' %}
-       <div class="form-group">
+       <div class="form-group col-md-12">
        <label class="col-sm-4 control-label">Start Time</label>
         <div class="col-sm-8">
           <input type="text" id="startTime" placeholder="HH-MM" class="form-control" value='{{ev.startTime}}' />
@@ -145,7 +141,7 @@
         </div>     
       </div>
 
-       <div class="form-group">
+       <div class="form-group col-md-12">
        <label class="col-sm-4 control-label">End Time</label>
         <div class="col-sm-8">
           <input type="text" id="endTime" placeholder="HH-MM" class="form-control" value='{{ev.endTime}}' />
@@ -155,14 +151,21 @@
 
     {% endif %}
 
+     <div class="form-group col-md-12">
+       <label class="col-sm-4 control-label">Location</label>
+       <div class="col-sm-8">
+          <input type="text" id="location" placeholder="Location" class="form-control" value='{{ev.location}}' />
+          <!--span class="input-icon fui-location"></span--> 
+      </div>     
+    </div>
 
 {% if paras.action == 'create' %}
 <input id='postAjaxBtn' class="col-sm-4 btn btn-primary btn-lg" value='Create' >
-<label class="col-sm-1 control-label"></label>
+
 {% elif paras.action == 'view' %}
 <!--a class="btn btn-success btn-lg btn-block" href="/event/edit/{{ev.id}}" role="button">Edit</a-->
   {% if current_user.id|string==ev.userID %} <!--TBD-->
-    <a class="btn btn-success btn-lg " href="/event/edit/{{ev.id}}" role="button">Edit</a> 
+    <a class="col-sm-4 btn btn-success btn-lg " href="/event/edit/{{ev.id}}" role="button">Edit</a> 
   {% else %}
       {% set vars = {'foo': False} %}
       {% for rq in ev.Requests %}
@@ -172,9 +175,9 @@
       {% endfor %}
 
       {% if vars.foo %}
-        <input id='requestAjaxBtn' class="btn btn-primary btn-lg" event = {{ev.id}} alt={{vars.foo}} eventowner = {{ev.userID}} disabled="disabled" value='Request' >
+        <input id='requestAjaxBtn' class="col-sm-4 btn btn-primary btn-lg" event = {{ev.id}} alt={{vars.foo}} eventowner = {{ev.userID}} disabled="disabled" value='Request' >
       {% else %}
-        <input id='requestAjaxBtn' class="btn btn-primary btn-lg" event = {{ev.id}}  eventowner = {{ev.userID}} value='Request' >
+        <input id='requestAjaxBtn' class="col-sm-4 btn btn-primary btn-lg" event = {{ev.id}}  eventowner = {{ev.userID}} value='Request' >
       {% endif %}
     <!-- <a class="btn btn-success btn-lg btn-block" href="/" role="button">Request</a>  -->
   {% endif %}  
@@ -183,6 +186,7 @@
 {% else %}
 
 {% endif %}
+<label class="col-sm-1"></label>
 <a class="col-sm-4 btn btn-warning btn-lg " href="/events" role="button">Cancel</a>
              
   </div>
@@ -200,7 +204,7 @@
   <!-- <col width="150"> -->
     <col width="150">
     <col>
-    <col width="150">
+    <col width="120">
         <thead>
         </thead>
         <tbody>
