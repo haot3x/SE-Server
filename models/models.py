@@ -9,7 +9,6 @@ class EventModel(db.Document):
     title = db.StringField()
     description = db.StringField()  
     createTime = db.DateTimeField(default=datetime.datetime.now)
-    eventDate = db.StringField()
     startTime = db.StringField()
     endTime = db.StringField()
     userID = db.StringField()
@@ -27,13 +26,16 @@ class ProfileModel(db.Document):
     age = db.StringField()
     description = db.StringField()
     userID = db.StringField()
-    photo = db.FileField()
+    image = db.StringField()
+    # picture = db.ImageField()
+
 
 class EventMatchModel(db.Document):
     eventId = db.StringField()
     eventOwnerId = db.StringField()
     reqUserId = db.StringField()
-    status = db.StringField(default='pending')
+    status = db.StringField(default='open')
+
 
 # no use now
 from google.appengine.ext import ndb
