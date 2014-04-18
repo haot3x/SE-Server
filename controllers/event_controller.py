@@ -5,21 +5,31 @@ from bson import json_util
 
 
 from main import app,db,security
-from models.models import EventModel,EventMatchModel
+from models.models import EventModel,EventMatchModel,ProfileModel
 
 event_api = Blueprint('event_api', __name__)
 
 @event_api.route("/events", methods=['GET'])
 def api_event_demo():
-    doc = EventModel.objects.all()
+    doc = EventModel.objects(status='new')
+    for d in doc:
+        num = EventMatchModel.objects(eventId=str(d.id)).count()
+        setattr(d, 'numOfRequests', num)
+        photo = ProfileModel.objects.get(userID=d.userID).image
+        setattr(d, 'image', photo)
     # docs =  json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
     # app.logger.info(docs)
-    return render_template('event_list.html',events=doc,paras={"title":"All Events",'action':'all'})
+    return render_template('event_list.html',events=doc,paras={"title":"All Open Events",'action':'all'})
 
 
 @event_api.route("/event/mine/<_uid>", methods=['GET'])
 def api_event_mine(_uid = None):
     doc = EventModel.objects(userID=_uid)
+    for d in doc:
+        num = EventMatchModel.objects(eventId=str(d.id)).count()
+        setattr(d, 'numOfRequests', num)
+        photo = ProfileModel.objects.get(userID=d.userID).image
+        setattr(d, 'image', photo)
     return render_template('event_list.html',events=doc,paras={"title":"My Events",'action':'mine'})
     #return  json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
     # app.logger.info(docs)
@@ -37,23 +47,34 @@ def api_event_myrequest(_uid = None):
     match = EventMatchModel.objects().filter(reqUserId = _uid)
     eids = [d.eventId for d in match]
 
-
     matchDict = dict((key, value) for (key, value) in [(d.eventId,d.status) for d in match])
     print matchDict
     print eids
     event = EventModel.objects(id__in=eids)
+    for d in event:
+        num = EventMatchModel.objects(eventId=str(d.id)).count()
+        setattr(d, 'numOfRequests', num)
+        photo = ProfileModel.objects.get(userID=d.userID).image
+        setattr(d, 'image', photo)
     #return json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
     return render_template('event_list.html',events=event,matchDict=matchDict,paras={"title":"My Requests",'action':'myrequest'})
 
 @event_api.route("/event/view/<_eid>", methods=['GET'])
 def api_event_view(_eid = None):
     doc = EventModel.objects.get(id=_eid)
-    print "doc="
-    print doc['startTime']
-    doc2 = EventMatchModel.objects(eventId = _eid)
-        
-    print doc['title']
-    return render_template('event.html', ev=doc, match=doc2,paras={"action":"view"})
+
+    doc2 = EventMatchModel.objects(eventId=_eid)
+
+    for d in doc2:
+        doc3 = ProfileModel.objects.get(userID=d.reqUserId)
+        setattr(d, "reqProfile", doc3)
+
+    setattr(doc, "Requests", doc2)
+
+    #for d in doc.Requests:
+    #    print d.reqProfile.name
+
+    return render_template('event.html', ev=doc,paras={"action":"view"})
 
 @event_api.route("/event/edit/<_eid>", methods=['GET'])
 def api_event_edit(_eid = None):
@@ -72,7 +93,12 @@ def api_event_near():
         _lng = float(request.json['lng'])
 
         doc = EventModel.objects(LatLng__geo_within_center=[[_lat, _lng], dist])
-        print len(doc)
+        for d in doc:
+            num = EventMatchModel.objects(eventId=str(d.id)).count()
+            setattr(d, 'numOfRequests', num)
+            photo = ProfileModel.objects.get(userID=d.userID).image
+            setattr(d, 'image', photo)
+        #print len(doc)
         #print json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
         return json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
         #return render_template('event_list.html', ev=doc, paras={"action": "radius_refresh"})
