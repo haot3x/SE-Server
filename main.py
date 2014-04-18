@@ -55,10 +55,10 @@ from flask_mail import Mail
 from flask_security.forms import RegisterForm
 
 class ExtendedRegisterForm(RegisterForm):
-    first_name = TextField('First Name', [Required()])
-    last_name = TextField('Last Name', [Required()])
-    gender = TextField('Gender', [Required()])
-    age = IntegerField('Age', [Required()])
+    first_name = TextField('First Name', [])
+    # last_name = TextField('Last Name', [])
+    # gender = TextField('Gender', [])
+    # age = IntegerField('Age', [])
 
 
 
@@ -66,7 +66,7 @@ app = Flask(__name__.split('.')[0])
 app.config['DEBUG'] = True
 app.config['SECRET_KEY'] = 'super-secret'
 app.config['SECURITY_REGISTERABLE'] = True
-app.config['SECURITY_POST_LOGIN_VIEW'] = '/'
+app.config['SECURITY_POST_LOGIN_VIEW'] = '/a_page_requires_login'
 
 
 # # At top of file
@@ -109,10 +109,10 @@ class User(db.Document, UserMixin):
     roles = db.ListField(db.ReferenceField(Role), default=[])
     
     # #above is the minimum, dont touch
-    last_name = db.StringField(max_length=255)
-    first_name = db.StringField(max_length=255)
-    gender = db.StringField(max_length=255)
-    age = db.IntField()
+    # last_name = db.StringField(max_length=255)
+    # first_name = db.StringField(max_length=255)
+    # gender = db.StringField(max_length=255)
+    # age = db.IntField()
     # user_prof_id = db.ReferenceField("")
     
 
@@ -169,12 +169,6 @@ def basic():
 
 
 
-@app.route('/a_page_requires_login')
-@login_required
-def login_required_page():
-    return render_template('a_page_requires_login.html')
-
-
 
 @app.route('/api')
 def sitemap():
@@ -182,7 +176,7 @@ def sitemap():
     for rule in app.url_map.iter_rules():
         line = {}
         line['endpoint'] = rule.endpoint;
-        line['methods'] = ",".join(sorted(rule.methods))
+        ne['methods'] = ",".join(sorted(rule.methods))
         opts = {}
         for arg in rule.arguments:
             opts[arg] = "[{0}]".format(arg)
