@@ -174,7 +174,7 @@
         {% endif %}
       {% endfor %}
 
-      {% if vars.foo %}
+      {% if vars.foo or not current_user.is_authenticated()  %}
         <input id='requestAjaxBtn' class="col-sm-4 btn btn-primary btn-lg" event = {{ev.id}} alt={{vars.foo}} eventowner = {{ev.userID}} disabled="disabled" value='Request' >
       {% else %}
         <input id='requestAjaxBtn' class="col-sm-4 btn btn-primary btn-lg" event = {{ev.id}}  eventowner = {{ev.userID}} value='Request' >
