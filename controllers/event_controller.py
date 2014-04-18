@@ -15,10 +15,11 @@ def api_event_demo():
     for d in doc:
         num = EventMatchModel.objects(eventId=str(d.id)).count()
         setattr(d, 'numOfRequests', num)
-
+        photo = ProfileModel.objects.get(userID=d.userID).image
+        setattr(d, 'image', photo)
     # docs =  json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
     # app.logger.info(docs)
-    return render_template('event_list.html',events=doc,paras={"title":"All Events",'action':'all'})
+    return render_template('event_list.html',events=doc,paras={"title":"All Open Events",'action':'all'})
 
 
 @event_api.route("/event/mine/<_uid>", methods=['GET'])
@@ -27,6 +28,8 @@ def api_event_mine(_uid = None):
     for d in doc:
         num = EventMatchModel.objects(eventId=str(d.id)).count()
         setattr(d, 'numOfRequests', num)
+        photo = ProfileModel.objects.get(userID=d.userID).image
+        setattr(d, 'image', photo)
     return render_template('event_list.html',events=doc,paras={"title":"My Events",'action':'mine'})
     #return  json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
     # app.logger.info(docs)
@@ -44,7 +47,6 @@ def api_event_myrequest(_uid = None):
     match = EventMatchModel.objects().filter(reqUserId = _uid)
     eids = [d.eventId for d in match]
 
-
     matchDict = dict((key, value) for (key, value) in [(d.eventId,d.status) for d in match])
     print matchDict
     print eids
@@ -52,6 +54,8 @@ def api_event_myrequest(_uid = None):
     for d in event:
         num = EventMatchModel.objects(eventId=str(d.id)).count()
         setattr(d, 'numOfRequests', num)
+        photo = ProfileModel.objects.get(userID=d.userID).image
+        setattr(d, 'image', photo)
     #return json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
     return render_template('event_list.html',events=event,matchDict=matchDict,paras={"title":"My Requests",'action':'myrequest'})
 
@@ -89,7 +93,12 @@ def api_event_near():
         _lng = float(request.json['lng'])
 
         doc = EventModel.objects(LatLng__geo_within_center=[[_lat, _lng], dist])
-        print len(doc)
+        for d in doc:
+            num = EventMatchModel.objects(eventId=str(d.id)).count()
+            setattr(d, 'numOfRequests', num)
+            photo = ProfileModel.objects.get(userID=d.userID).image
+            setattr(d, 'image', photo)
+        #print len(doc)
         #print json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
         return json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
         #return render_template('event_list.html', ev=doc, paras={"action": "radius_refresh"})
