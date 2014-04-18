@@ -224,10 +224,10 @@
                     {% if rq.status== 'pending' %}
                     <input class="btn btn-warning btn-mini btn-block" id = "updateAjaxBtn" href="/event/view/{{ev.id}}" for = {{rq.reqUserId}} abc = {{rq.eventId}} role="button" value='Accept'>
                     <!-- <a class="btn btn-primary btn-mini btn-block" href="/event/view/{{ev.id}}" role="button">View Requester Profile</a>  -->
-                    {% elif rq.status== 'match' %}
-                     <input class="btn btn-success btn-mini btn-block" id = "updateAjaxBtn" href="/event/view/{{ev.id}}" for = {{rq.reqUserId}} abc = {{rq.eventId}} role="button" value='Match'>
+                    {% elif rq.status== 'matched' %}
+                     <input class="btn btn-success btn-mini btn-block" id = "updateAjaxBtn" href="/event/view/{{ev.id}}" for = {{rq.reqUserId}} abc = {{rq.eventId}} role="button" disabled="disabled" value='Matched'>
                     {% elif rq.status=='declined' %}
-                    <input class="btn btn-danger btn-mini btn-block" id = "updateAjaxBtn" href="/event/view/{{ev.id}}" for = {{rq.reqUserId}} abc = {{rq.eventId}} role="button" value='Declined'>
+                    <input class="btn btn-danger btn-mini btn-block" id = "updateAjaxBtn" href="/event/view/{{ev.id}}" for = {{rq.reqUserId}} abc = {{rq.eventId}} role="button" disabled="disabled" value='Declined'>
                     {% endif %}
                    </td>
                 </tr>
