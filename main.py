@@ -176,7 +176,7 @@ def sitemap():
     for rule in app.url_map.iter_rules():
         line = {}
         line['endpoint'] = rule.endpoint;
-        ne['methods'] = ",".join(sorted(rule.methods))
+        line['methods'] = ",".join(sorted(rule.methods))
         opts = {}
         for arg in rule.arguments:
             opts[arg] = "[{0}]".format(arg)
