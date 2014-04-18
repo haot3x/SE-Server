@@ -58,6 +58,7 @@ def api_event_myrequest(_uid = None):
 @event_api.route("/event/view/<_eid>", methods=['GET'])
 def api_event_view(_eid = None):
     doc = EventModel.objects.get(id=_eid)
+<<<<<<< HEAD
 
     doc2 = EventMatchModel.objects(eventId=_eid)
 
@@ -71,6 +72,14 @@ def api_event_view(_eid = None):
     #    print d.reqProfile.name
 
     return render_template('event.html', ev=doc,paras={"action":"view"})
+=======
+    print "doc="
+    print doc['startTime']
+    doc2 = EventMatchModel.objects(eventId = _eid)
+        
+    print doc['title']
+    return render_template('event.html', ev=doc, match=doc2,paras={"action":"view"})
+>>>>>>> 0e664ee3379c62f03a3db2094a16534ed8cb4ac1
 
 @event_api.route("/event/edit/<_eid>", methods=['GET'])
 def api_event_edit(_eid = None):

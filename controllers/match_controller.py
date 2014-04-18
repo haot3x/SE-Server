@@ -45,42 +45,24 @@ def eventmatch_view_joins(_eventid = None):
 	doc = EventMatchModel.objects(eventId=_eventid)
 	return json_util.dumps([d.to_mongo() for d in doc], default=json_util.default)
 
-'''
-@eventmatch_api.route("/match/accept", methods=['POST']) 
-def eventmatch_accept_request():
-	print request
-	if request.method == 'POST':
-		eventId = request.json['eventId']
-		eventOwnerId = request.json['eventOwnerId']
-		reqUserId = request.json['reqUserId']
-
-			doc = EventMatchModel.objects.get(eventId=eventId)
-			for d in doc: 
-				if (d.reqUserId == reqUserId):
-					d.status = "matched"
-				else:
-					d.status = "declined"
-
-			doc.save()
-			print json_util.dumps(doc.to_mongo())
-			return json_util.dumps(doc.to_mongo())
-'''
-
 @eventmatch_api.route("/match/accept", methods=['POST'])
 def eventmatch_test_accept():
 	print request
 	if request.method == "POST":
-		eventId = request.json['eventId']
-		reqUserId = request.json['reqUserId']
-	doc = EventMatchModel.objects(eventId=eventId)
-	doc2 = EventModel.objects.get(id=eventId)
-	for d in doc:
-		if (d.reqUserId == reqUserId):
-			doc2.status = "closed"
-			d.status = "matched"
-		else:
-			d.status = "declined"
-		d.save()
+		_eventid = request.json['eventId']
+		_requserid = request.json['reqUserId']
+
+		doc = EventMatchModel.objects(eventId=_eventid)
+		doc2 = EventModel.objects.get(id=_eventid)
+		print doc
+		for d in doc:
+			if (d.reqUserId == _requserid):
+				d.status = "matched"
+				doc2.status = "closed"
+				doc2.save()
+			else:
+				d.status = "declined"
+			d.save()
 
 	return json_util.dumps([d.to_mongo() for d in doc], default=json_util.default)
 
@@ -97,7 +79,6 @@ def eventmatch_test():
 @eventmatch_api.route("/match/join/request", methods=['POST'])
 def eventmatch_join_request():
 	print request
-	print "abcdef"
 	if request.method == 'POST':
 		eventId = request.json['eventId']
 		eventOwnerId = request.json['eventOwnerId']
