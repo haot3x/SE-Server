@@ -53,28 +53,33 @@ def api_profile_edit(_uid = None):
 
 @profile_api.route("/api/profile/image/<_uid>", methods=['POST'])
 def api_profile_image(_uid = None):
-    doc = ProfileModel.objects.get(userID=_uid)
-    try:
-        # img = request.files['img']
-        # doc.photo.put(img, content_type = 'image/jpeg') 
-        doc.image = request.json['image']
-        # print(doc.image)
-        doc.save();
+    cnt = ProfileModel.objects(userID=_uid).count()
+    if cnt == 1:
+        doc = ProfileModel.objects.get(userID=_uid)
+        try:
+            # img = request.files['img']
+            # doc.photo.put(img, content_type = 'image/jpeg') 
+            doc.image = request.json['image']
+            # print(doc.image)
+            doc.save();
 
-    except Exception, e:
-        print e
-        return str(e)
-
-    
-    
+        except Exception, e:
+            print e
+            return str(e)
+    else:
+        image = request.json['image']
+        model = ProfileModel(image=image, userID=_uid)
+        doc = model.save()
+  
     return json_util.dumps(doc.to_mongo())
 
 @profile_api.route("/api/profile/create", methods=['POST'])
 def api_profile_post():
     print request
     _method = request.json['_method']
-
-    if _method == 'POST':
+    userID = request.json['userID'] 
+    cnt = ProfileModel.objects(userID=userID).count()
+    if _method == 'POST' and cnt == 0:
         name = request.json['name']
         gender = request.json['gender']
         age = request.json['age']
@@ -87,7 +92,7 @@ def api_profile_post():
         print json_util.dumps(doc.to_mongo())
         app.logger.info(doc)
         return json_util.dumps(doc.to_mongo())
-    elif _method == 'PUT':
+    elif _method == 'PUT' or cnt == 1:
         userID = request.json['userID']
         doc = ProfileModel.objects.get(userID=userID)
 
@@ -97,7 +102,6 @@ def api_profile_post():
         description = request.json['description']
 
         if not name is None or name == '':
-            print "heheehehehe"
             doc.name = name
         if not gender is None or gender == '':
             doc.gender = gender
@@ -108,7 +112,7 @@ def api_profile_post():
 
         doc.save()
         return json_util.dumps(doc.to_mongo())
-
+    return 1
 
 
 
