@@ -22,6 +22,12 @@ def api_event_demo():
     return render_template('event_list.html',events=doc,paras={"title":"All Open Events",'action':'all'})
 
 
+@event_api.route("/map_view", methods=['GET'])
+def api_event_map():
+    doc = EventModel.objects(status='new')
+    return render_template('map_view.html',events=doc,paras={"title":"All Open Events",'action':'all'})
+
+
 @event_api.route("/event/mine/<_uid>", methods=['GET'])
 def api_event_mine(_uid = None):
     doc = EventModel.objects(userID=_uid)

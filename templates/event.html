@@ -192,7 +192,6 @@
   </div>
   
   <div class="col-md-9" id ='mapcanvas' style='height:400px;width:400px;'>
-  <input id="pac-input" class="controls" type="text" placeholder="Search Box">
 
   </div>
 
@@ -337,8 +336,8 @@
                //{{ev.location}}
                 //console.log(ev);
             {% if ev is not none %}
-              latlng.A = '{{ev.LatLng.coordinates[0]}}';
-              latlng.k = '{{ev.LatLng.coordinates[1]}}';
+              latlng.A = '{{ev.LatLng.coordinates[1]}}';
+              latlng.k = '{{ev.LatLng.coordinates[0]}}';
             {% endif %}
               //latlng = '{{ev.LatLng}}';
               //console.log(latlng.A);
@@ -349,7 +348,7 @@
                 position: latlng, 
                 map: map, 
                 description: ("GEO [" + locGeoLat + ":" + locGeoLng + "]") ,  
-                title:"You are here!meng (at least within a "+position.coords.accuracy+" meter radius)",
+                title:"You are here! (at least within a "+position.coords.accuracy+" meter radius)",
                 draggable:true
             });
             
@@ -392,6 +391,10 @@
                  disc = place['formatted_address'];
                  //set location box to search box value
                  $("#location").val(disc);
+
+                                  //alert(this.position.d);
+                 locGeoLat = place.geometry.location.k;
+                 locGeoLng = place.geometry.location.A;
                  
 
 
@@ -399,7 +402,6 @@
                  marker = new google.maps.Marker({
                  map: map,
                  
-                 title: place.name,
                  position: place.geometry.location,
                  description: ("GEO [" + position.coords.latitude + ":" + position.coords.longitude + "]") ,  
                  title:"You are here! (at least within a "+position.coords.accuracy+" meter radius)",
@@ -418,17 +420,18 @@
                  });
 
 
-                 // markers.push(marker);
 
                   bounds.extend(place.geometry.location)
-
+                  
+                  
+                  
                
 
                  google.maps.event.addListener(marker, 'dragend', function(data){
                  //alert(this.position.e);
                  //alert(this.position.d);
-                 locGeoLat = this.position.A;
-                 locGeoLng = this.position.k;
+                 locGeoLat = this.position.k;
+                 locGeoLng = this.position.A;
                  this.description = "GEO [" + locGeoLat + ":" + locGeoLng + "]";
                  });
 
@@ -457,8 +460,8 @@
             google.maps.event.addListener(marker, 'dragend', function(data){
               //alert(this.position.e);
               //alert(this.position.d);
-              locGeoLat = this.position.A;
-              locGeoLng = this.position.k;
+              locGeoLat = this.position.k;
+              locGeoLng = this.position.A;
               this.description = "GEO [" + locGeoLat + ":" + locGeoLng + "]";
             });
 
@@ -473,7 +476,6 @@
           function geoError(msg) {
             console.log(msg);
           }
-
 
 
           navigator.geolocation.getCurrentPosition(geoSuccess, geoError);
