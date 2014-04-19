@@ -22,6 +22,12 @@ def api_event_demo():
     return render_template('event_list.html',events=doc,paras={"title":"All Open Events",'action':'all'})
 
 
+@event_api.route("/map_view", methods=['GET'])
+def api_event_map():
+    doc = EventModel.objects(status='new')
+    return render_template('map_view.html',events=doc,paras={"title":"All Open Events",'action':'all'})
+
+
 @event_api.route("/event/mine/<_uid>", methods=['GET'])
 def api_event_mine(_uid = None):
     doc = EventModel.objects(userID=_uid)
@@ -135,7 +141,7 @@ def api_event_post():
         title = request.json['title']
         description = request.json['description']
         location = request.json['location']
-        eventDate = request.json['eventDate']
+        #eventDate = request.json['eventDate']
         startTime = request.json['startTime']
         endTime = request.json['endTime']
         userID = request.json['userID']
@@ -144,7 +150,7 @@ def api_event_post():
         ZIP = request.json['ZIP']
 
         #model = EventModel(title=title,description=description,location=location,startTime=startTime,endTime=endTime,userID=userID,latitude=latitude,longitude=longitude,ZIP=ZIP)
-        model = EventModel(title=title,description=description,location=location,eventDate=eventDate,startTime=startTime,endTime=endTime,userID=userID,LatLng={"type":"Point","coordinates":[latitude,longitude]},ZIP=ZIP)
+        model = EventModel(title=title,description=description,location=location,startTime=startTime,endTime=endTime,userID=userID,LatLng={"type":"Point","coordinates":[latitude,longitude]},ZIP=ZIP)
         doc = model.save()
         print json_util.dumps(doc.to_mongo())
         app.logger.info(doc)
