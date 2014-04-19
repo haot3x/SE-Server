@@ -67,6 +67,8 @@ app.config['DEBUG'] = True
 app.config['SECRET_KEY'] = 'super-secret'
 app.config['SECURITY_REGISTERABLE'] = True
 app.config['SECURITY_POST_LOGIN_VIEW'] = '/a_page_requires_login'
+app.config['SECURITY_POST_REGISTER_VIEW'] = '/a_page_requires_login'
+
 
 
 # # At top of file
@@ -109,11 +111,11 @@ class User(db.Document, UserMixin):
     roles = db.ListField(db.ReferenceField(Role), default=[])
     
     # #above is the minimum, dont touch
-    # last_name = db.StringField(max_length=255)
-    # first_name = db.StringField(max_length=255)
-    # gender = db.StringField(max_length=255)
-    # age = db.IntField()
-    # user_prof_id = db.ReferenceField("")
+    last_name = db.StringField(max_length=255)
+    first_name = db.StringField(max_length=255)
+    gender = db.StringField(max_length=255)
+    age = db.IntField()
+    #user_prof_id = db.ReferenceField("")
     
 
 user_datastore = MongoEngineUserDatastore(db, User, Role)
