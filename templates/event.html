@@ -317,8 +317,8 @@
                //{{ev.location}}
                 //console.log(ev);
             {% if ev is not none %}
-              latlng.A = '{{ev.LatLng.coordinates[1]}}';
-              latlng.k = '{{ev.LatLng.coordinates[0]}}';
+              latlng.A = '{{ev.LatLng.coordinates[0]}}';
+              latlng.k = '{{ev.LatLng.coordinates[1]}}';
             {% endif %}
               //latlng = '{{ev.LatLng}}';
               //console.log(latlng.A);
