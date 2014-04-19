@@ -101,12 +101,15 @@ def api_event_near():
         _lat = float(request.json['lat'])
         _lng = float(request.json['lng'])
 
-        doc = EventModel.objects(LatLng__geo_within_center=[[_lat, _lng], dist])
+        doc = EventModel.objects(LatLng__geo_within_center=[[_lat, _lng], dist],status='new')
         for d in doc:
             num = EventMatchModel.objects(eventId=str(d.id)).count()
             setattr(d, 'numOfRequests', num)
+            print num
+            print d.numOfRequests
             photo = ProfileModel.objects.get(userID=d.userID).image
             setattr(d, 'image', photo)
+        
         #print len(doc)
         #print json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
         return json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)

@@ -15,6 +15,7 @@ class EventModel(db.Document):
     location =  db.StringField()
     # latitude = db.FloatField()  
     # longitude = db.FloatField()
+    eventDate = db.StringField()
     LatLng = db.PointField()
     ZIP = db.StringField()
     status = db.StringField(default='new')
