@@ -59,9 +59,14 @@
         <div class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: 200px; height: 150px;"></div>
 
     </div> -->
-    {% if action == 'exist' %}
+    {% if action == 'exist' and profile.image is not none %}
     <img src= '{{profile.image}}' alt="Profile photo" style="border: 2px solid #000; max-width:300px; max-height:450px;"/>  
    
+
+    {% elif action == 'exist' and profile.image is none %}
+    <img src='http://www.b2match.com/assets/fallback/default.png ' alt='User Profile Photo' class='img-thumbnail img-responsive' style="border: 2px solid #000; max-width:300px; max-height:450px;">
+    
+
     {% elif action == 'create'%}
     <img src='http://www.b2match.com/assets/fallback/default.png ' alt='User Profile Photo' class='img-thumbnail img-responsive' style="border: 2px solid #000; max-width:300px; max-height:450px;">
     {% else %}
