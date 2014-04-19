@@ -141,6 +141,9 @@ def api_event_post():
         longitude = request.json['longitude']
         ZIP = request.json['ZIP']
 
+        #might be swapped
+        latitude, longitude = longitude, latitude
+
         #model = EventModel(title=title,description=description,location=location,startTime=startTime,endTime=endTime,userID=userID,latitude=latitude,longitude=longitude,ZIP=ZIP)
         model = EventModel(title=title,description=description,location=location,startTime=startTime,endTime=endTime,userID=userID,LatLng={"type":"Point","coordinates":[latitude,longitude]},ZIP=ZIP)
         doc = model.save()
@@ -155,7 +158,7 @@ def api_event_post():
         title = request.json['title']
         description = request.json['description']
         location = request.json['location']
-        eventDate = request.json['eventDate']
+        #eventDate = request.json['eventDate']
         startTime = request.json['startTime']
         endTime = request.json['endTime']
         userID = request.json['userID']
