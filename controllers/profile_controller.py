@@ -4,7 +4,7 @@ from flask import render_template
 from bson import json_util
 
 
-from main import app,db,security
+from main import app,db,security, User
 from models.models import ProfileModel
 
 profile_api = Blueprint('profile_api', __name__)
@@ -23,15 +23,27 @@ def api_profile_show(_uid = None):
 def login_required_page():
     from flask.ext.security import current_user
     print current_user.id
-    cnt = ProfileModel.objects(userID=str(current_user.id)).count()
-    print cnt
+    userID = str(current_user.id)
+    cnt = ProfileModel.objects(userID=userID).count()
+    #print "cnt"
+    #print cnt
     
     #return render_template('landing.html')
     if cnt == 0:
-        return render_template('profile.html', action = 'create')
-    else:
-        return render_template('landing.html')
-        
+        doc = User.objects.get(id=userID)
+        name = doc.first_name + " " + doc.last_name
+        age = str(doc.age)
+        gender = doc.gender
+        description=""
+
+        doc2 = ProfileModel(name=name,gender=gender,age=age,description=description,userID=userID,image=None)
+        doc2.save()
+
+
+    #    return render_template('profile.html', action = 'create')
+
+    
+    return render_template('landing.html')    
 
 
 @profile_api.route("/profile/create/<_uid>", methods=['GET'])
