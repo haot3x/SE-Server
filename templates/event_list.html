@@ -100,7 +100,7 @@
                                 </td>
                                 <td>
                                     <b>Title</b>: {{ ev.title }}<br>
-                                    <b>Time</b>: {{ev.eventDate}} {{ ev.startTime }}-{{ ev.endTime }}<br>
+                                    <b>Time</b>: {{ ev.startTime }}-{{ ev.endTime }}<br>
                                     <b>Location</b>: {{ev.location}}<br>
                                     <b>Description</b>: {{ ev.description }} <br>
                                     <b>Created On</b>: <span class='ev-createTime'>{{ev.createTime}}</span>
@@ -241,7 +241,6 @@
                                                               });
                                                        
                                                        $.each(objs,function(i,obj){
-                                                              
                                                               var n = numDict[obj['_id']['$oid']].toString();
                                                               var p = photoDict[obj['_id']['$oid']].toString(); 
 
@@ -251,7 +250,7 @@
                                                               </td> \
                                                               <td> \
                                                               <b>Title</b>: " + obj['title'] + "<br> \
-                                                              <b>Time</b>: " + obj['eventDate'] + obj['startTime'] + "-" + obj['endTime'] + "<br> \
+                                                              <b>Time</b>: " + obj['startTime'] + "-" + obj['endTime'] + "<br> \
                                                               <b>Location</b>: " + obj['location'] + "<br> \
                                                               <b>Description</b>: " + obj['description'] + "<br>\
                                                               <b>Created On</b>: <span class='ev-createTime" + obj['createTime'] + "'</span> \
