@@ -100,7 +100,7 @@
                                 </td>
                                 <td>
                                     <b>Title</b>: {{ ev.title }}<br>
-                                    <b>Time</b>: {{ev.date}} {{ ev.startTime }}-{{ ev.endTime }}<br>
+                                    <b>Time</b>: {{ev.eventDate}} {{ ev.startTime }}-{{ ev.endTime }}<br>
                                     <b>Location</b>: {{ev.location}}<br>
                                     <b>Description</b>: {{ ev.description }} <br>
                                     <b>Created On</b>: <span class='ev-createTime'>{{ev.createTime}}</span>
@@ -227,8 +227,13 @@
                                                        },
                                                        success: function(data){
                                                        
-                                                       var objs = $.parseJSON(data);
-                                                       console.log(objs.length);
+                                                        
+
+                                                      
+                                                       var dataObj = $.parseJSON(data);
+                                                       objs = dataObj['doc'];
+                                                       numDict = dataObj['nums'];
+                                                       photoDict = dataObj['photos'];
                                                        
                                                        
                                                        $.each($("#eventsTable tr"),function(i,tr){
@@ -236,23 +241,27 @@
                                                               });
                                                        
                                                        $.each(objs,function(i,obj){
+                                                              
+                                                              var n = numDict[obj['_id']['$oid']].toString();
+                                                              var p = photoDict[obj['_id']['$oid']].toString(); 
+
                                                               var dom = "<tr id= " + obj['_id']['$oid'] + "> \
                                                               <td valign='middle'> \
-                                                              <a href='/profile/view/"+ obj['userID']+ "'><img src='" + obj['image'] + " ' alt='User Profile Photo' class='img-thumbnail img-responsive'></a> \
+                                                              <a href='/profile/view/"+ obj['userID']+ "'><img src='" + p + " ' alt='User Profile Photo' class='img-thumbnail img-responsive'></a> \
                                                               </td> \
                                                               <td> \
                                                               <b>Title</b>: " + obj['title'] + "<br> \
-                                                              <b>Time</b>: " + obj['date'] + obj['startTime'] + "-" + obj['endTime'] + "<br> \
+                                                              <b>Time</b>: " + obj['eventDate'] + obj['startTime'] + "-" + obj['endTime'] + "<br> \
                                                               <b>Location</b>: " + obj['location'] + "<br> \
                                                               <b>Description</b>: " + obj['description'] + "<br>\
                                                               <b>Created On</b>: <span class='ev-createTime" + obj['createTime'] + "'</span> \
                                                               </td> \
                                                               <td> \
                                                               <a class='btn btn-warning btn-mini btn-block' href='/event/view/" + obj['_id']['$oid'] + "' role='button'>Details</a> <br> \
-                                                              {% if " + obj['numOfRequests'] + " > 1 %} \
-                                                              <a class='btn btn-info btn-mini btn-block' href='/event/view/" + obj['_id']['$oid'] + "' role='button'>" + obj['numOfRequests'] + " Requests</a> \
+                                                              {% if " + n + " > 1 %} \
+                                                              <a class='btn btn-info btn-mini btn-block' href='/event/view/" + obj['_id']['$oid'] + "' role='button'>" + n + " Requests</a> \
                                                               {% else %}\
-                                                              <a class='btn btn-info btn-mini btn-block' href='/event/view/" + obj['_id']['$oid'] + "' role='button'>" + obj['numOfRequests'] + " Request</a> \
+                                                              <a class='btn btn-info btn-mini btn-block' href='/event/view/" + obj['_id']['$oid'] + "' role='button'>" + n + " Request</a> \
                                                               {% endif %}\
                                                               </td> \
                                                               </tr>";

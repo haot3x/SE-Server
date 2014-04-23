@@ -107,18 +107,26 @@ def api_event_near():
         _lat = float(request.json['lat'])
         _lng = float(request.json['lng'])
 
-        doc = EventModel.objects(LatLng__geo_within_center=[[_lat, _lng], dist],status='new')
+        doc = EventModel.objects(LatLng__geo_within_center=[(_lat, _lng), dist])
+        print doc.count()
+        nums = {}
+        photos = {}
+
         for d in doc:
             num = EventMatchModel.objects(eventId=str(d.id)).count()
-            setattr(d, 'numOfRequests', num)
-            print num
-            print d.numOfRequests
-            photo = ProfileModel.objects.get(userID=d.userID).image
-            setattr(d, 'image', photo)
+            # setattr(d, 'numOfRequests', num)
+            nums[str(d.id)] = num
+            
+            #print d.numOfRequests
+            photo = ProfileModel.objects.get(userID=d.userID)
+            photos[str(d.id)] = photo.image
+            #setattr(d, 'image', photo.image)
+        
+        return json_util.dumps({'doc':[d.to_mongo() for d in doc], "nums":nums, "photos":photos},default=json_util.default)
         
         #print len(doc)
         #print json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
-        return json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
+        #return json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
         #return render_template('event_list.html', ev=doc, paras={"action": "radius_refresh"})
 
 
