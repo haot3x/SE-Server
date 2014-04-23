@@ -132,7 +132,7 @@
       var infoWindowContent = new Array();
 
       {% for ev in events%}
-      item = ['{{ev.title}}',{{ev.LatLng.coordinates[0]}},{{ev.LatLng.coordinates[1]}}];
+      item = ['{{ev.title}}',{{ev.LatLng.coordinates[1]}},{{ev.LatLng.coordinates[0]}}];
       popup = ['<div class="info_content">' + '<h6><a href="/event/view/{{ev.id}}" target="d_blank">' + '{{ev.title}}' +'</a></h6><p>' + '{{ev.description}}' +'</p></div>']
       markers.push(item);
       infoWindowContent.push(popup);
