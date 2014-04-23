@@ -1,0 +1,5 @@
+/
+/event/create
+/events
+/event/mine/534c5cd16c22bdfffe4b558f
+/profile/view/5351bc846c22bdfffeb3f4f0
