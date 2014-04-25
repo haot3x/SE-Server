@@ -141,11 +141,56 @@ html lang="en">
             {% else %}
             {% endif %}
 
+<<<<<<< HEAD
+     <div class="form-group col-md-12">
+       <label class="col-sm-4 control-label">Location</label>
+       <div class="col-sm-8">
+          <input type="text" id="location" placeholder="Location" class="form-control" value='{{ev.location}}' />
+          <!--span class="input-icon fui-location"></span--> 
+      </div>     
+    </div>
+
+{% if paras.action == 'create' %}
+
+<a id='postAjaxBtn' class="col-sm-4 btn btn-primary btn-lg" href="/events">Create</a>
+
+{% elif paras.action == 'view' %}
+<!--a class="btn btn-success btn-lg btn-block" href="/event/edit/{{ev.id}}" role="button">Edit</a-->
+  {% if current_user.id|string==ev.userID %} <!--TBD-->
+    <button class="col-sm-4 btn btn-success btn-lg " href="/event/edit/{{ev.id}}">Edit</button> 
+  {% else %}
+      {% set vars = {'foo': False} %}
+      {% for rq in ev.Requests %}
+        {% if current_user.id|string == rq.reqUserId  %}
+          {% if vars.update({'foo': True}) %} {% endif %}
+        {% endif %}
+      {% endfor %}
+
+      {% if vars.foo or not current_user.is_authenticated()  %}
+        <button id='requestAjaxBtn' class="col-sm-4 btn btn-primary btn-lg" event = {{ev.id}} alt={{vars.foo}} eventowner = {{ev.userID}} disabled="disabled">Request</button>
+      {% else %}
+        <button id='requestAjaxBtn' class="col-sm-4 btn btn-primary btn-lg" event = {{ev.id}}  eventowner = {{ev.userID}}>Request</button>
+      {% endif %}
+    <!-- <a class="btn btn-success btn-lg btn-block" href="/" role="button">Request</a>  -->
+  {% endif %}  
+{% elif paras.action == 'edit' %}
+  <button id='editAjaxBtn' class="col-sm-4 btn btn-primary btn-lg" abc = {{ev.id}}>Finish</button>
+{% else %}
+
+{% endif %}
+    <label class="col-sm-1"></label>
+    <a class="col-sm-4 btn btn-warning btn-lg " href="/events">Cancel</a>
+
+  </fieldset>
+  </form>       
+  </div>
+=======
             <label class="col-sm-1"></label>
             <button class="col-sm-4 btn btn-warning btn-lg " href="/events">Cancel</button>
             </fieldset>
           </form>       
         </div>
+>>>>>>> bdf9de4017f7d7e7e3224bb1e2f9ec0e5800efa5
   
       <!-- Block for Map module -->
         <div class="col-md-9" id ='mapcanvas' style='height:400px;width:400px;'>
@@ -212,6 +257,11 @@ html lang="en">
      </script>
     </script>
 
+<<<<<<< HEAD
+
+</script>
+=======
+>>>>>>> bdf9de4017f7d7e7e3224bb1e2f9ec0e5800efa5
     <script src={{ url_for('static', filename='../static/Flat-UI-master/js/jquery-1.8.3.min.js')}} ></script>
     <script src={{ url_for('static', filename='../static/Flat-UI-master/js/jquery-ui-1.10.3.custom.min.js')}} ></script>
     <script src={{ url_for('static', filename='../static/Flat-UI-master/js/jquery.ui.touch-punch.min.js')}} ></script>
@@ -549,6 +599,7 @@ html lang="en">
            
             var uid  = $(this).attr('for');
             var eid = $(this).attr('abc');
+<<<<<<< HEAD
             var data = {"_method":"POST", "eventId": eid, "reqUserId": uid};
             var dataSMS = {"_method":"POST", "eventId": eid, "reqUserId": uid, "hostId": userID};
             var djsonSMS = JSON.stringify(dataSMS);
@@ -571,6 +622,28 @@ html lang="en">
               }
            
            });
+=======
+            var data = {"_method":"POST", "eventId": eid, "reqUserId": uid}
+
+          var djson = JSON.stringify(data);
+          var url = "{{ url_for('eventmatch_api.eventmatch_test_accept') }}";
+   
+          console.log(djson);
+          $.ajax({
+             type: "POST",
+              url: url,
+              data: djson,
+              contentType: 'application/json;charset=UTF-8',
+              error: function(e) {
+                 console.log("get an error");
+                 console.log(e);
+              },
+              success: function(data){
+                window.location = '/event/view/' + eid;
+               }
+             
+             });
+>>>>>>> bdf9de4017f7d7e7e3224bb1e2f9ec0e5800efa5
 
             $.ajax({
              type: "POST",
