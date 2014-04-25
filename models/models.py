@@ -28,6 +28,7 @@ class ProfileModel(db.Document):
     description = db.StringField()
     userID = db.StringField()
     image = db.StringField()
+    phone = db.StringField()
     # picture = db.ImageField()
 
 

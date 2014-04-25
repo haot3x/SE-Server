@@ -115,7 +115,8 @@
     </div>
 
 {% if paras.action == 'create' %}
-<button id='postAjaxBtn' class="col-sm-4 btn btn-primary btn-lg">Create</button>
+
+<a id='postAjaxBtn' class="col-sm-4 btn btn-primary btn-lg" href="/events">Create</a>
 
 {% elif paras.action == 'view' %}
 <!--a class="btn btn-success btn-lg btn-block" href="/event/edit/{{ev.id}}" role="button">Edit</a-->
@@ -142,7 +143,7 @@
 
 {% endif %}
     <label class="col-sm-1"></label>
-    <button class="col-sm-4 btn btn-warning btn-lg " href="/events">Cancel</button>
+    <a class="col-sm-4 btn btn-warning btn-lg " href="/events">Cancel</a>
 
   </fieldset>
   </form>       
@@ -334,15 +335,12 @@
           if ('{{ paras.action}}' != 'view') 
           {
 
-            console.log("ADD BOX");
+           
 
           // Create the search box and link it to the UI element.
             var input = /** @type {HTMLInputElement} */(
             document.getElementById('pac-input'));
             map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-
-          console.log("ADD BOX1");
-          //meng add if
 
             var searchBox = new google.maps.places.SearchBox(
            /** @type {HTMLInputElement} */(input));
@@ -574,12 +572,13 @@
            
             var uid  = $(this).attr('for');
             var eid = $(this).attr('abc');
-            var data = {"_method":"POST", "eventId": eid, "reqUserId": uid}
-
-         var djson = JSON.stringify(data);
-         var url = "{{ url_for('eventmatch_api.eventmatch_test_accept') }}";
-   
-         console.log(djson);
+            var data = {"_method":"POST", "eventId": eid, "reqUserId": uid};
+            var dataSMS = {"_method":"POST", "eventId": eid, "reqUserId": uid, "hostId": userID};
+            var djsonSMS = JSON.stringify(dataSMS);
+            var djson = JSON.stringify(data);
+            var url = "{{ url_for('eventmatch_api.eventmatch_test_accept') }}";
+            var urlSMS = "/SMSAccept";
+         
          $.ajax({
              type: "POST",
              url: url,
@@ -590,11 +589,26 @@
                console.log(e);
              },
              success: function(data){
+              console.log("Here");
                window.location = '/event/view/' + eid;
               }
            
            });
 
+            $.ajax({
+             type: "POST",
+             url: urlSMS,
+             data: djsonSMS,
+             contentType: 'application/json;charset=UTF-8',
+             error: function(e) {
+               console.log("get an error");
+               console.log(e);
+             },
+             success: function(data){
+               alert("SMS Sent!");
+            }
+                   
+            });
          });
 
 
