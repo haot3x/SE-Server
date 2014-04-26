@@ -130,7 +130,6 @@
                                 </td>
                             </tr>
                             {% endfor %}
-                            <div class="text-center"><span class="eventsInfo"></span></div>
                         </tbody>
                 </table>
             </div>
@@ -330,14 +329,7 @@
                                                        console.log("object length is");
                                                        console.log(objs.length);
                                                        
-                                                       if( objs.length == 0 ){
-                                                            console.log("event not found");
-                                                            $('.eventsInfo').text("No events are found.");
-                                                       }
-                                                       else{
-                                                       console.log("Found some events");
-                                                       if( objs.length == 0 )
-                                                        alert("no events found");
+                                                       
 
                                                        $.each(objs,function(i,obj){
                                                               var n = numDict[obj['_id']['$oid']].toString();
@@ -363,13 +355,15 @@
                                                               </tr>";
                                                               
                                                               var target = $('#eventsTable tr:last');
-                                                              
-                                                              if(target.length == 0)
-                                                              target = $('#eventsTable tbody')
-                                                              
+                                                             
+                                                             if(target.length == 0)
+                                                             {
+                                                              $('#eventsTable').append(dom);
+                                                             }
+                                                             else
                                                               target.after(dom);
                                                         });
-                                                       }
+                                                       
                                                        
                                                        }
                                                        });//ajax ends
