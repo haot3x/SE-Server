@@ -54,6 +54,10 @@ from flask_mail import Mail
 
 from flask_security.forms import RegisterForm
 
+import webapp2
+from google.appengine.api import mail
+import smtplib
+
 class ExtendedRegisterForm(RegisterForm):
     first_name = TextField('First Name', [])
     last_name = TextField('Last Name', [])
@@ -67,7 +71,7 @@ app.config['DEBUG'] = True
 app.config['SECRET_KEY'] = 'super-secret'
 app.config['SECURITY_REGISTERABLE'] = True
 app.config['SECURITY_POST_LOGIN_VIEW'] = '/a_page_requires_login'
-app.config['SECURITY_POST_REGISTER_VIEW'] = '/a_page_requires_login'
+app.config['SECURITY_POST_REGISTER_VIEW'] = '/register_complete'
 
 
 
@@ -137,6 +141,13 @@ app.register_blueprint(eventmatch_api)
 # @app.before_first_request
 # def create_user():
 #     user_datastore.create_user(email='test@yale.edu', password='qwe123')
+
+def send_email(_to, _subject, _body):
+    mail.send_mail(sender="HOUT-ADMIN <admin@yale-hout.appspotmail.com>",
+                  to=_to,
+                  subject=_subject,
+                  body=_body)
+    return 'Email Sent'
 
 @app.errorhandler(404)
 def not_found(error):

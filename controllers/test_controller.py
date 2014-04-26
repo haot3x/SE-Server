@@ -9,6 +9,23 @@ from models.models import MongoTestModel
 
 test_api = Blueprint('test_api', __name__)
 
+
+@test_api.route("/api/tests/email/<_sender>", methods=['GET'])
+def test_send_email(_sender = None, _message = None):
+    from main import send_email
+    return send_email(str(_sender), "Test Email Feature", """Dear User:
+
+    Your email account has been approved.  You can now visit
+    http://www.h-out.com/ and sign in using your Account to
+    access new features.
+
+    Please let us know if you have any questions.
+
+    The HOUT Team
+    """)
+
+
+
 @test_api.route("/api/tests/mongo_demo", methods=['GET'])
 def test_mongo_demo():
     return render_template('mongo_test.html',models=[])

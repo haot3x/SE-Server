@@ -4,7 +4,7 @@ from flask import render_template
 from bson import json_util
 
 
-from main import app,db,security
+from main import app,db,security,User
 from models.models import EventMatchModel, EventModel, ProfileModel
 
 from flask.ext.security import current_user
@@ -87,7 +87,7 @@ def eventmatch_sendSMS(_number = None, _message = None):
 
 @eventmatch_api.route("/SMSAccept", methods=['POST'])
 def eventmatch_SMSAccpet():
-	print request
+	from main import send_email
 	_eventid = request.json['eventId']
 	_requesterid = request.json['reqUserId']
 	_hostid = request.json['hostId']
@@ -95,10 +95,46 @@ def eventmatch_SMSAccpet():
 	doc2 = ProfileModel.objects.get(userID = _hostid)
 	doc3 = EventModel.objects.get(id=_eventid)
 
+	requser = User.objects.get(id=_requesterid)
+	hostuser = User.objects.get(id=_hostid)
+
+	reqmessage = """Dear %(UserName)s:
+
+    Your Event request: %(EventTitle)s with %(HostName)s is accepted.
+    You will be meeting at %(EventLoc)s. %(EventTime)s
+
+    Enjoy!
+
+    The HOUT Team
+    """ % {"UserName": doc1.name, "EventTitle": doc3.title, "HostName": doc2.name, "EventLoc": doc3.location, "EventTime": doc3.startTime}
+
+	# "Dear "+ doc1.name +":\n\n\tYour Event Request: " + doc3.title + " With " + doc2.name + 
+	# 			" is accepted. You will be meeting at " + doc3.location 
+	# 			+ ". "+ doc3.startTime + "\n\n\tEnjoy!\n\n\tThe HOUT Team"
+	# hostmessage = "Dear "+ doc2.name +":\n\n\tYour Event: " + doc3.title + " With " + doc1.name + 
+	# 			" is confirmed. You will be meeting at " + doc3.location 
+	# 			+ ". "+ doc3.startTime + "\n\n\tEnjoy!\n\n\tThe HOUT Team"
+	
+	hostmessage = """Dear %(HostName)s:
+
+    Your Event: %(EventTitle)s with %(ReqName)s is confirmed.
+    You will be meeting at %(EventLoc)s. %(EventTime)s
+
+    Enjoy!
+
+    The HOUT Team
+    """ % {"HostName": doc2.name, "EventTitle": doc3.title, "ReqName": doc1.name, "EventLoc": doc3.location, "EventTime": doc3.startTime}
+
+	send_email(requser.email, "HOUT: Your event request is accepted", reqmessage)
+	send_email(hostuser.email, "HOUT: Your event is confirmed", hostmessage)
+	
+
 	ACCOUNT_SID = "AC7be7eca91ee23111d924d090a70fa933" 
 	AUTH_TOKEN = "c78ca17ad1777ca6de9d3f3844dbc1e6" 
 	client = TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN) 
 	
+
+
 	try: 
 		# To the reqeuster
 		client.messages.create( 
@@ -106,7 +142,7 @@ def eventmatch_SMSAccpet():
 			from_="+12036803816", 
 			body="Your Event Request: " + doc3.title + " With " + doc2.name + 
 				" is accepted. You will be meeting at " + doc3.location 
-				+ " "+ doc3.startTime + " HOUT TEAM MESSAGE"
+				+ ". "+ doc3.startTime + " HOUT TEAM MESSAGE"
 		)
 
 		client.messages.create( 
