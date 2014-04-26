@@ -122,7 +122,7 @@ html lang="en">
             <a id='postAjaxBtn' class="col-sm-4 btn btn-primary btn-lg">Create</a>
             {% elif paras.action == 'view' %}
               {% if current_user.id|string==ev.userID %} <!--TBD-->
-                <a class="col-sm-4 btn btn-success btn-lg " href="/event/edit/{{ev.id}}">Edit</a> 
+                <button class="col-sm-4 btn btn-success btn-lg " href="/event/edit/{{ev.id}}">Edit</button> 
               {% else %}
                   {% set vars = {'foo': False} %}
 

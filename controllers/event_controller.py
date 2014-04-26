@@ -107,27 +107,70 @@ def api_event_near():
         _lat = float(request.json['lat'])
         _lng = float(request.json['lng'])
 
-        doc = EventModel.objects(LatLng__geo_within_center=[(_lat, _lng), dist], status = 'new')
-        print doc.count()
+        doc = EventModel.objects(status = 'new')
+
+        # for d in doc:
+        #     print request
+        #     lat = d.LatLng.get('coordinates')[0];
+        #     lng = d.LatLng.get('coordinates')[1];
+        #     if isWithin(_lat, _lng, lat, lng, dist) is not 1:
+        #     else:
+        #         pass
+
+        
         nums = {}
         photos = {}
-
-        for d in doc:
-            num = EventMatchModel.objects(eventId=str(d.id)).count()
-            # setattr(d, 'numOfRequests', num)
-            nums[str(d.id)] = num
-            
-            #print d.numOfRequests
-            photo = ProfileModel.objects.get(userID=d.userID)
-            photos[str(d.id)] = photo.image
-            #setattr(d, 'image', photo.image)
+        return_doc = [d.to_mongo() for d in doc if isWithin(d.LatLng.get('coordinates')[0], d.LatLng.get('coordinates')[1],_lat,_lng,dist) == 1]
         
-        return json_util.dumps({'doc':[d.to_mongo() for d in doc], "nums":nums, "photos":photos},default=json_util.default)
+        for d in doc:
+            if isWithin(d.LatLng.get('coordinates')[0], d.LatLng.get('coordinates')[1],_lat,_lng,dist) == 1:
+                num = EventMatchModel.objects(eventId=str(d.id)).count()
+                # setattr(d, 'numOfRequests', num)
+                nums[str(d.id)] = num
+                
+                #print d.numOfRequests
+                photo = ProfileModel.objects.get(userID=d.userID)
+                photos[str(d.id)] = photo.image
+                #setattr(d, 'image', photo.image)
+
+        print json_util.dumps(return_doc)
+        return json_util.dumps({'doc':return_doc, "nums":nums, "photos":photos},default=json_util.default)
         
         #print len(doc)
         #print json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
         #return json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
         #return render_template('event_list.html', ev=doc, paras={"action": "radius_refresh"})
+import math
+from math import radians, sqrt, sin, cos, atan2
+
+def isWithin(lat1, lon1, lon2, lat2, radius):
+    print lat1
+    print lon1
+    print lat2
+    print lon2
+    print radius
+    lat1 = radians(lat1)
+    lon1 = radians(lon1)
+    lat2 = radians(lat2)
+    lon2 = radians(lon2)
+    
+    dlon = lon1 - lon2
+
+    EARTH_R = 6372.8
+
+    y = sqrt(
+        (cos(lat2) * sin(dlon)) ** 2
+        + (cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dlon)) ** 2
+        )
+    x = sin(lat1) * sin(lat2) + cos(lat1) * cos(lat2) * cos(dlon)
+    c = atan2(y, x)
+    print EARTH_R * c
+    if EARTH_R * c < radius:
+        return 1
+    else:
+        return 0
+
+
 
 
 @event_api.route("/api/event/create", methods=['POST'])
