@@ -137,13 +137,16 @@ def eventmatch_join_request():
     if cnt == 0:
     	raise Exception("no profile")
     else:
-		eventId = request.json['eventId']
-		eventOwnerId = request.json['eventOwnerId']
-		reqUserId = request.json['reqUserId']
-
-		model = EventMatchModel(eventId=eventId, eventOwnerId=eventOwnerId, reqUserId=reqUserId)
-		doc = model.save()
-		print json_util.dumps(doc.to_mongo())
-		app.logger.info(doc)
-		return json_util.dumps(doc.to_mongo())
+    	eventId = request.json['eventId']
+    	eventOwnerId = request.json['eventOwnerId']
+    	reqUserId = request.json['reqUserId']
+    	count = EventMatchModel.objects(eventId=eventId, eventOwnerId=eventOwnerId, reqUserId=reqUserId).count()
+    	if count == 0:
+    		model = EventMatchModel(eventId=eventId, eventOwnerId=eventOwnerId, reqUserId=reqUserId)
+    		doc = model.save()
+    		print json_util.dumps(doc.to_mongo())
+    		app.logger.info(doc)
+    		return json_util.dumps(doc.to_mongo())
+    	else:
+    		pass
 
