@@ -69,8 +69,6 @@ def eventmatch_test_accept():
 	return json_util.dumps([d.to_mongo() for d in doc], default=json_util.default)
 
 
-<<<<<<< HEAD
-=======
 @eventmatch_api.route("/sendSMS/<_number>/<_message>", methods=['GET'])
 def eventmatch_sendSMS(_number = None, _message = None):
 	
@@ -124,8 +122,6 @@ def eventmatch_SMSAccpet():
 	except Exception,e:
 		return str(e)
 
-
->>>>>>> a15ffde3c36a37cbf24615bb89263f7ae2eb3660
 @eventmatch_api.route("/match/createtest", methods=['GET'])
 def eventmatch_test():
 	eventId = "e2"

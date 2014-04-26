@@ -6,7 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Loading Bootstrap -->
-
+    <style>
+      td.imageTd
+      {
+          max-width: 100px !important;
+          max-height: 100px !important;
+          overflow: hidden !important;
+      }
+    </style>
     <link href={{ url_for('static', filename='../static/Flat-UI-master/bootstrap/css/bootstrap.css' )}} rel="stylesheet">
     <link href={{ url_for('static', filename='../static/Flat-UI-master/css/flat-ui.css' )}} rel="stylesheet">
     <link href={{ url_for('static', filename='../static/Flat-UI-master/images/favicon.ico' )}} rel="shortcut icon">
@@ -92,11 +99,22 @@
             <!-- Event Table -->
             <div class='col-md-12'>
                 <table id='eventsTable' class="table table-striped table-hover">
-                    <col width="30%">
+                    <col width="30%" style = 'max-width:200px'>
                     <col>
                         <tbody>
                             {% for ev in events %}
                             <tr id= '{{ev.id}}'>
+<<<<<<< HEAD
+                                <td class = 'imageTd' valign='middle' >
+                                    <a href='/profile/view/{{ev.userID}}'><img src= '{{ev.image}}' style = 'max-width:200px' alt='User Profile Photo' class='img-thumbnail img-responsive'></a><br> <!--Profile Photo-->
+                                    <a class='btn btn-warning btn-mini btn-block' href='/event/view/{{ev.id}}' style = 'max-width:200px' role='button'>Details</a> <!--Click a detail button to jump to the detail page of an event-->
+                                    
+                                    <!--Display the # of requests of an event-->
+                                    {% if ev.numOfRequests > 1 %}
+                                    <a class='btn btn-info btn-mini btn-block' href='/event/view/{{ev.id}}' style = 'max-width:200px' role='button'>{{ev.numOfRequests}} Requests</a>
+                                    {% else %}
+                                    <a class='btn btn-info btn-mini btn-block' href='/event/view/{{ev.id}}' style = 'max-width:200px' role='button'>{{ev.numOfRequests}} Request</a>
+=======
                                 <td valign='middle'>
                                     <a href='/profile/view/{{ev.userID}}'><img src= '{{ev.image}}' alt='User Profile Photo' class='img-thumbnail img-responsive'></a><br> <!--Profile Photo-->
                                     <a class='btn btn-warning btn-sm btn-block' href='/event/view/{{ev.id}}' role='button'>Details</a> <!--Click a detail button to jump to the detail page of an event-->
@@ -106,6 +124,7 @@
                                     <a class='btn btn-info btn-sm btn-block' href='/event/view/{{ev.id}}' role='button'>{{ev.numOfRequests}} Requests</a>
                                     {% else %}
                                     <a class='btn btn-info btn-sm btn-block' href='/event/view/{{ev.id}}' role='button'>{{ev.numOfRequests}} Request</a>
+>>>>>>> 5a70c6de6a5d35ffe4b8eea247c13225c34b60d6
                                     {% endif %}
                                 </td>
                                 <!--Display basic info about the event-->
