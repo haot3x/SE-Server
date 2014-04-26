@@ -76,25 +76,26 @@
 
         {% elif paras.action == 'all' %}
         <!--show search filters if this is All Open Events page-->
-        <div align=center class='row'>
-            <div align=center class='col-xs-5 col-md-3 col-xs-offset-1 col-md-offset-3'>
+        
+            <div align=center class='test-center col-xs-8 col-md-6 col-xs-offset-2 col-md-offset-3'>
                 <!--Search by radius-->
                 <div class="form-group">
                     <input type="test" id="radius" placeholder="Search radius (miles)" class="form-control" />
                     <span class="input-icon fui-lock"></span>
                 </div>
             </div>
-            <div align=center class='col-xs-0 col-md-3'>
+            <br>
+            <div align=center class='text-center col-xs-12 col-md-12 '>
                 <a id='searchBtn' class="btn btn-success btn-mini" > Search </a>
                 <a href='/events' id='cancelBtn' class="btn btn-warning btn-mini" > Cancel </a>
             </div>
-            <br>
             <!--display search info-->
-            <div class="text-center col-md-12">
+            <div class="text-center col-xs-12 col-md-12">
+                <br>
                 <span class="searchInfo">No filter is added.</span><br>
                 <span class="numEvents"></span><br>
             </div>
-        </div>
+
         {% endif %}
         
         {% if events.count() > 0 %}
