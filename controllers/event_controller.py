@@ -236,8 +236,6 @@ def api_event_post():
            doc.description = description
         if not location is None or location == '':
            doc.location = location
-        if not eventDate is None or eventDate == '':
-           doc.eventDate = eventDate
         if not startTime is None or startTime == '':
            doc.startTime = startTime
         if not endTime is None or endTime == '':
