@@ -9,6 +9,9 @@ from models.models import MongoTestModel
 
 list_page_api = Blueprint('list_page_api', __name__)
 
+
+### Following APIs are for python&gae functions testing only
+
 @list_page_api.route("/list_page", methods=['GET'])
 def list_page():
     return render_template('list_page.html',models=[])

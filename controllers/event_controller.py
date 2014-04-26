@@ -9,6 +9,7 @@ from models.models import EventModel,EventMatchModel,ProfileModel
 
 event_api = Blueprint('event_api', __name__)
 
+# API for viewing all new events
 @event_api.route("/events", methods=['GET'])
 def api_event_demo():
     doc = EventModel.objects(status='new')
@@ -22,25 +23,32 @@ def api_event_demo():
     return render_template('event_list.html',events=doc,paras={"title":"All Open Events",'action':'all'})
 
 
+# API for viewing events in map view
 @event_api.route("/map_view", methods=['GET'])
 def api_event_map():
     doc = EventModel.objects(status='new')
     return render_template('map_view.html',events=doc,paras={"title":"All Open Events",'action':'all'})
 
 
+# view all my events, need to pass user id
 @event_api.route("/event/mine/<_uid>", methods=['GET'])
 def api_event_mine(_uid = None):
     doc = EventModel.objects(userID=_uid)
+
+    eventDict = dict((key, value) for (key, value) in [(d.id,d.status) for d in doc])
+    
     for d in doc:
         num = EventMatchModel.objects(eventId=str(d.id)).count()
         setattr(d, 'numOfRequests', num)
         photo = ProfileModel.objects.get(userID=d.userID).image
         setattr(d, 'image', photo)
-    return render_template('event_list.html',events=doc,paras={"title":"My Events",'action':'mine'})
+    return render_template('event_list.html',events=doc, eventDict=eventDict, paras={"title":"My Events",'action':'mine'})
     #return  json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
     # app.logger.info(docs)
     #return render_template('events.html',events=doc)
 
+
+# API for creating events
 @event_api.route("/event/create", methods=['GET'])
 def api_event_create():
     from flask.ext.security import current_user
@@ -56,7 +64,7 @@ def api_event_create():
 
 
 
-#My Requests
+# API to view my personal events
 @event_api.route("/event/myrequest/<_uid>", methods=['GET'])
 def api_event_myrequest(_uid = None):
     match = EventMatchModel.objects().filter(reqUserId = _uid)
@@ -74,12 +82,15 @@ def api_event_myrequest(_uid = None):
     #return json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
     return render_template('event_list.html',events=event,matchDict=matchDict,paras={"title":"My Requests",'action':'myrequest'})
 
+
+# view event details. This API will also return requester's profile info
 @event_api.route("/event/view/<_eid>", methods=['GET'])
 def api_event_view(_eid = None):
     doc = EventModel.objects.get(id=_eid)
 
     doc2 = EventMatchModel.objects(eventId=_eid)
 
+    # get profile info for all requesters
     for d in doc2:
         doc3 = ProfileModel.objects.get(userID=d.reqUserId)
         setattr(d, "reqProfile", doc3)
@@ -91,13 +102,14 @@ def api_event_view(_eid = None):
 
     return render_template('event.html', ev=doc,paras={"action":"view"})
 
+# API for event detail editing
 @event_api.route("/event/edit/<_eid>", methods=['GET'])
 def api_event_edit(_eid = None):
     doc = EventModel.objects.get(id=_eid)
     return render_template('event.html', ev=doc,paras={"action":"edit"})
 
 
-######################## APIs BELOW ########################
+# API to filter out events with certain distance
 @event_api.route("/events/near", methods=['POST'])
 def api_event_near():
     """ http://mongoengine-odm.readthedocs.org/guide/querying.html#geo-queries """
@@ -107,29 +119,73 @@ def api_event_near():
         _lat = float(request.json['lat'])
         _lng = float(request.json['lng'])
 
-        doc = EventModel.objects(LatLng__geo_within_center=[(_lat, _lng), dist], status = 'new')
-        print doc.count()
+        doc = EventModel.objects(status = 'new')
+
+        # for d in doc:
+        #     print request
+        #     lat = d.LatLng.get('coordinates')[0];
+        #     lng = d.LatLng.get('coordinates')[1];
+        #     if isWithin(_lat, _lng, lat, lng, dist) is not 1:
+        #     else:
+        #         pass
+
+        
         nums = {}
         photos = {}
-
-        for d in doc:
-            num = EventMatchModel.objects(eventId=str(d.id)).count()
-            # setattr(d, 'numOfRequests', num)
-            nums[str(d.id)] = num
-            
-            #print d.numOfRequests
-            photo = ProfileModel.objects.get(userID=d.userID)
-            photos[str(d.id)] = photo.image
-            #setattr(d, 'image', photo.image)
+        return_doc = [d.to_mongo() for d in doc if isWithin(d.LatLng.get('coordinates')[0], d.LatLng.get('coordinates')[1],_lat,_lng,dist) == 1]
         
-        return json_util.dumps({'doc':[d.to_mongo() for d in doc], "nums":nums, "photos":photos},default=json_util.default)
+        for d in doc:
+            if isWithin(d.LatLng.get('coordinates')[0], d.LatLng.get('coordinates')[1],_lat,_lng,dist) == 1:
+                num = EventMatchModel.objects(eventId=str(d.id)).count()
+                # setattr(d, 'numOfRequests', num)
+                nums[str(d.id)] = num
+                
+                #print d.numOfRequests
+                photo = ProfileModel.objects.get(userID=d.userID)
+                photos[str(d.id)] = photo.image
+                #setattr(d, 'image', photo.image)
+
+        print json_util.dumps(return_doc)
+        return json_util.dumps({'doc':return_doc, "nums":nums, "photos":photos},default=json_util.default)
         
         #print len(doc)
         #print json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
         #return json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
         #return render_template('event_list.html', ev=doc, paras={"action": "radius_refresh"})
+import math
+from math import radians, sqrt, sin, cos, atan2
+
+def isWithin(lat1, lon1, lon2, lat2, radius):
+    print lat1
+    print lon1
+    print lat2
+    print lon2
+    print radius
+    lat1 = radians(lat1)
+    lon1 = radians(lon1)
+    lat2 = radians(lat2)
+    lon2 = radians(lon2)
+    
+    dlon = lon1 - lon2
+
+    EARTH_R = 6372.8
+
+    y = sqrt(
+        (cos(lat2) * sin(dlon)) ** 2
+        + (cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dlon)) ** 2
+        )
+    x = sin(lat1) * sin(lat2) + cos(lat1) * cos(lat2) * cos(dlon)
+    c = atan2(y, x)
+    print EARTH_R * c
+    if EARTH_R * c < radius:
+        return 1
+    else:
+        return 0
 
 
+
+
+# API for creating events
 @event_api.route("/api/event/create", methods=['POST'])
 def api_event_post():
     

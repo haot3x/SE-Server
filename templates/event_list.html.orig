@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -8,7 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Loading Bootstrap -->
-
+    <style>
+      td.imageTd
+      {
+          max-width: 100px !important;
+          max-height: 100px !important;
+          overflow: hidden !important;
+      }
+    </style>
     <link href={{ url_for('static', filename='../static/Flat-UI-master/bootstrap/css/bootstrap.css' )}} rel="stylesheet">
     <link href={{ url_for('static', filename='../static/Flat-UI-master/css/flat-ui.css' )}} rel="stylesheet">
     <link href={{ url_for('static', filename='../static/Flat-UI-master/images/favicon.ico' )}} rel="shortcut icon">
@@ -64,15 +69,6 @@
             <br>
             <br>
         </div>
-        {% elif paras.action == 'mine' %}
-        <!-- Buttons -->
-        <div align=center class='row' style='padding-top:10px' >
-            <a id='allBtn2' class="btn btn-warning" > All </a>
-            <a id='matchedBtn2' class="btn btn-success" > Matched </a>
-            <a id='pendingBtn2' class="btn btn-info" > Pending </a>
-            <br>
-            <br>
-        </div>
 
         {% elif paras.action == 'all' %}
         <!--show search filters if this is All Open Events page-->
@@ -103,11 +99,22 @@
             <!-- Event Table -->
             <div class='col-md-12'>
                 <table id='eventsTable' class="table table-striped table-hover">
-                    <col width="30%">
+                    <col width="30%" style = 'max-width:200px'>
                     <col>
                         <tbody>
                             {% for ev in events %}
                             <tr id= '{{ev.id}}'>
+<<<<<<< HEAD
+                                <td class = 'imageTd' valign='middle' >
+                                    <a href='/profile/view/{{ev.userID}}'><img src= '{{ev.image}}' style = 'max-width:200px' alt='User Profile Photo' class='img-thumbnail img-responsive'></a><br> <!--Profile Photo-->
+                                    <a class='btn btn-warning btn-mini btn-block' href='/event/view/{{ev.id}}' style = 'max-width:200px' role='button'>Details</a> <!--Click a detail button to jump to the detail page of an event-->
+                                    
+                                    <!--Display the # of requests of an event-->
+                                    {% if ev.numOfRequests > 1 %}
+                                    <a class='btn btn-info btn-mini btn-block' href='/event/view/{{ev.id}}' style = 'max-width:200px' role='button'>{{ev.numOfRequests}} Requests</a>
+                                    {% else %}
+                                    <a class='btn btn-info btn-mini btn-block' href='/event/view/{{ev.id}}' style = 'max-width:200px' role='button'>{{ev.numOfRequests}} Request</a>
+=======
                                 <td valign='middle'>
                                     <a href='/profile/view/{{ev.userID}}'><img src= '{{ev.image}}' alt='User Profile Photo' class='img-thumbnail img-responsive'></a><br> <!--Profile Photo-->
                                     <a class='btn btn-warning btn-sm btn-block' href='/event/view/{{ev.id}}' role='button'>Details</a> <!--Click a detail button to jump to the detail page of an event-->
@@ -117,6 +124,7 @@
                                     <a class='btn btn-info btn-sm btn-block' href='/event/view/{{ev.id}}' role='button'>{{ev.numOfRequests}} Requests</a>
                                     {% else %}
                                     <a class='btn btn-info btn-sm btn-block' href='/event/view/{{ev.id}}' role='button'>{{ev.numOfRequests}} Request</a>
+>>>>>>> 5a70c6de6a5d35ffe4b8eea247c13225c34b60d6
                                     {% endif %}
                                 </td>
                                 <!--Display basic info about the event-->
@@ -130,7 +138,6 @@
                                 </td>
                             </tr>
                             {% endfor %}
-                            <div class="text-center"><span class="eventsInfo"></span></div>
                         </tbody>
                 </table>
             </div>
@@ -139,7 +146,7 @@
         <!--display none of events is found-->
         <br>
         <div class="text-center col-md-12">
-            <span class="eventInfo">No events are found.</span>
+            <span class="searchInfo">No events are found.</span>
         </div>
         <br>
         {% endif %}
@@ -246,36 +253,6 @@
                                                                       });
                                                   });
                           
-                          {% elif paras.action == 'mine' %}
-                          {% for key in eventDict %}
-                          $("#{{key}}").addClass('{{eventDict[key]}}');
-                          {% endfor %}
-                          
-                          //Click actions of all/pending/matched buttons on My Events page
-                          $('#allBtn2').click(function(){
-                                             $("tr").each(function(i,dom){
-                                                          $(dom).show();
-                                                          });
-                                             });
-                          
-                          $('#pendingBtn2').click(function(){
-                                                 $("tr").each(function(i,dom){
-                                                              $(dom).hide();
-                                                              });
-                                                 $(".new").each(function(i,dom){
-                                                                    $(dom).show();
-                                                                    });
-                                                 });
-                          
-                          $('#matchedBtn2').click(function(){
-                                                 $("tr").each(function(i,dom){
-                                                              $(dom).hide();
-                                                              });
-                                                 $(".closed").each(function(i,dom){
-                                                                    $(dom).show();
-                                                                    });
-                                                 });
-                          
                           {% endif %}
                           
                           
@@ -284,8 +261,9 @@
                                                 function geoSuccess(position)
                                                 {
                                                 var radius = document.getElementById('radius').value;
-                                                //console.log(radius);
+                                                console.log(radius);
                                                 
+                                                console.log("position is:");
                                                 locGeoLat = position.coords.latitude.toString();
                                                 locGeoLng = position.coords.longitude.toString();
                                                 //console.log(locGeoLat);
@@ -327,14 +305,6 @@
                                                               $(this).remove();
                                                         });
                                                        //Then refresh the event table by inserting filtered events
-                                                       console.log("object length is");
-                                                       console.log(objs.length);
-                                                       
-                                                       if( objs.length == 0 ){
-                                                            console.log("event not found");
-                                                            $('.eventsInfo').text("No events are found.");
-                                                       }
-                                                       else{
                                                        console.log("Found some events");
                                                        if( objs.length == 0 )
                                                         alert("no events found");
@@ -369,7 +339,6 @@
                                                               
                                                               target.after(dom);
                                                         });
-                                                       }
                                                        
                                                        }
                                                        });//ajax ends

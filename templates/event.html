@@ -45,7 +45,10 @@
 
   <body style=''> <!--for the navibar always top-->
     <div class='container'>
+      {% if paras.action == 'create' %}
     <input id="pac-input"></input>
+    {%else%}
+    {%endif%}
       <div>      
         {% with active_nav='nav-propose' %}
           {% include "_header.html" %}
@@ -120,7 +123,7 @@
             <a id='postAjaxBtn' class="col-sm-4 btn btn-primary btn-lg">Create</a>
             {% elif paras.action == 'view' %}
               {% if current_user.id|string==ev.userID %} <!--TBD-->
-                <a class="col-sm-4 btn btn-success btn-lg " href="/event/edit/{{ev.id}}">Edit</a> 
+                <button class="col-sm-4 btn btn-success btn-lg " href="/event/edit/{{ev.id}}">Edit</button> 
               {% else %}
                   {% set vars = {'foo': False} %}
 
@@ -132,7 +135,7 @@
 
                   <!-- If Current User has already requested this event, the Request Button is disabled. -->
                   {% if vars.foo or not current_user.is_authenticated()  %}
-                    <button id='requestAjaxBtn' class="col-sm-4 btn btn-primary btn-lg" event = {{ev.id}} alt={{vars.foo}} eventowner = {{ev.userID}} disabled="disabled">Request</button>
+                    <button id='requestAjaxBtn' class="col-sm-4 btn btn-primary btn-lg" event = {{ev.id}} alt={{vars.foo}} eventowner = {{ev.userID}} disabled="disabled">Requested</button>
                   {% else %}
                     <button id='requestAjaxBtn' class="col-sm-4 btn btn-primary btn-lg" event = {{ev.id}}  eventowner = {{ev.userID}}>Request</button>
                   {% endif %} 
@@ -472,9 +475,12 @@
 
           });
 
-
+        var flag = 0;
 
         $("#requestAjaxBtn").click(function(event){
+          if(flag == 1)
+              return;
+          flag = 1;
           var eid = $(this).attr('event');
           var oid = $(this).attr('eventowner');
           var uid = userID;

@@ -9,16 +9,18 @@ from models.models import ProfileModel
 
 profile_api = Blueprint('profile_api', __name__)
 
-
+# API for viewing user profile, provide user id in url
 @profile_api.route("/profile/view/<_uid>", methods=['GET'])
 def api_profile_show(_uid = None):
     try:
         doc = ProfileModel.objects.get(userID=_uid)
         return render_template('profile.html', profile = doc, action = 'exist')
+    # in case user don't have profile info
     except Exception,e:
         return render_template('profile.html', action = 'create')
     
 
+# to redirect user to login page
 @app.route('/a_page_requires_login')
 def login_required_page():
     from flask.ext.security import current_user
@@ -37,21 +39,16 @@ def login_required_page():
         description=""
 
         doc2 = ProfileModel(name=name,gender=gender,age=age,description=description,userID=userID,image=None)
-        doc2.save()
-
-
-    #    return render_template('profile.html', action = 'create')
-
-    
+        doc2.save()    
     return render_template('landing.html')    
 
-
+# API for profile creation
 @profile_api.route("/profile/create/<_uid>", methods=['GET'])
 def api_profile_create(_uid = None):
     return render_template('edit_profile.html', action='create')
     
 
-
+#API for profile modification
 @profile_api.route("/profile/edit/<_uid>", methods=['GET'])
 def api_profile_edit(_uid = None):
     try:
@@ -60,9 +57,8 @@ def api_profile_edit(_uid = None):
     except Exception,e:
         pass
 
-# ######################## APIs BELOW ########################
 
-
+# API for profile image handling
 @profile_api.route("/api/profile/image/<_uid>", methods=['POST'])
 def api_profile_image(_uid = None):
     cnt = ProfileModel.objects(userID=_uid).count()
@@ -85,6 +81,8 @@ def api_profile_image(_uid = None):
   
     return json_util.dumps(doc.to_mongo())
 
+
+# API for profile create, parameters passed by AJAX
 @profile_api.route("/api/profile/create", methods=['POST'])
 def api_profile_post():
     print request
@@ -127,34 +125,3 @@ def api_profile_post():
         doc.save()
         return json_util.dumps(doc.to_mongo())
     return 1
-
-
-
-
-
-# @profile_api.route("/api/profile", methods=['GET'])
-# @profile_api.route("/api/profile/<_id>", methods=['GET','POST'])
-# def api_profile_getputdelete(_id = None):
-#     """ <_id> is for update/delete/get operation"""
-#     if(request.method == 'GET'):
-#         if _id == None:
-#             doc = ProfileModel.objects.all()
-#             app.logger.info(doc)
-#             return json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
-#         else:
-#             doc = ProfileModel.objects.get(id=_id)
-#             return json_util.dumps(doc.to_mongo())
-#     if(request.method == 'POST'):
-#         if(request.json['_method'] == 'DELETE'):
-#             print _id;  
-#             doc = ProfileModel.objects.get(id=_id)
-#             doc.delete()
-#             print json_util.dumps(doc.to_mongo())
-#             return json_util.dumps(doc.to_mongo())
-#         elif(request.json['_method'] == 'PUT'):
-#             print _id;  
-#             doc = ProfileModel.objects.get(id=_id)
-#             #doc.k1 = request.json['k1']
-#             doc.save()
-#             print json_util.dumps(doc.to_mongo())
-#             return json_util.dumps(doc.to_mongo())
