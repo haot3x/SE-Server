@@ -97,7 +97,7 @@ def api_profile_post():
         age = request.json['age']
         description = request.json['description']
         userID = request.json['userID']        
-
+        phone = request.json['phone']
         #model = ProfileModel(title=title,description=description,location=location,startTime=startTime,endTime=endTime,userID=userID,latitude=latitude,longitude=longitude,ZIP=ZIP)
         model = ProfileModel(name=name,gender = gender, age = age, description=description, userID=userID)
         doc = model.save()
@@ -107,12 +107,14 @@ def api_profile_post():
     elif _method == 'PUT' or cnt == 1:
         userID = request.json['userID']
         doc = ProfileModel.objects.get(userID=userID)
-
+        phone = request.json['phone']
         name = request.json['name']
         gender = request.json['gender']
         age = request.json['age']
         description = request.json['description']
 
+        if not phone is None or phone == '':
+            doc.phone = phone 
         if not name is None or name == '':
             doc.name = name
         if not gender is None or gender == '':

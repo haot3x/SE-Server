@@ -321,15 +321,12 @@ html lang="en">
           if ('{{ paras.action}}' != 'view') 
           {
 
-            console.log("ADD BOX");
+           
 
           // Create the search box and link it to the UI element.
             var input = /** @type {HTMLInputElement} */(
             document.getElementById('pac-input'));
             map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-
-          console.log("ADD BOX1");
-          //meng add if
 
             var searchBox = new google.maps.places.SearchBox(
            /** @type {HTMLInputElement} */(input));
@@ -552,27 +549,43 @@ html lang="en">
            
             var uid  = $(this).attr('for');
             var eid = $(this).attr('abc');
-            var data = {"_method":"POST", "eventId": eid, "reqUserId": uid}
-
-          var djson = JSON.stringify(data);
-          var url = "{{ url_for('eventmatch_api.eventmatch_test_accept') }}";
-   
-          console.log(djson);
-          $.ajax({
+            var data = {"_method":"POST", "eventId": eid, "reqUserId": uid};
+            var dataSMS = {"_method":"POST", "eventId": eid, "reqUserId": uid, "hostId": userID};
+            var djsonSMS = JSON.stringify(dataSMS);
+            var djson = JSON.stringify(data);
+            var url = "{{ url_for('eventmatch_api.eventmatch_test_accept') }}";
+            var urlSMS = "/SMSAccept";
+         
+         $.ajax({
              type: "POST",
-              url: url,
-              data: djson,
-              contentType: 'application/json;charset=UTF-8',
-              error: function(e) {
-                 console.log("get an error");
-                 console.log(e);
-              },
-              success: function(data){
-                window.location = '/event/view/' + eid;
-               }
-             
-             });
+             url: url,
+             data: djson,
+             contentType: 'application/json;charset=UTF-8',
+             error: function(e) {
+               console.log("get an error");
+               console.log(e);
+             },
+             success: function(data){
+              console.log("Here");
+               window.location = '/event/view/' + eid;
+              }
+           
+           });
 
+            $.ajax({
+             type: "POST",
+             url: urlSMS,
+             data: djsonSMS,
+             contentType: 'application/json;charset=UTF-8',
+             error: function(e) {
+               console.log("get an error");
+               console.log(e);
+             },
+             success: function(data){
+               alert("SMS Sent!");
+            }
+                   
+            });
          });
 
 
