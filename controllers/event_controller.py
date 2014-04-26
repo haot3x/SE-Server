@@ -9,6 +9,7 @@ from models.models import EventModel,EventMatchModel,ProfileModel
 
 event_api = Blueprint('event_api', __name__)
 
+# API for viewing all new events
 @event_api.route("/events", methods=['GET'])
 def api_event_demo():
     doc = EventModel.objects(status='new')
@@ -22,12 +23,14 @@ def api_event_demo():
     return render_template('event_list.html',events=doc,paras={"title":"All Open Events",'action':'all'})
 
 
+# API for viewing events in map view
 @event_api.route("/map_view", methods=['GET'])
 def api_event_map():
     doc = EventModel.objects(status='new')
     return render_template('map_view.html',events=doc,paras={"title":"All Open Events",'action':'all'})
 
 
+# view all my events, need to pass user id
 @event_api.route("/event/mine/<_uid>", methods=['GET'])
 def api_event_mine(_uid = None):
     doc = EventModel.objects(userID=_uid)
@@ -37,10 +40,9 @@ def api_event_mine(_uid = None):
         photo = ProfileModel.objects.get(userID=d.userID).image
         setattr(d, 'image', photo)
     return render_template('event_list.html',events=doc,paras={"title":"My Events",'action':'mine'})
-    #return  json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
-    # app.logger.info(docs)
-    #return render_template('events.html',events=doc)
 
+
+# API for creating events
 @event_api.route("/event/create", methods=['GET'])
 def api_event_create():
     from flask.ext.security import current_user
@@ -56,7 +58,7 @@ def api_event_create():
 
 
 
-#My Requests
+# API to view my personal events
 @event_api.route("/event/myrequest/<_uid>", methods=['GET'])
 def api_event_myrequest(_uid = None):
     match = EventMatchModel.objects().filter(reqUserId = _uid)
@@ -74,12 +76,15 @@ def api_event_myrequest(_uid = None):
     #return json_util.dumps([d.to_mongo() for d in doc],default=json_util.default)
     return render_template('event_list.html',events=event,matchDict=matchDict,paras={"title":"My Requests",'action':'myrequest'})
 
+
+# view event details. This API will also return requester's profile info
 @event_api.route("/event/view/<_eid>", methods=['GET'])
 def api_event_view(_eid = None):
     doc = EventModel.objects.get(id=_eid)
 
     doc2 = EventMatchModel.objects(eventId=_eid)
 
+    # get profile info for all requesters
     for d in doc2:
         doc3 = ProfileModel.objects.get(userID=d.reqUserId)
         setattr(d, "reqProfile", doc3)
@@ -91,13 +96,14 @@ def api_event_view(_eid = None):
 
     return render_template('event.html', ev=doc,paras={"action":"view"})
 
+# API for event detail editing
 @event_api.route("/event/edit/<_eid>", methods=['GET'])
 def api_event_edit(_eid = None):
     doc = EventModel.objects.get(id=_eid)
     return render_template('event.html', ev=doc,paras={"action":"edit"})
 
 
-######################## APIs BELOW ########################
+# API to filter out events with certain distance
 @event_api.route("/events/near", methods=['POST'])
 def api_event_near():
     """ http://mongoengine-odm.readthedocs.org/guide/querying.html#geo-queries """
@@ -173,6 +179,7 @@ def isWithin(lat1, lon1, lon2, lat2, radius):
 
 
 
+# API for creating events
 @event_api.route("/api/event/create", methods=['POST'])
 def api_event_post():
     
