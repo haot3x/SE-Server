@@ -42,6 +42,23 @@ def login_required_page():
         doc2.save()    
     return render_template('landing.html')    
 
+@app.route('/register_complete')
+def register_complete():
+    from flask.ext.security import current_user
+    from main import send_email
+    alert(send_email(current_user.email, "Welcome to HOUT", """Dear User:
+
+    Your email account has been approved.  You can now visit
+    http://www.h-out.com/ and sign in using your Account to
+    access new features.
+
+    Please let us know if you have any questions.
+
+    The HOUT Team
+    """))   
+    return login_required_page()
+
+
 # API for profile creation
 @profile_api.route("/profile/create/<_uid>", methods=['GET'])
 def api_profile_create(_uid = None):
