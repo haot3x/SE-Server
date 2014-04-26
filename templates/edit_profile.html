@@ -1,3 +1,5 @@
+<!-- This html file contains profile/edit page -->
+<!-- Routing to this page by click "Edit" Button on profile/view page -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -16,155 +18,126 @@
     <link href={{ url_for('static', filename='../static/Flat-UI-master/css/flat-ui.css' )}} rel="stylesheet">
     <link href={{ url_for('static', filename='../static/Flat-UI-master/images/favicon.ico' )}} rel="shortcut icon">
 
-    <!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
-    <!--[if lt IE 9]>
-      <script src="js/html5shiv.js"></script>
-      <script src="js/respond.min.js"></script>
-    <![endif]-->
   </head>
   <body style=''> <!--for the navibar always top-->
-
     <div class='container'>
+      {% with active_nav='nav-settings' %}
+       {% include "_header.html" %}
+      {% endwith %}
 
+      <div class='row' style='padding-top:53px'>
+        <div class="col-md-4 text-center">    
+            <h3>Edit Profile</h3>
+            <h6></h6>
+        </div>
+      </div>
 
-        {% with active_nav='nav-settings' %}
-          {% include "_header.html" %}
-        {% endwith %}
-
-
-
-        <div class='row' style='padding-top:53px'>
-
-            <div class="col-md-4 text-center">    
-                <h3>Edit Profile</h3>
-                <h6></h6>
+    <!-- Form group for input: Image, Name, Gender, Age, Phone#, Description -->
+  	  <div class="col-md-4">
+  	  <form class="form-horizontal" role="form" id='imgForm' enctype="multipart/form-data">
+        <fieldset>
+        <div class="from-group">
+          <div class="fileinput fileinput-new" data-provides="fileinput">
+            <div class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: 200px; height: 150px;"></div>
+            <div>
+            <span class="btn btn-default btn-file"><span class="fileinput-new">Select image</span><span class="fileinput-exists">Change</span><input type="file" id='img' name="img"></span>
+              <a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
             </div>
           </div>
-    
-	<div class="col-md-4">
-	  <form class="form-horizontal" role="form" id='imgForm' enctype="multipart/form-data">
-      <fieldset>
-
-      <div class="from-group">
-
-      <div class="fileinput fileinput-new" data-provides="fileinput">
-        <div class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: 200px; height: 150px;"></div>
-        <div>
-          <span class="btn btn-default btn-file"><span class="fileinput-new">Select image</span><span class="fileinput-exists">Change</span><input type="file" id='img' name="img"></span>
-
-
-          <!-- <div id="base">    </div> -->
-          <a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
         </div>
-      </div>
 
-    </div>
+  	    <div class="form-group">
+  	      <label class="col-sm-2 control-label">Name</label>
+  	      <div class="col-sm-10">
+  		      {% if action == 'edit' %}
+            <input type="text" id="name" class="form-control" value = '{{profile.name}}'>
+            {% elif action == 'create'%}
+            <input type="text" id="name" class="form-control" value = 'your name'>
+            {% else %}
+            {% endif %}
+  	      </div>
+  	    </div>
 
-
-
-
-
-	    <div class="form-group">
-	      <label class="col-sm-2 control-label">Name</label>
-	      <div class="col-sm-10">
-		      {% if action == 'edit' %}
-          <input type="text" id="name" class="form-control" value = '{{profile.name}}'>
+      <!-- Choose Gender: Female/Male -->    
+  	    <div class="form-group">
+  	      <label class="col-sm-2 control-label">Gender</label>
+          <div class="col-sm-10">
+          {% if action == 'edit' %}
+            {% if profile.gender == 'Male' %}
+            <select id="gender" class="form-control">
+              <option selected>Male</option>
+              <option>Female</option>
+            </select>
+            {% else%}
+            <select id="gender" class="form-control">
+              <option>Male</option>
+              <option selected>Female</option>
+            </select>
+            {% endif%}
           {% elif action == 'create'%}
-          <input type="text" id="name" class="form-control" value = 'your name'>
-          {% else %}
-          {% endif %}
-	      </div>
-	    </div>
-      
-	    <div class="form-group">
-	      <label class="col-sm-2 control-label">Gender</label>
-        <div class="col-sm-10">
-        {% if action == 'edit' %}
-
-          {% if profile.gender == 'Male' %}
-          <select id="gender" class="form-control">
-            <option selected>Male</option>
-            <option>Female</option>
-          </select>
-          {% else%}
           <select id="gender" class="form-control">
             <option>Male</option>
-            <option selected>Female</option>
+            <option>Female</option>
           </select>
-          {% endif%}
-        {% elif action == 'create'%}
-        <select id="gender" class="form-control">
-          <option>Male</option>
-          <option>Female</option>
-        </select>
-        {% else %}
-        {% endif %}
+          {% else %}
+          {% endif %}
+          </div>
+  	    </div>
+
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Age</label>
+          <div class="col-sm-10">
+             {% if action == 'edit' %}
+            <input type="text" id="age" class="form-control" value = '{{profile.age}}'>
+            {% elif action == 'create'%}
+            <input type="text" id="age" class="form-control" value = 'your age'>
+            {% else %}
+            {% endif %}
+          </div>    
         </div>
-	    </div>
+
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Phone</label>
+          <div class="col-sm-10">
+
+            {% if action == 'edit' %}
+            <input type="text" id="phone" class="form-control" value = '{{profile.phone}}'>
+            {% elif action == 'create'%}
+            <input type="text" id="phone" class="form-control" value = 'Other member can not see your phone number unless matched, We will text you after your event is matched'>
+            {% else %}
+            {% endif %}
+          </div>    
+        </div>
+
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Description</label>
+          <div class="col-sm-12">
+            {% if action == 'edit' %}
+            <textarea class="form-control" id = "description" rows="3">{{profile.description}}</textarea>
+            {% elif action == 'create'%}
+            <textarea class="form-control" id = "description" rows="3" placeholder = 'breifly describe yourself'></textarea>
+            {% else %}
+            {% endif %}
+          </div>    
+        </div>
 
 
-      <div class="form-group">
-        <label class="col-sm-2 control-label">Age</label>
-        <div class="col-sm-10">
-           {% if action == 'edit' %}
-          <input type="text" id="age" class="form-control" value = '{{profile.age}}'>
-          {% elif action == 'create'%}
-          <input type="text" id="age" class="form-control" value = 'your age'>
-          {% else %}
-          {% endif %}
-        </div>    
-      </div>
+      </fieldset>
 
+        <div class="from-group">
 
-      <div class="form-group">
-        <label class="col-sm-2 control-label">Phone</label>
-        <div class="col-sm-10">
-
-          {% if action == 'edit' %}
-          <input type="text" id="phone" class="form-control" value = '{{profile.phone}}'>
-          {% elif action == 'create'%}
-          <input type="text" id="phone" class="form-control" value = 'Other member can not see your phone number unless matched, We will text you after your event is matched'>
-          {% else %}
-          {% endif %}
-        </div>    
-      </div>
-
-
-      <div class="form-group">
-        <label class="col-sm-2 control-label">Description</label>
-        <div class="col-sm-12">
-          {% if action == 'edit' %}
-          <textarea class="form-control" id = "description" rows="3">{{profile.description}}</textarea>
-          {% elif action == 'create'%}
-          <textarea class="form-control" id = "description" rows="3" placeholder = 'breifly describe yourself'></textarea>
-          {% else %}
-          {% endif %}
-        </div>    
-      </div>
-
-
-    </fieldset>
-
-      <div class="from-group">
-
-          {% if action == 'create' %}
-          <a type = 'button' id='createAjaxBtn' class="btn btn-primary " >Done</a>
-          {% elif action == 'edit' %}
-          <a type = 'button' id='updateAjaxBtn' class="btn btn-primary " >Done</a>
+            {% if action == 'create' %}
+            <a type = 'button' id='createAjaxBtn' class="btn btn-primary " >Done</a>
+            {% elif action == 'edit' %}
+            <a type = 'button' id='updateAjaxBtn' class="btn btn-primary " >Done</a>
+            {% endif %}
           
-          {% endif %}
-        
-        <a type="button" class="btn btn-danger" href="{{ url_for('profile_api.api_profile_show',  _uid = current_user.id ) }}">Cancel</a>
-        
-      </div>
+          <a type="button" class="btn btn-danger" href="{{ url_for('profile_api.api_profile_show',  _uid = current_user.id ) }}">Cancel</a>
+        </div>
 
-
-	  </form>
-	  
-	  
-	</div>
-
-</div>
+  	  </form>	  
+	   </div>
+    </div>
 
 
     <!-- Load JS here for greater good =============================-->
@@ -196,7 +169,7 @@
           console.log(_uid);
           console.log($("#img").val);
 
-
+          //Send Ajex of the newly created profile info 
           $("#createAjaxBtn").click(function(event){
             var data = {"_method":"POST",
               "userID":_uid,
@@ -227,6 +200,7 @@
 
           });
 
+          //read image from local
           function readImage(input) {
             if ( input.files && input.files[0] ) {
               var FR = new FileReader();
@@ -278,31 +252,14 @@
                   error: function (data) {
                     console.log(data);
                   },
-                  // xhrFields: {
-                  //   // add listener to XMLHTTPRequest object directly for progress (jquery doesn't have this yet)
-                  //   onprogress: function (progress) {
-                  //     // calculate upload progress
-                  //     var percentage = Math.floor((progress.total / progress.totalSize) * 100);
-                  //     // log upload progress to console
-                  //     console.log('progress', percentage);
-                  //     if (percentage === 100) {
-                  //       console.log('DONE!');
-                  //     }
-                  //   }
-                  // },
                   processData: false
                   //contentType: file.type
                 });
 
           });
 
-
-
-
-
+          //send update Ajax
           $("#updateAjaxBtn").click(function(event){
-            
-
             var photo = $("#img").val();
             console.log(photo);
 
@@ -334,9 +291,6 @@
             });
 
           });
-
-
-
         });
     </script>
   </body>
