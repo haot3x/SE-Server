@@ -9,6 +9,33 @@ from models.models import MongoTestModel
 
 test_api = Blueprint('test_api', __name__)
 
+import webapp2
+from google.appengine.api import mail
+import smtplib
+
+
+@test_api.route("/api/tests/email", methods=['GET'])
+def test_send_email():
+    return send_email("Maxxx <maxxxchou@gmail.com>", "Test Email Feature", """Dear User:
+
+    Your email account has been approved.  You can now visit
+    http://www.h-out.com/ and sign in using your Account to
+    access new features.
+
+    Please let us know if you have any questions.
+
+    The HOUT Team
+    """)
+
+def send_email(_to, _subject, _body):
+    mail.send_mail(sender="HOUT-ADMIN <admin@yale-hout.appspotmail.com>",
+                  to=_to,
+                  subject=_subject,
+                  body=_body)
+    return 'Email Sent'
+
+
+
 @test_api.route("/api/tests/mongo_demo", methods=['GET'])
 def test_mongo_demo():
     return render_template('mongo_test.html',models=[])
