@@ -116,10 +116,10 @@ html lang="en">
                                                                 Request Button for view page if this event is owned by others
                                                                 Finish Button for edit page -->
             {% if paras.action == 'create' %}
-            <button id='postAjaxBtn' class="col-sm-4 btn btn-primary btn-lg">Create</button>
+            <a id='postAjaxBtn' class="col-sm-4 btn btn-primary btn-lg">Create</a>
             {% elif paras.action == 'view' %}
               {% if current_user.id|string==ev.userID %} <!--TBD-->
-                <button class="col-sm-4 btn btn-success btn-lg " href="/event/edit/{{ev.id}}">Edit</button> 
+                <a class="col-sm-4 btn btn-success btn-lg " href="/event/edit/{{ev.id}}">Edit</a> 
               {% else %}
                   {% set vars = {'foo': False} %}
 
@@ -142,7 +142,7 @@ html lang="en">
             {% endif %}
 
             <label class="col-sm-1"></label>
-            <button class="col-sm-4 btn btn-warning btn-lg " href="/events">Cancel</button>
+            <a class="col-sm-4 btn btn-warning btn-lg " href="/events">Cancel</a>
             </fieldset>
           </form>       
         </div>
