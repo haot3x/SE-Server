@@ -334,12 +334,10 @@
                                                        }
                                                        else{
                                                        console.log("Found some events");
-                                                       if( objs.length == 0 )
-                                                        alert("no events found");
-
                                                        $.each(objs,function(i,obj){
                                                               var n = numDict[obj['_id']['$oid']].toString();
                                                               var p = photoDict[obj['_id']['$oid']].toString();
+                                                              
                                                               var dom = "<tr id= " + obj['_id']['$oid'] + "> \
                                                               <td valign='middle'> \
                                                               <a href='/profile/view/"+ obj['userID']+ "'><img src='" + p + " ' alt='User Profile Photo' class='img-thumbnail img-responsive'></a><br> \
@@ -352,8 +350,8 @@
                                                               </td> \
                                                               <td> \
                                                               <b>Title</b>: " + obj['title'] + "<br> \
-                                                              <b>Start Time</b>: <span class='ev-startTime'>" + obj['startTime'] + "</span>, <span class='ev-startDate'>" + obj['startTime'] + "</span><br> \
-                                                              <b>End Time</b>: <span class='ev-endTime'>" + obj['endTime'] + "</span>, <span class='ev-endDate'>" + obj['endTime'] + "</span><br> \
+                                                              <b>Start Time</b>: <span class='ev-startTime'>" + obj['startTime'] + "</span> on <span class='ev-startDate'>" + obj['startTime'] + "</span><br> \
+                                                              <b>End Time</b>: <span class='ev-endTime'>" + obj['endTime'] + "</span> on <span class='ev-endDate'>" + obj['endTime'] + "</span><br> \
                                                               <b>Location</b>: " + obj['location'] + "<br> \
                                                               <b>Description</b>: " + obj['description'] + "<br>\
                                                               <b>Created On</b>: <span class='ev-createTime" + obj['createTime'] + "'</span> \
@@ -363,7 +361,7 @@
                                                               var target = $('#eventsTable tr:last');
                                                               
                                                               if(target.length == 0)
-                                                              target = $('#eventsTable tbody')
+                                                              target = $('#eventsTable tbody');
                                                               
                                                               target.after(dom);
                                                         });
