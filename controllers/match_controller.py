@@ -10,6 +10,7 @@ from models.models import EventMatchModel, EventModel, ProfileModel
 from flask.ext.security import current_user
 
 from mongoengine.queryset import Q
+from twilio.rest import TwilioRestClient 
 
 import random, string
 
@@ -65,10 +66,66 @@ def eventmatch_test_accept():
 			else:
 				d.status = "declined"
 			d.save()
-
 	return json_util.dumps([d.to_mongo() for d in doc], default=json_util.default)
 
 
+<<<<<<< HEAD
+=======
+@eventmatch_api.route("/sendSMS/<_number>/<_message>", methods=['GET'])
+def eventmatch_sendSMS(_number = None, _message = None):
+	
+	ACCOUNT_SID = "AC7be7eca91ee23111d924d090a70fa933" 
+	AUTH_TOKEN = "c78ca17ad1777ca6de9d3f3844dbc1e6" 
+	client = TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN) 
+	try: 
+		client.messages.create( 
+			to=_number,
+			from_="2036803816", 
+			body=_message  
+		)
+		return 'Message Sent'
+	except Exception,e:
+		return str(e)
+
+@eventmatch_api.route("/SMSAccept", methods=['POST'])
+def eventmatch_SMSAccpet():
+	print request
+	_eventid = request.json['eventId']
+	_requesterid = request.json['reqUserId']
+	_hostid = request.json['hostId']
+	doc1 = ProfileModel.objects.get(userID = _requesterid)
+	doc2 = ProfileModel.objects.get(userID = _hostid)
+	doc3 = EventModel.objects.get(id=_eventid)
+
+	ACCOUNT_SID = "AC7be7eca91ee23111d924d090a70fa933" 
+	AUTH_TOKEN = "c78ca17ad1777ca6de9d3f3844dbc1e6" 
+	client = TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN) 
+	
+	try: 
+		# To the reqeuster
+		client.messages.create( 
+			to=doc1.phone,
+			from_="+12036803816", 
+			body="Your Event Request: " + doc3.title + " With " + doc2.name + 
+				" is accepted. You will be meeting at " + doc3.location 
+				+ " "+ doc3.startTime + " HOUT TEAM MESSAGE"
+		)
+
+		client.messages.create( 
+			to=doc2.phone,
+			from_="+12036803816", 
+			body="Your Event: " + doc3.title + " With " + doc1.name + 
+				" is confirmed. You will be meeting at " + doc3.location 
+				+ ". "+ doc3.startTime+ " -- HOUT TEAM MESSAGE"
+		)
+
+		# To the Host
+		return 'Message Sent'
+	except Exception,e:
+		return str(e)
+
+
+>>>>>>> a15ffde3c36a37cbf24615bb89263f7ae2eb3660
 @eventmatch_api.route("/match/createtest", methods=['GET'])
 def eventmatch_test():
 	eventId = "e2"
@@ -85,13 +142,16 @@ def eventmatch_join_request():
     if cnt == 0:
     	raise Exception("no profile")
     else:
-		eventId = request.json['eventId']
-		eventOwnerId = request.json['eventOwnerId']
-		reqUserId = request.json['reqUserId']
-
-		model = EventMatchModel(eventId=eventId, eventOwnerId=eventOwnerId, reqUserId=reqUserId)
-		doc = model.save()
-		print json_util.dumps(doc.to_mongo())
-		app.logger.info(doc)
-		return json_util.dumps(doc.to_mongo())
+    	eventId = request.json['eventId']
+    	eventOwnerId = request.json['eventOwnerId']
+    	reqUserId = request.json['reqUserId']
+    	count = EventMatchModel.objects(eventId=eventId, eventOwnerId=eventOwnerId, reqUserId=reqUserId).count()
+    	if count == 0:
+    		model = EventMatchModel(eventId=eventId, eventOwnerId=eventOwnerId, reqUserId=reqUserId)
+    		doc = model.save()
+    		print json_util.dumps(doc.to_mongo())
+    		app.logger.info(doc)
+    		return json_util.dumps(doc.to_mongo())
+    	else:
+    		pass
 

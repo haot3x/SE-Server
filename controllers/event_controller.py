@@ -113,7 +113,7 @@ def api_event_near():
         _lat = float(request.json['lat'])
         _lng = float(request.json['lng'])
 
-        doc = EventModel.objects(LatLng__geo_within_center=[(_lat, _lng), dist])
+        doc = EventModel.objects(LatLng__geo_within_center=[(_lat, _lng), dist], status = 'new')
         print doc.count()
         nums = {}
         photos = {}

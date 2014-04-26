@@ -116,6 +116,19 @@
       </div>
 
 
+      <div class="form-group">
+        <label class="col-sm-2 control-label">Phone</label>
+        <div class="col-sm-10">
+
+          {% if action == 'edit' %}
+          <input type="text" id="phone" class="form-control" value = '{{profile.phone}}'>
+          {% elif action == 'create'%}
+          <input type="text" id="phone" class="form-control" value = 'Other member can not see your phone number unless matched, We will text you after your event is matched'>
+          {% else %}
+          {% endif %}
+        </div>    
+      </div>
+
 
       <div class="form-group">
         <label class="col-sm-2 control-label">Description</label>
@@ -190,6 +203,7 @@
               "name":$("#name").val(),
               "gender":$("#gender").val(),
               "age":$("#age").val(),
+              "phone":$("#phone").val(),
               "description":$("#description").val()
             }
           var djson = JSON.stringify(data);
@@ -296,7 +310,8 @@
               "userID":_uid,
               "name":$("#name").val(),
               "gender":$("#gender").val(),
-              "age":$("#age").val(),
+              "age":$("#age").val(),              
+              "phone":$("#phone").val(),
               "description":$("#description").val()
             }
           var djson = JSON.stringify(data);

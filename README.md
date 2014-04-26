@@ -21,7 +21,7 @@ Last Update:    Apr 25th, 2014
 The design of the system follows MVC pattern.
 
 ### Model
-	Data model for users, events, profiles, event and match records. 
+	Data model for users, events, profiles and match records. 
 	Check models/models.py for detailed data model design.
 
 
@@ -29,7 +29,6 @@ The design of the system follows MVC pattern.
 	Mobile adjusted web UI design for all our functionalities.
 	templates/profile.html: webpage for profile viewing
 	templates/map_view.html: webpage for viewing all event on a map
-	templates/list_page.html: 
 	tempaltes/landing.html: homepage
 	templates/event_list.html: webpage for viewing all event in a list
 	templates/event.html: webpage for viewing event details
