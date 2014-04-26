@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -360,8 +362,9 @@
                                                               
                                                               var target = $('#eventsTable tr:last');
                                                               
-                                                              if(target.length == 0)
-                                                              target = $('#eventsTable tbody');
+                                                              if(target.length == 0){
+                                                              target = $('#eventsTable').append(dom);
+                                                              }
                                                               
                                                               target.after(dom);
                                                         });
