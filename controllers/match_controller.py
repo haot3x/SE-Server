@@ -112,7 +112,7 @@ def eventmatch_SMSAccpet():
 			from_="+12036803816", 
 			body="Your Event: " + doc3.title + " With " + doc1.name + 
 				" is confirmed. You will be meeting at " + doc3.location 
-				+ " "+ doc3.startTime+ " HOUT TEAM MESSAGE"
+				+ ". "+ doc3.startTime+ " -- HOUT TEAM MESSAGE"
 		)
 
 		# To the Host

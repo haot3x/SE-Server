@@ -286,7 +286,6 @@
                                                               $(this).remove();
                                                         });
                                                        //Then refresh the event table by inserting filtered events
-                                                       //{% if objs.count() > 0 %}
                                                        console.log("Found some events");
                                                        $.each(objs,function(i,obj){
                                                               var dom = "<tr id= " + obj['_id']['$oid'] + "> \
@@ -316,10 +315,6 @@
                                                               
                                                               target.after(dom);
                                                         });
-                                                       //{% else %}
-                                                       //     console.log("no events found");
-                                                       //     $('.numEvents').text("No events are found.");
-                                                       //{% endif %}
                                                        
                                                        }
                                                        });//ajax ends
