@@ -62,6 +62,15 @@
             <br>
             <br>
         </div>
+        {% elif paras.action == 'mine' %}
+        <!-- Buttons -->
+        <div align=center class='row' style='padding-top:10px' >
+            <a id='allBtn2' class="btn btn-warning" > All </a>
+            <a id='matchedBtn2' class="btn btn-success" > Matched </a>
+            <a id='pendingBtn2' class="btn btn-info" > Pending </a>
+            <br>
+            <br>
+        </div>
 
         {% elif paras.action == 'all' %}
         <!--show search filters if this is All Open Events page-->
@@ -119,6 +128,7 @@
                                 </td>
                             </tr>
                             {% endfor %}
+                            <div class="text-center"><span class="eventsInfo"></span></div>
                         </tbody>
                 </table>
             </div>
@@ -127,7 +137,7 @@
         <!--display none of events is found-->
         <br>
         <div class="text-center col-md-12">
-            <span class="searchInfo">No events are found.</span>
+            <span class="eventInfo">No events are found.</span>
         </div>
         <br>
         {% endif %}
@@ -234,6 +244,36 @@
                                                                       });
                                                   });
                           
+                          {% elif paras.action == 'mine' %}
+                          {% for key in eventDict %}
+                          $("#{{key}}").addClass('{{eventDict[key]}}');
+                          {% endfor %}
+                          
+                          //Click actions of all/pending/matched buttons on My Events page
+                          $('#allBtn2').click(function(){
+                                             $("tr").each(function(i,dom){
+                                                          $(dom).show();
+                                                          });
+                                             });
+                          
+                          $('#pendingBtn2').click(function(){
+                                                 $("tr").each(function(i,dom){
+                                                              $(dom).hide();
+                                                              });
+                                                 $(".new").each(function(i,dom){
+                                                                    $(dom).show();
+                                                                    });
+                                                 });
+                          
+                          $('#matchedBtn2').click(function(){
+                                                 $("tr").each(function(i,dom){
+                                                              $(dom).hide();
+                                                              });
+                                                 $(".closed").each(function(i,dom){
+                                                                    $(dom).show();
+                                                                    });
+                                                 });
+                          
                           {% endif %}
                           
                           
@@ -242,9 +282,8 @@
                                                 function geoSuccess(position)
                                                 {
                                                 var radius = document.getElementById('radius').value;
-                                                console.log(radius);
+                                                //console.log(radius);
                                                 
-                                                console.log("position is:");
                                                 locGeoLat = position.coords.latitude.toString();
                                                 locGeoLng = position.coords.longitude.toString();
                                                 //console.log(locGeoLat);
@@ -286,6 +325,14 @@
                                                               $(this).remove();
                                                         });
                                                        //Then refresh the event table by inserting filtered events
+                                                       console.log("object length is");
+                                                       console.log(objs.length);
+                                                       
+                                                       if( objs.length == 0 ){
+                                                            console.log("event not found");
+                                                            $('.eventsInfo').text("No events are found.");
+                                                       }
+                                                       else{
                                                        console.log("Found some events");
                                                        if( objs.length == 0 )
                                                         alert("no events found");
@@ -320,6 +367,7 @@
                                                               
                                                               target.after(dom);
                                                         });
+                                                       }
                                                        
                                                        }
                                                        });//ajax ends
