@@ -141,14 +141,19 @@
           </fieldset>
 
           <div class="from-group">
-            {% if action == 'exist' %}
-              <a type="button" class="btn btn-primary" href="{{ url_for('profile_api.api_profile_edit',  _uid = current_user.id ) }}">Edit</a>
-            {% elif action == 'create'%}
-              <a type="button" class="btn btn-primary" href="{{ url_for('profile_api.api_profile_create',  _uid = current_user.id ) }}">Edit</a>
+            {% if action == 'exist' and current_user.id|string==profile.userID%}
+              <a type="button" class="btn btn-primary ol-xs-4 col-sm-4 col-md-4" href="{{ url_for('profile_api.api_profile_edit',  _uid = current_user.id ) }}">Edit</a>
+              <label class="col-xs-1 col-sm-1 col-md-1"></label>
+              <a type="button" class="btn btn-default ol-xs-4 col-sm-4 col-md-4 " href="/events">Cancel</a> 
+            {% elif action == 'create' and current_user.id|string==profile.userID%}
+              <a type="button" class="btn btn-primary ol-xs-4 col-sm-4 col-md-4" href="{{ url_for('profile_api.api_profile_create',  _uid = current_user.id ) }}">Edit</a>
+              <label class="col-xs-1 col-sm-1 col-md-1"></label>
+              <a type="button" class="btn btn-default ol-xs-4 col-sm-4 col-md-4" href="/events">Cancel</a> 
             {% else %}
+            <a type="button" class="btn btn-default ol-xs-4 col-sm-4 col-md-4" href="/events">Done</a> 
             {% endif %}
 
-            <button type="button" class="btn btn-default" disabled="disabled">Cancel</button>   
+              
           </div>
           </form>        
         </div>
