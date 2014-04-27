@@ -23,8 +23,15 @@ class HoutTest(unittest.TestCase):
         pass
 
     def test_event(self):
-        CONFIG = ['534ca3ab58738cfffe20f09d', '5351c2a66c22bdfffeb3f4f9', 
-        '5351cbc66c22bdfffeb3f502']
+        CONFIG = ['535af34e9f5ffcfffe58a801', '535af4cf9f5ffcfffe3ffcbe', 
+        '535af6f558738cfffef04d41',
+        '535203de6c22bdfffe601d5d','5352cfbc6c22bdfffefa2f76',
+        '5355c36c6c22bdfffe6f5dc0', '535aa85b9f5ffcfffe67f3a0',
+        '535aacaf6c22bdfffe0f207a','535aadab9f5ffcfffe8f293c',
+        '535aae5b58738cfffe020764', '535ab1dc58738cfffebb0812',
+        '535aedfa58738cfffeb58926', '535aee2958738cfffeb58927',
+        '535aeff66c22bdfffec86a4f', '535af4169f5ffcfffea21c93',
+        '535af68458738cfffe7e537c', '535af76f58738cfffed9fe8e']
 
         API = HOST + '/api/event/'
         DIR = os.path.join(EXPECTED_DIR, "event")

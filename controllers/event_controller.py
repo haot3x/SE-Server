@@ -6,13 +6,15 @@ from bson import json_util
 
 from main import app,db,security
 from models.models import EventModel,EventMatchModel,ProfileModel
+import operator
 
 event_api = Blueprint('event_api', __name__)
 
 # API for viewing all new events
 @event_api.route("/events", methods=['GET'])
 def api_event_demo():
-    doc = EventModel.objects(status='new')
+    doc = EventModel.objects(status='new').order_by('-createTime')
+    print doc
     for d in doc:
         num = EventMatchModel.objects(eventId=str(d.id)).count()
         setattr(d, 'numOfRequests', num)
