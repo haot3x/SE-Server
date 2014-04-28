@@ -110,7 +110,11 @@
                             {% for ev in events %}
                             <tr id= '{{ev.id}}'>
                                 <td valign='middle'>
+                                    {% if ev.image is not none %}
                                     <a href='/profile/view/{{ev.userID}}'><img src= '{{ev.image}}' alt='User Profile Photo' class='img-thumbnail img-responsive'></a><br> <!--Profile Photo-->
+                                    {% else %}
+                                    <a href='/profile/view/{{ev.userID}}'><img src= 'http://simpleicon.com/wp-content/uploads/user1.png' alt='User Profile Photo' class='img-thumbnail img-responsive'></a><br> <!--Profile Photo-->
+                                    {% endif %}
                                     <a class='btn btn-warning btn-sm btn-block' href='/event/view/{{ev.id}}' role='button'>Details</a> <!--Click a detail button to jump to the detail page of an event-->
                                     
                                     <!--Display the # of requests of an event-->
@@ -127,10 +131,11 @@
                                     <b>End Time</b>: <span class='ev-endTime'>{{ ev.endTime }}</span> on <span class='ev-endDate'>{{ ev.endTime }}</span><br>
                                     <b>Location</b>: {{ ev.location }}<br>
                                     <b>Description</b>: {{ ev.description }}<br>
-                                    <b>Created On</b>: <span class='ev-createTime'>{{ev.createTime}}</span>
+                                    <!--b>Created On</b>: <span class='ev-createTime'>{{ev.createTime}}</span-->
                                 </td>
                             </tr>
                             {% endfor %}
+                            <div class="text-center"><span class="eventsInfo"></span></div>
                         </tbody>
                 </table>
             </div>
@@ -165,12 +170,12 @@
     
     <script>
         $(document).ready(function() {
-                          function trimCreateTime(){
+                          //function trimCreateTime(){
                           //only show date and HH-MM-SS of the create time
-                          $('.ev-createTime').each(function(i,dom){
-                                                   $(dom).text($(dom).text().substring(0,$(dom).text().length-7));
-                                                   });
-                          }
+                          //$('.ev-createTime').each(function(i,dom){
+                          //                         $(dom).text($(dom).text().substring(0,$(dom).text().length-7));
+                          //                         });
+                          //}
 
                           function trimStartTime(){
                           //only show HH-MM-SS of the start time
@@ -202,7 +207,7 @@
                           
                           trimStartTime();
                           trimEndTime();
-                          trimCreateTime();
+                          //trimCreateTime();
                           trimStartDate();
                           trimEndDate();
                           
@@ -302,8 +307,6 @@
                                                 //console.log(url);
                                                 //console.log(djson);
                                                 
-                                                $('.searchInfo').text("Events within "+radius+" miles.");
-                                                
                                                 $.ajax({
                                                        type: "POST",
                                                        url: url,
@@ -330,25 +333,24 @@
                                                        console.log("object length is");
                                                        console.log(objs.length);
                                                        
-<<<<<<< HEAD
-                                                       
-
-=======
                                                        if( objs.length == 0 ){
                                                             console.log("event not found");
                                                             $('.eventsInfo').text("No events are found.");
                                                        }
                                                        else{
                                                        console.log("Found some events");
->>>>>>> f20e7565c0684d555ad1f4009a47d732bef73a2b
                                                        $.each(objs,function(i,obj){
                                                               var n = numDict[obj['_id']['$oid']].toString();
                                                               var p = photoDict[obj['_id']['$oid']].toString();
                                                               
                                                               var dom = "<tr id= " + obj['_id']['$oid'] + "> \
                                                               <td valign='middle'> \
+                                                              {% if p is not none %} \
                                                               <a href='/profile/view/"+ obj['userID']+ "'><img src='" + p + " ' alt='User Profile Photo' class='img-thumbnail img-responsive'></a><br> \
-                                                              <a class='btn btn-warning btn-sm btn-block' href='/event/view/" + obj['_id']['$oid'] + "' role='button'>Details</a> <br> \
+                                                              {% else %}
+                                                              <a href='/profile/view/"+ obj['userID'] +"><img src= 'http://simpleicon.com/wp-content/uploads/user1.png' alt='User Profile Photo' class='img-thumbnail img-responsive'></a><br> \
+                                                              {% endif %} \
+                                                              <a class='btn btn-warning btn-sm btn-block' href='/event/view/" + obj['_id']['$oid'] + "' role='button'>Details</a>\
                                                               {% if " + n + " > 1 %} \
                                                               <a class='btn btn-info btn-sm btn-block' href='/event/view/" + obj['_id']['$oid'] + "' role='button'>" + n + " Requests</a> \
                                                               {% else %}\
@@ -361,31 +363,27 @@
                                                               <b>End Time</b>: <span class='ev-endTime'>" + obj['endTime'] + "</span> on <span class='ev-endDate'>" + obj['endTime'] + "</span><br> \
                                                               <b>Location</b>: " + obj['location'] + "<br> \
                                                               <b>Description</b>: " + obj['description'] + "<br>\
-                                                              <b>Created On</b>: <span class='ev-createTime" + obj['createTime'] + "'</span> \
                                                               </td> \
                                                               </tr>";
                                                               
+                                                              //console.log(obj);
+                                                              
                                                               var target = $('#eventsTable tr:last');
-<<<<<<< HEAD
-                                                             
-                                                             if(target.length == 0)
-                                                             {
-                                                              $('#eventsTable').append(dom);
-                                                             }
-                                                             else
-=======
                                                               
                                                               if(target.length == 0){
-                                                              target = $('#eventsTable').append(dom);
+                                                                target = $('#eventsTable').append(dom);
                                                               }
-                                                              
->>>>>>> f20e7565c0684d555ad1f4009a47d732bef73a2b
-                                                              target.after(dom);
+                                                              else
+                                                                target.after(dom);
+                                                            
+                                                              //trimCreateTime();
                                                         });
-                                                       
+                                                       }
                                                        
                                                        }
                                                        });//ajax ends
+                                                       
+                                                       $('.searchInfo').text("Events within "+radius+" miles.");
                                                 }
                                                 
                                                 function geoError(msg)

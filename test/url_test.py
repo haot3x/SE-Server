@@ -7,6 +7,7 @@ logfile = "./url-test-log.log" ##Logfile to write actions to
 import sys
 import os
 import os.path
+import time
 import datetime
 from httplib import HTTP
 
@@ -40,6 +41,7 @@ def get(host,port,url):
 	h.putheader('User-agent', 'python-httplib')
 	h.endheaders()
 
+	time.sleep(1)
 	(returncode, returnmsg, headers) = h.getreply()
 	if returncode != 200:
 		print returncode,returnmsg

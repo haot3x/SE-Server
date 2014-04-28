@@ -180,12 +180,12 @@
                   <td valign="middle"> 
                     <img src='{{ rq.reqProfile.image }}' alt="User Profile Photo" class="img-thumbnail img-responsive" >   
                       {% if rq.status== 'pending' %}
-                        <input class="btn btn-warning btn-mini btn-block" id = "updateAjaxBtn" href="/event/view/{{ev.id}}" for = {{rq.reqUserId}} abc = {{rq.eventId}} role="button" value='Accept'>
+                        <input class="btn btn-warning btn-mini btn-block updateAjaxBtn" id = "{{rq.id}}" href="/event/view/{{ev.id}}" for = {{rq.reqUserId}} abc = {{rq.eventId}} role="button" value='Accept' readonly>
                               
                       {% elif rq.status== 'matched' %}
-                        <input class="btn btn-success btn-mini btn-block" id = "updateAjaxBtn" href="/event/view/{{ev.id}}" for = {{rq.reqUserId}} abc = {{rq.eventId}} role="button" disabled="disabled" value='Matched'>
+                        <input class="btn btn-success btn-mini btn-block" role="button" disabled="disabled" value='Matched'>
                       {% elif rq.status=='declined' %}
-                        <input class="btn btn-danger btn-mini btn-block" id = "updateAjaxBtn" href="/event/view/{{ev.id}}" for = {{rq.reqUserId}} abc = {{rq.eventId}} role="button" disabled="disabled" value='Declined'>
+                        <input class="btn btn-danger btn-mini btn-block" role="button" disabled="disabled" value='Declined'>
                        {% endif %}   
                   </td>
                   <td style="vertical-align:middle">
@@ -226,7 +226,6 @@
     <script src={{ url_for('static', filename='../static/Flat-UI-master/js/jquery.ui.touch-punch.min.js')}} ></script>
     <script src={{ url_for('static', filename='../static/Flat-UI-master/js/bootstrap.min.js')}} ></script>
     <script src={{ url_for('static', filename='../static/Flat-UI-master/js/bootstrap-select.js')}} ></script>
-    <script src={{ url_for('static', filename='../static/Flat-UI-master/js/bootstrap-switch.js')}} ></script>
     <script src={{ url_for('static', filename='../static/Flat-UI-master/js/flatui-checkbox.js')}} ></script>
     <script src={{ url_for('static', filename='../static/Flat-UI-master/js/flatui-radio.js')}} ></script>
     <script src={{ url_for('static', filename='../static/Flat-UI-master/js/jquery.tagsinput.js')}} ></script>
@@ -506,7 +505,7 @@
                 window.location = '/profile/view/'+uid;
               },
               success: function(data){
-                window.location = '/events';
+                window.location.reload();
                }
             
             });
@@ -553,8 +552,8 @@
           });
 
 
-          $("#updateAjaxBtn").click(function(event){
-           
+          $(".updateAjaxBtn").click(function(event){
+            
             var uid  = $(this).attr('for');
             var eid = $(this).attr('abc');
             var data = {"_method":"POST", "eventId": eid, "reqUserId": uid};
