@@ -137,13 +137,13 @@
 
                   <!-- If Current User has already requested this event, the Request Button is disabled. -->
                   {% if vars.foo or not current_user.is_authenticated()  %}
-                    <a id='requestAjaxBtn' class="col-xs-4 col-sm-4 col-md-4 btn btn-primary btn-lg" event = {{ev.id}} alt={{vars.foo}} eventowner = {{ev.userID}} disabled="disabled">Requested</button>
+                    <a id='requestAjaxBtn' class="col-xs-4 col-sm-4 col-md-4 btn btn-primary btn-lg" event = {{ev.id}} alt={{vars.foo}} eventowner = {{ev.userID}} disabled="disabled">Requested</a>
                   {% else %}
-                    <a id='requestAjaxBtn' class="col-xs-4 col-sm-4 col-md-4 btn btn-primary btn-lg" event = {{ev.id}}  eventowner = {{ev.userID}}>Request</button>
+                    <a id='requestAjaxBtn' class="col-xs-4 col-sm-4 col-md-4 btn btn-primary btn-lg" event = {{ev.id}}  eventowner = {{ev.userID}}>Request</a>
                   {% endif %} 
               {% endif %}  
             {% elif paras.action == 'edit' %}
-              <a id='editAjaxBtn' class="col-xs-4 col-sm-4 col-md-4 btn btn-primary btn-lg" abc = {{ev.id}}>Finish</button>
+              <a id='editAjaxBtn' class="col-xs-4 col-sm-4 col-md-4 btn btn-primary btn-lg" abc = {{ev.id}}>Finish</a>
             {% else %}
             {% endif %}
 
