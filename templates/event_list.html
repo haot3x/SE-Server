@@ -341,21 +341,21 @@
                                                        console.log("Found some events");
                                                        $.each(objs,function(i,obj){
                                                               var n = numDict[obj['_id']['$oid']].toString();
-                                                              var p = photoDict[obj['_id']['$oid']].toString();
+                                                              if( n > 1 )
+                                                                var num = "Requests";
+                                                                else
+                                                                var num = "Request";
+                                                              
+                                                              if( photoDict[obj['_id']['$oid']] == null )
+                                                                var p = "http://simpleicon.com/wp-content/uploads/user1.png";
+                                                              else
+                                                                var p = photoDict[obj['_id']['$oid']];
                                                               
                                                               var dom = "<tr id= " + obj['_id']['$oid'] + "> \
                                                               <td valign='middle'> \
-                                                              {% if p is not none %} \
                                                               <a href='/profile/view/"+ obj['userID']+ "'><img src='" + p + " ' alt='User Profile Photo' class='img-thumbnail img-responsive'></a><br> \
-                                                              {% else %}
-                                                              <a href='/profile/view/"+ obj['userID'] +"><img src= 'http://simpleicon.com/wp-content/uploads/user1.png' alt='User Profile Photo' class='img-thumbnail img-responsive'></a><br> \
-                                                              {% endif %} \
                                                               <a class='btn btn-warning btn-sm btn-block' href='/event/view/" + obj['_id']['$oid'] + "' role='button'>Details</a>\
-                                                              {% if " + n + " > 1 %} \
-                                                              <a class='btn btn-info btn-sm btn-block' href='/event/view/" + obj['_id']['$oid'] + "' role='button'>" + n + " Requests</a> \
-                                                              {% else %}\
-                                                              <a class='btn btn-info btn-sm btn-block' href='/event/view/" + obj['_id']['$oid'] + "' role='button'>" + n + " Request</a> \
-                                                              {% endif %}\
+                                                              <a class='btn btn-info btn-sm btn-block' href='/event/view/" + obj['_id']['$oid'] + "' role='button'>" + n + " " + num + "</a> \
                                                               </td> \
                                                               <td> \
                                                               <b>Title</b>: " + obj['title'] + "<br> \
