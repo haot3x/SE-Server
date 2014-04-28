@@ -110,7 +110,11 @@
                             {% for ev in events %}
                             <tr id= '{{ev.id}}'>
                                 <td valign='middle'>
+                                    {% if ev.image is not none %}
                                     <a href='/profile/view/{{ev.userID}}'><img src= '{{ev.image}}' alt='User Profile Photo' class='img-thumbnail img-responsive'></a><br> <!--Profile Photo-->
+                                    {% else %}
+                                    <a href='/profile/view/{{ev.userID}}'><img src= 'http://simpleicon.com/wp-content/uploads/user1.png' alt='User Profile Photo' class='img-thumbnail img-responsive'></a><br> <!--Profile Photo-->
+                                    {% endif %}
                                     <a class='btn btn-warning btn-sm btn-block' href='/event/view/{{ev.id}}' role='button'>Details</a> <!--Click a detail button to jump to the detail page of an event-->
                                     
                                     <!--Display the # of requests of an event-->
@@ -343,7 +347,11 @@
                                                               
                                                               var dom = "<tr id= " + obj['_id']['$oid'] + "> \
                                                               <td valign='middle'> \
+                                                              {% if p is not none %} \
                                                               <a href='/profile/view/"+ obj['userID']+ "'><img src='" + p + " ' alt='User Profile Photo' class='img-thumbnail img-responsive'></a><br> \
+                                                              {% else %}
+                                                              <a href='/profile/view/"+ obj['userID'] +"><img src= 'http://simpleicon.com/wp-content/uploads/user1.png' alt='User Profile Photo' class='img-thumbnail img-responsive'></a><br> \
+                                                              {% endif %} \
                                                               <a class='btn btn-warning btn-sm btn-block' href='/event/view/" + obj['_id']['$oid'] + "' role='button'>Details</a> <br> \
                                                               {% if " + n + " > 1 %} \
                                                               <a class='btn btn-info btn-sm btn-block' href='/event/view/" + obj['_id']['$oid'] + "' role='button'>" + n + " Requests</a> \
@@ -364,10 +372,10 @@
                                                               var target = $('#eventsTable tr:last');
                                                               
                                                               if(target.length == 0){
-                                                              target = $('#eventsTable').append(dom);
+                                                                target = $('#eventsTable').append(dom);
                                                               }
-                                                              
-                                                              target.after(dom);
+                                                              else
+                                                                target.after(dom);
                                                         });
                                                        }
                                                        
