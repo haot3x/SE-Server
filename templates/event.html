@@ -125,7 +125,11 @@
             <a id='postAjaxBtn' class="col-xs-4 col-sm-4 col-md-4 btn btn-primary btn-lg">Create</a>
             {% elif paras.action == 'view' %}
               {% if current_user.id|string==ev.userID %} <!--TBD-->
-                <a class="col-xs-4 col-sm-4 col-md-4 btn btn-success btn-lg " href="/event/edit/{{ev.id}}">Edit</a>
+                {% if ev.status=="closed" %}
+                  <a class="col-xs-4 col-sm-4 col-md-4 btn btn-success btn-lg " disabled='disabled' href="/event/edit/{{ev.id}}">Edit</a>
+                {% else %}
+                  <a class="col-xs-4 col-sm-4 col-md-4 btn btn-success btn-lg " href="/event/edit/{{ev.id}}">Edit</a>
+                {% endif %}
               {% else %}
                   {% set vars = {'foo': False} %}
 
