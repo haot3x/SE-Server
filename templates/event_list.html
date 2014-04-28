@@ -131,7 +131,7 @@
                                     <b>End Time</b>: <span class='ev-endTime'>{{ ev.endTime }}</span> on <span class='ev-endDate'>{{ ev.endTime }}</span><br>
                                     <b>Location</b>: {{ ev.location }}<br>
                                     <b>Description</b>: {{ ev.description }}<br>
-                                    <b>Created On</b>: <span class='ev-createTime'>{{ev.createTime}}</span>
+                                    <!--b>Created On</b>: <span class='ev-createTime'>{{ev.createTime}}</span-->
                                 </td>
                             </tr>
                             {% endfor %}
@@ -170,12 +170,12 @@
     
     <script>
         $(document).ready(function() {
-                          function trimCreateTime(){
+                          //function trimCreateTime(){
                           //only show date and HH-MM-SS of the create time
-                          $('.ev-createTime').each(function(i,dom){
-                                                   $(dom).text($(dom).text().substring(0,$(dom).text().length-7));
-                                                   });
-                          }
+                          //$('.ev-createTime').each(function(i,dom){
+                          //                         $(dom).text($(dom).text().substring(0,$(dom).text().length-7));
+                          //                         });
+                          //}
 
                           function trimStartTime(){
                           //only show HH-MM-SS of the start time
@@ -207,7 +207,7 @@
                           
                           trimStartTime();
                           trimEndTime();
-                          trimCreateTime();
+                          //trimCreateTime();
                           trimStartDate();
                           trimEndDate();
                           
@@ -307,8 +307,6 @@
                                                 //console.log(url);
                                                 //console.log(djson);
                                                 
-                                                $('.searchInfo').text("Events within "+radius+" miles.");
-                                                
                                                 $.ajax({
                                                        type: "POST",
                                                        url: url,
@@ -352,7 +350,7 @@
                                                               {% else %}
                                                               <a href='/profile/view/"+ obj['userID'] +"><img src= 'http://simpleicon.com/wp-content/uploads/user1.png' alt='User Profile Photo' class='img-thumbnail img-responsive'></a><br> \
                                                               {% endif %} \
-                                                              <a class='btn btn-warning btn-sm btn-block' href='/event/view/" + obj['_id']['$oid'] + "' role='button'>Details</a> <br> \
+                                                              <a class='btn btn-warning btn-sm btn-block' href='/event/view/" + obj['_id']['$oid'] + "' role='button'>Details</a>\
                                                               {% if " + n + " > 1 %} \
                                                               <a class='btn btn-info btn-sm btn-block' href='/event/view/" + obj['_id']['$oid'] + "' role='button'>" + n + " Requests</a> \
                                                               {% else %}\
@@ -365,9 +363,10 @@
                                                               <b>End Time</b>: <span class='ev-endTime'>" + obj['endTime'] + "</span> on <span class='ev-endDate'>" + obj['endTime'] + "</span><br> \
                                                               <b>Location</b>: " + obj['location'] + "<br> \
                                                               <b>Description</b>: " + obj['description'] + "<br>\
-                                                              <b>Created On</b>: <span class='ev-createTime" + obj['createTime'] + "'</span> \
                                                               </td> \
                                                               </tr>";
+                                                              
+                                                              //console.log(obj);
                                                               
                                                               var target = $('#eventsTable tr:last');
                                                               
@@ -376,11 +375,15 @@
                                                               }
                                                               else
                                                                 target.after(dom);
+                                                            
+                                                              trimCreateTime();
                                                         });
                                                        }
                                                        
                                                        }
                                                        });//ajax ends
+                                                       
+                                                       $('.searchInfo').text("Events within "+radius+" miles.");
                                                 }
                                                 
                                                 function geoError(msg)
